@@ -294,7 +294,6 @@ function showBookPicker() {
     h += `<div class="tbv-picker-card" onclick="pickTextbook('${escQ(book.id)}')">
       <div class="tbv-pc-icon">${book.icon||'📘'}</div>
       <div class="tbv-pc-name">${esc(book.label)}</div>
-      <div class="tbv-pc-meta">${book.chapters.length} 章 · ${totalSec} 节</div>
     </div>`;
   }
   grid.innerHTML = h;
