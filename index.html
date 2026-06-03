@@ -311,7 +311,7 @@ function pickTextbook(id) {
   currentTB = book;
   currentChapter = null;
   document.getElementById('tbvPicker').style.display = 'none';
-  document.getElementById('tbvSelBar').innerHTML = `<span class="tbv-sel-badge" style="background:${book.iconBg||'#6366f1'}">${book.iconText||'📘'}</span><span class="tbv-sel-name">${esc(book.label)}</span><span class="tbv-sel-arrow">▾</span>`;
+  document.getElementById('tbvSelBar').innerHTML = `<span class="tbv-sel-badge" style="background:${book.iconBg||'#6366f1'}">${book.iconText||'📘'}</span><span class="tbv-sel-name">${esc(book.grade)}</span><span class="tbv-sel-arrow">▾</span>`;
   document.getElementById('tbvColMid').style.display = 'block';
   document.getElementById('tbvColRight').innerHTML = '';
   renderChapterList();
