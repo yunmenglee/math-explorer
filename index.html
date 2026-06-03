@@ -72,9 +72,9 @@
   <div class="tbv-body">
     <div class="tbv-sidebar" id="tbvSidebar">
       <div class="tbv-sb-header">📚 选择教材</div>
-      <div id="tbvBookList"></div>
+      <div id="tbvBookList" class="tbv-book-list"></div>
       <div class="tbv-sb-header tbv-ch-hdr" id="tbvChHdr" style="display:none">📖 章节</div>
-      <div id="tbvChapterList"></div>
+      <div id="tbvChapterList" class="tbv-book-list"></div>
     </div>
     <div class="tbv-content" id="tbvContent">
       <div class="tbv-placeholder" id="tbvPlaceholder">
@@ -131,7 +131,7 @@ async function loadData() {
       fetch('data/regions.json?v=2').then(r=>r.json()),
       fetch('data/quotes.json?v=2').then(r=>r.json()),
       fetch('data/meta.json?v=2').then(r=>r.json()),
-      fetch('data/textbooks.json?v=2').then(r=>r.json()),
+      fetch('data/textbooks.json?v=3').then(r=>r.json()),
     ]);
     D = entries;
     S = summary;
