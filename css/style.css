@@ -227,8 +227,8 @@ mark{background:var(--mark-bg);padding:1px 4px;border-radius:4px;font-weight:500
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:4px}
 
-.im{max-width:100%;margin:8px 0;border-radius:6px;cursor:pointer;border:1px solid var(--border);transition:transform .2s,box-shadow .2s;display:block}
-.im:hover{transform:scale(1.02);box-shadow:0 4px 16px rgba(0,0,0,0.12);border-color:var(--accent)}
+.im{max-width:100%;max-height:280px;margin:8px 0;border-radius:6px;border:1px solid var(--border);display:block;object-fit:contain;background:#f8fafc}
+[data-theme="dark"] .im{background:#1a2035}
 
 /* ===== MODAL ===== */
 .mmodal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(0,0,0,0.8);justify-content:center;align-items:center;cursor:pointer}

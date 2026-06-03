@@ -412,7 +412,7 @@ function renderResults() {
       ${headerHtml}
       <h3>${highlight(esc(e.t), st.q)}</h3>
       ${desc ? '<div class="de">'+desc+'</div>' : ''}
-      ${e.imt ? '<img class="im" src="data:image/png;base64,'+e.imt+'" onclick="showImg(\''+e.img+'\')" title="点击查看大图">' : (e.img && e.img.startsWith('image') ? '<img class="im" src="images/'+e.img+'" onclick="showImgFile(this.src)" title="点击查看大图">' : '')}
+      ${e.imt ? '<img class="im" src="data:image/png;base64,'+e.imt+'" alt="图示">' : (e.img && e.img.startsWith('image') ? '<img class="im" src="images/'+e.img+'" alt="图示">' : '')}
       ${extra ? '<div class="ex">'+extra+'</div>' : ''}
       ${ah}
       <div class="actions">${favBtn}${learnBtn}</div>
