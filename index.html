@@ -72,11 +72,7 @@
   <div class="tbv-body">
     <div class="tbv-col tbv-col-left" id="tbvColLeft">
       <div class="tbv-col-header">📚 教材版本</div>
-      <div class="tbv-book-select" id="tbvBookSelect" onclick="toggleBookDropdown()">
-        <span id="tbvSelectedLabel">请选择教材</span>
-        <span class="tbv-dropdown-arrow">▾</span>
-      </div>
-      <div class="tbv-book-dropdown" id="tbvBookDropdown" style="display:none"></div>
+      <div id="tbvBookSelector"></div>
     </div>
     <div class="tbv-col tbv-col-mid" id="tbvColMid" style="display:none">
       <div class="tbv-col-header">📖 章节</div>
@@ -262,7 +258,6 @@ function goHome() {
 // ===== TEXTBOOK VIEW =====
 let currentTB = null;
 let currentChapter = null;
-let dropdownOpen = false;
 
 function enterTextbook() {
   if (!requireAuth()) return;
@@ -281,33 +276,22 @@ function goHomeFromTB() {
   goHome();
 }
 
-function toggleBookDropdown() {
-  dropdownOpen = !dropdownOpen;
-  document.getElementById('tbvBookDropdown').style.display = dropdownOpen ? 'block' : 'none';
-}
-
 function renderTextbookView() {
   document.getElementById('tbvColMid').style.display = 'none';
-  document.getElementById('tbvSelectedLabel').textContent = '请选择教材';
   document.getElementById('tbvColRight').innerHTML = '';
-  renderBookDropdown();
-}
 
-function renderBookDropdown() {
-  const dd = document.getElementById('tbvBookDropdown');
   let h = '';
   for (const book of TB) {
     const totalSec = book.chapters.reduce((s, ch) => s + ch.sections.length, 0);
-    const active = currentTB && currentTB.id === book.id ? ' on' : '';
-    h += `<div class="tbv-book-option${active}" onclick="selectTextbook('${escQ(book.id)}')">
-      <span class="tbv-book-icon">${book.icon||'📘'}</span>
-      <div class="tbv-book-info">
-        <div class="tbv-book-name">${esc(book.label)}</div>
-        <div class="tbv-book-meta">${book.chapters.length} 章 · ${totalSec} 节</div>
-      </div>
+    const active = currentTB && currentTB.id === book.id ? 'on' : '';
+    h += `<div class="tbv-book-pill ${active}" onclick="selectTextbook('${escQ(book.id)}')">
+      <span class="tbv-bp-icon">${book.icon||'📘'}</span>
+      <span class="tbv-bp-label">${esc(book.label)}</span>
+      <span class="tbv-bp-meta">${book.chapters.length}章 ${totalSec}节</span>
+      ${active ? '<span class="tbv-bp-check">✓</span>' : ''}
     </div>`;
   }
-  dd.innerHTML = h;
+  document.getElementById('tbvBookSelector').innerHTML = h;
 }
 
 function selectTextbook(id) {
@@ -315,9 +299,7 @@ function selectTextbook(id) {
   if (!book) return;
   currentTB = book;
   currentChapter = null;
-  dropdownOpen = false;
-  document.getElementById('tbvBookDropdown').style.display = 'none';
-  document.getElementById('tbvSelectedLabel').textContent = `${book.icon||'📘'} ${book.label}`;
+  renderTextbookView();
   document.getElementById('tbvColMid').style.display = 'block';
   document.getElementById('tbvColRight').innerHTML = '';
   renderChapterList();
@@ -368,15 +350,6 @@ function renderSections() {
   h += '</div>';
   document.getElementById('tbvColRight').innerHTML = h;
 }
-
-// Close textbook dropdown on outside click
-document.addEventListener('click', function(e) {
-  const left = document.getElementById('tbvColLeft');
-  if (left && !left.contains(e.target)) {
-    document.getElementById('tbvBookDropdown').style.display = 'none';
-    dropdownOpen = false;
-  }
-});
 
 // ===== MODULE TABS =====
 function renderModuleTabs() {
