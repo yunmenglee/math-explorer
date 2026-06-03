@@ -1,272 +1,273 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>数学探索中心 · 知识宝典</title>
-<link rel="stylesheet" href="css/style.css?v=2">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#302b63">
-<meta name="description" content="小学数学、初中数学、中考数学知识点全收录 - 2835条知识">
-</head>
-<body>
-<div class="header">
-  <div class="dec"><span></span><span></span><span></span><span></span><span></span><span></span></div>
-  <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="切换主题">🌙</button>
-  <div class="hc">
-    <h1>🧮 数学探索中心</h1>
-    <div class="subtitle">小学 · 初中 · 中考</div>
-    <div class="sb">
-      <span class="ic">🔍</span>
-      <input type="text" id="sq" placeholder="搜索知识点..." autocomplete="off" spellcheck="false">
-      <span class="hk">⌘/</span>
-    </div>
-  </div>
-</div>
-
-<div id="loadingScreen" class="loading">
-  <div class="spinner"></div>
-  <h3>加载知识库中...</h3>
-  <p style="font-size:13px;color:var(--text-muted);margin-top:8px">2835 条知识，马上就好</p>
-</div>
-
-<div class="hm" id="hm" style="display:none"></div>
-<div class="qs" id="qs" style="display:none"></div>
-
-<div class="br" id="br">
-  <div class="tb">
-    <span class="bh" onclick="goHome()">← 返回首页</span>
-    <div class="bh-group">
-      <span class="bh bh-sm" onclick="randomKnowledge()" title="随机知识点">🎲 随机</span>
-      <span class="bh bh-sm" onclick="showFavorites()" title="收藏夹">⭐ 收藏</span>
-      <span class="bh bh-sm" onclick="showLearningProgress()" title="学习进度">📖 进度</span>
-      <span class="bh bh-sm" onclick="showGraph()" title="知识图谱">📊 图谱</span>
-    </div>
-  </div>
-  <div class="mt" id="mt"></div>
-  <div class="mw">
-    <span class="tg-btn" id="tg">☰ 分类筛选</span>
-    <div class="sd" id="sd"></div>
-    <div class="ct">
-      <!-- Favorites & Progress panels (shown when toggled) -->
-      <div id="extraPanels"></div>
-      <div class="cr">
-        <div class="info" id="st">共 <strong>0</strong> 条知识</div>
-      </div>
-      <div id="cps" class="cps"></div>
-      <div class="ac" id="ac"></div>
-      <div class="cb" id="cb"></div>
-      <div id="rs"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== TEXTBOOK VIEW ===== -->
-<div class="tbv" id="tbv" style="display:none">
-  <div class="tb">
-    <span class="bh" onclick="goHomeFromTB()">← 返回首页</span>
-    <div class="bh-group">
-      <span class="bh bh-sm" id="tbvTitle" style="font-weight:700;font-size:15px">📘 教材库</span>
-    </div>
-  </div>
-  <div class="tbv-body">
-    <div class="tbv-col tbv-col-left" id="tbvColLeft">
-      <div class="tbv-col-header">📚 教材版本</div>
-      <div id="tbvBookList"></div>
-    </div>
-    <div class="tbv-col tbv-col-mid" id="tbvColMid" style="display:none">
-      <div class="tbv-col-header">📖 章节</div>
-      <div id="tbvChapterList"></div>
-    </div>
-    <div class="tbv-col tbv-col-right" id="tbvColRight">
-      <div class="tbv-placeholder" id="tbvPlaceholder">
-        <div class="tbv-placeholder-icon">📚</div>
-        <div class="tbv-placeholder-text">请先从左侧选择教材版本</div>
-      </div>
-      <div id="tbvSections" style="display:none">
-        <div class="tbv-col-header" id="tbvSectionHeader">📖 小节</div>
-        <div class="tbv-section-grid" id="tbvSectionGrid"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="mmodal" id="mv"><span class="mclose" onclick="hideImg()">×</span></div>
-
-<!-- Auth overlay -->
-<div id="authOverlay" class="auth-overlay" style="display:none">
-  <div class="auth-modal">
-    <div class="auth-left">
-      <h2>🔐 授权访问</h2>
-      <p>内容已锁定，请输入访问密码</p>
-      <div class="al">访问密码</div>
-      <input type="password" id="authPwd" placeholder="请输入密码..." onkeydown="if(event.key==='Enter')checkAuth()">
-      <button class="ab" onclick="checkAuth()">🔓 验证身份</button>
-      <div class="ae" id="authErr">❌ 密码错误，请重试</div>
-    </div>
-    <div class="auth-right">
-      <div style="width:180px;height:180px;background:linear-gradient(135deg,#6366f1,#a855f7);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:60px;box-shadow:0 4px 20px rgba(0,0,0,0.1)">🧮</div>
-      <div class="qr-t">数学探索中心<br><strong>学无止境</strong></div>
-    </div>
-  </div>
-</div>
-
-<script>
-const STORE_KEY = 'math_explorer';
-
-// State
-let D = [];
-let S = {};
-let T = {};
-let C = {};
-let Q = [];
-let meta = {};
-let TB = [];
-let st = {m:'',c1:'',c2:'',tp:'all',q:'',ar:''};
-let isDataLoaded = false;
-let preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-// ===== DATA LOADING =====
-async function loadData() {
-  try {
-    const [entries, summary, cats, regions, quotes, metadata, textbooks] = await Promise.all([
-      fetch('data/entries.json?v=2').then(r=>r.json()),
-      fetch('data/summary.json?v=2').then(r=>r.json()),
-      fetch('data/categories.json?v=2').then(r=>r.json()),
-      fetch('data/regions.json?v=2').then(r=>r.json()),
-      fetch('data/quotes.json?v=2').then(r=>r.json()),
-      fetch('data/meta.json?v=2').then(r=>r.json()),
-      fetch('data/textbooks.json?v=3').then(r=>r.json()),
-    ]);
-    D = entries;
-    S = summary;
-    T = cats;
-    C = regions;
-    Q = quotes;
-    meta = metadata;
-    TB = textbooks || [];
-    isDataLoaded = true;
-    document.getElementById('loadingScreen').style.display = 'none';
-    document.getElementById('hm').style.display = 'grid';
-    document.getElementById('qs').style.display = 'block';
-    init();
-  } catch(e) {
-    document.getElementById('loadingScreen').innerHTML = 
-      '<div class="em"><div class="e">❌</div><h3>加载失败：'+e.message+'</h3><p style="color:var(--text-muted);margin-top:8px">请检查网络后刷新页面</p></div>';
-  }
-}
-
-// ===== INIT =====
-function init() {
-  restoreTheme();
-  renderHome();
-  renderQuote();
-  setupSearch();
-  setupSidebarToggle();
-  setupKeyboard();
-  loadUserData();
-  // If returning to browse mode, restore
-  if (st.m) {
-    document.getElementById('hm').style.display = 'none';
-    document.getElementById('qs').style.display = 'none';
-    document.getElementById('br').classList.add('sh');
-    renderModuleTabs();
-    renderSidebar();
-    renderResults();
-  }
-}
-
-// ===== THEME =====
-function toggleTheme() {
-  const html = document.documentElement;
-  const btn = document.getElementById('themeBtn');
-  if (html.getAttribute('data-theme') === 'dark') {
-    html.removeAttribute('data-theme');
-    btn.textContent = '🌙';
-    localStorage.setItem( STORE_KEY + '_theme', 'light');
-  } else {
-    html.setAttribute('data-theme', 'dark');
-    btn.textContent = '☀️';
-    localStorage.setItem( STORE_KEY + '_theme', 'dark');
-  }
-}
-function restoreTheme() {
-  const saved = localStorage.getItem( STORE_KEY + '_theme');
-  const btn = document.getElementById('themeBtn');
-  if (saved === 'dark' || (!saved && preferDark)) {
-    document.documentElement.setAttribute('data-theme', 'dark');
-    btn.textContent = '☀️';
-  } else {
-    btn.textContent = '🌙';
-  }
-}
-
-// ===== HOME =====
-function renderHome() {
-  const el = document.getElementById('hm');
-  let h = '';
-  h += `<div class="cd m4" onclick="enterTextbook()">
-    <div class="dv"></div>
-    <div class="top"><div class="ico">📚</div>
-    <div><div class="nm">教材库</div><div class="ct">${TB.length} 本教材 · 共 ${TB.reduce((s,b)=>s+b.chapters.length,0)} 章</div></div></div>
-    <div class="desc">按教材目录组织章节，逐节学习知识内容</div>
-    <div class="cs">
-      <span class="tg">📘 8 套教材已收录</span>
-      <span class="tg">📋 ${TB.reduce((s,b)=>s+b.chapters.length,0)} 章 · ${TB.reduce((s,b)=>s+b.chapters.reduce((s2,c)=>s2+c.sections.length,0),0)} 节</span>
-      <span class="tg">🔄 持续更新中</span>
-    </div></div>`;
-  for (const k of ['小学','初中','中考']) {
-    const mk = {'小学':'小学','初中':'初中','中考':'中考数学'}[k];
-    const s = S[mk] || {n:0, cs:{}};
-    const icons = {'小学':'🎒','初中':'📐','中考数学':'🎯'};
-    const descs = {'小学':'从加减乘除到几何图形，打下坚实的数学基础','初中':'代数方程与几何证明，构建系统的数学思维','中考数学':'把握考情趋势，直击中考热点与难点'};
-    const cats = Object.entries(s.cs).sort((a,b) => b[1]-a[1]).slice(0,16);
-    const chips = cats.map(x => `<span class="tg">${esc(x[0])} <span class="nu">${x[1]}</span></span>`).join('');
-    const cls = {'小学':'m1','初中':'m2','中考数学':'m3'}[mk];
-    h += `<div class="cd ${cls}" onclick="enterModule('${k}')">
-      <div class="dv"></div>
-      <div class="top"><div class="ico">${icons[mk]||'💭'}</div>
-      <div><div class="nm">${k}</div><div class="ct">${s.n} 条知识</div></div></div>
-      <div class="desc">${descs[mk]||''}</div>
-      <div class="cs">${chips}</div></div>`;
-  }
-  el.innerHTML = h;
-}
-
-function renderQuote() {
-  const el = document.getElementById('qs');
-  if (!el || !Q.length) return;
-  const q = Q[Math.floor(Math.random() * Q.length)];
-  el.innerHTML = `<div class="qc"><div class="qt"><span class="star">★</span> ${esc(q[0])} <span class="star">★</span></div><div class="qa">${esc(q[1])||''}</div></div>`;
-}
-
-// ===== NAVIGATION =====
-function enterModule(m) {
-  if (!requireAuth()) return;
-  st = {m:{'小学':'小学','初中':'初中','中考':'中考数学'}[m],c1:'',c2:'',tp:'all',q:'',ar:''};
-  document.getElementById('sq').value = '';
-  document.getElementById('hm').style.display = 'none';
-  document.getElementById('qs').style.display = 'none';
-  document.getElementById('br').classList.add('sh');
-  renderModuleTabs();
-  renderSidebar();
-  renderResults();
-}
-
-function goHome() {
-  st = {m:'',c1:'',c2:'',tp:'all',q:'',ar:''};
-  document.getElementById('hm').style.display = 'grid';
-  document.getElementById('qs').style.display = 'block';
-  document.getElementById('br').classList.remove('sh');
-  document.getElementById('tbv').style.display = 'none';
-  document.getElementById('extraPanels').innerHTML = '';
-  renderHome();
-  renderQuote();
-}
-
-// ===== TEXTBOOK VIEW =====
+1|<!DOCTYPE html>
+2|<html lang="zh-CN">
+3|<head>
+4|<meta charset="UTF-8">
+5|<meta name="viewport" content="width=device-width,initial-scale=1.0">
+6|<title>数学探索中心 · 知识宝典</title>
+7|<link rel="stylesheet" href="css/style.css?v=2">
+8|<link rel="manifest" href="manifest.json">
+9|<meta name="theme-color" content="#302b63">
+10|<meta name="description" content="小学数学、初中数学、中考数学知识点全收录 - 2835条知识">
+11|</head>
+12|<body>
+13|<div class="header">
+14|  <div class="dec"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+15|  <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="切换主题">🌙</button>
+16|  <div class="hc">
+17|    <h1>🧮 数学探索中心</h1>
+18|    <div class="subtitle">小学 · 初中 · 中考</div>
+19|    <div class="sb">
+20|      <span class="ic">🔍</span>
+21|      <input type="text" id="sq" placeholder="搜索知识点..." autocomplete="off" spellcheck="false">
+22|      <span class="hk">⌘/</span>
+23|    </div>
+24|  </div>
+25|</div>
+26|
+27|<div id="loadingScreen" class="loading">
+28|  <div class="spinner"></div>
+29|  <h3>加载知识库中...</h3>
+30|  <p style="font-size:13px;color:var(--text-muted);margin-top:8px">2835 条知识，马上就好</p>
+31|</div>
+32|
+33|<div class="hm" id="hm" style="display:none"></div>
+34|<div class="qs" id="qs" style="display:none"></div>
+35|
+36|<div class="br" id="br">
+37|  <div class="tb">
+38|    <span class="bh" onclick="goHome()">← 返回首页</span>
+39|    <div class="bh-group">
+40|      <span class="bh bh-sm" onclick="randomKnowledge()" title="随机知识点">🎲 随机</span>
+41|      <span class="bh bh-sm" onclick="showFavorites()" title="收藏夹">⭐ 收藏</span>
+42|      <span class="bh bh-sm" onclick="showLearningProgress()" title="学习进度">📖 进度</span>
+43|      <span class="bh bh-sm" onclick="showGraph()" title="知识图谱">📊 图谱</span>
+44|    </div>
+45|  </div>
+46|  <div class="mt" id="mt"></div>
+47|  <div class="mw">
+48|    <span class="tg-btn" id="tg">☰ 分类筛选</span>
+49|    <div class="sd" id="sd"></div>
+50|    <div class="ct">
+51|      <!-- Favorites & Progress panels (shown when toggled) -->
+52|      <div id="extraPanels"></div>
+53|      <div class="cr">
+54|        <div class="info" id="st">共 <strong>0</strong> 条知识</div>
+55|      </div>
+56|      <div id="cps" class="cps"></div>
+57|      <div class="ac" id="ac"></div>
+58|      <div class="cb" id="cb"></div>
+59|      <div id="rs"></div>
+60|    </div>
+61|  </div>
+62|</div>
+63|
+64|<!-- ===== TEXTBOOK VIEW ===== -->
+65|<div class="tbv" id="tbv" style="display:none">
+66|  <div class="tb">
+67|    <span class="bh" onclick="goHomeFromTB()">← 返回首页</span>
+68|    <div class="bh-group">
+69|      <span class="bh bh-sm" id="tbvTitle" style="font-weight:700;font-size:15px">📘 教材库</span>
+70|    </div>
+71|  </div>
+72|  <div class="tbv-body">
+73|    <div class="tbv-col tbv-col-left" id="tbvColLeft">
+74|      <div class="tbv-col-header">📚 教材版本</div>
+75|      <div id="tbvBookList"></div>
+76|    </div>
+77|    <div class="tbv-col tbv-col-mid" id="tbvColMid" style="display:none">
+78|      <div class="tbv-col-header">📖 章节</div>
+79|      <div id="tbvChapterList"></div>
+80|    </div>
+81|    <div class="tbv-col tbv-col-right" id="tbvColRight">
+82|      <div class="tbv-placeholder" id="tbvPlaceholder">
+83|        <div class="tbv-placeholder-icon">📚</div>
+84|        <div class="tbv-placeholder-text">请先从左侧选择教材版本</div>
+85|      </div>
+86|      <div id="tbvSections" style="display:none">
+87|        <div class="tbv-col-header" id="tbvSectionHeader">📖 小节</div>
+88|        <div class="tbv-section-grid" id="tbvSectionGrid"></div>
+89|      </div>
+90|    </div>
+91|  </div>
+92|</div>
+93|
+94|<div class="mmodal" id="mv"><span class="mclose" onclick="hideImg()">×</span></div>
+95|
+96|<!-- Auth overlay -->
+97|<div id="authOverlay" class="auth-overlay" style="display:none">
+98|  <div class="auth-modal">
+99|    <div class="auth-left">
+100|      <h2>🔐 授权访问</h2>
+101|      <p>内容已锁定，请输入访问密码</p>
+102|      <div class="al">访问密码</div>
+103|      <input type="password" id="authPwd" placeholder="请输入密码..." onkeydown="if(event.key==='Enter')checkAuth()">
+104|      <button class="ab" onclick="checkAuth()">🔓 验证身份</button>
+105|      <div class="ae" id="authErr">❌ 密码错误，请重试</div>
+106|    </div>
+107|    <div class="auth-right">
+108|      <div style="width:180px;height:180px;background:linear-gradient(135deg,#6366f1,#a855f7);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:60px;box-shadow:0 4px 20px rgba(0,0,0,0.1)">🧮</div>
+109|      <div class="qr-t">数学探索中心<br><strong>学无止境</strong></div>
+110|    </div>
+111|  </div>
+112|</div>
+113|
+114|<script>
+115|const STORE_KEY = 'math_explorer';
+116|
+117|// State
+118|let D = [];
+119|let S = {};
+120|let T = {};
+121|let C = {};
+122|let Q = [];
+123|let meta = {};
+124|let TB = [];
+125|let st = {m:'',c1:'',c2:'',tp:'all',q:'',ar:''};
+126|let isDataLoaded = false;
+127|let preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+128|
+129|// ===== DATA LOADING =====
+130|async function loadData() {
+131|  try {
+132|    const [entries, summary, cats, regions, quotes, metadata, textbooks] = await Promise.all([
+133|      fetch('data/entries.json?v=2').then(r=>r.json()),
+134|      fetch('data/summary.json?v=2').then(r=>r.json()),
+135|      fetch('data/categories.json?v=2').then(r=>r.json()),
+136|      fetch('data/regions.json?v=2').then(r=>r.json()),
+137|      fetch('data/quotes.json?v=2').then(r=>r.json()),
+138|      fetch('data/meta.json?v=2').then(r=>r.json()),
+139|      fetch('data/textbooks.json?v=3').then(r=>r.json()),
+140|    ]);
+141|    D = entries;
+142|    S = summary;
+143|    T = cats;
+144|    C = regions;
+145|    Q = quotes;
+146|    meta = metadata;
+147|    TB = textbooks || [];
+148|    isDataLoaded = true;
+149|    document.getElementById('loadingScreen').style.display = 'none';
+150|    document.getElementById('hm').style.display = 'grid';
+151|    document.getElementById('qs').style.display = 'block';
+152|    init();
+153|  } catch(e) {
+154|    document.getElementById('loadingScreen').innerHTML = 
+155|      '<div class="em"><div class="e">❌</div><h3>加载失败：'+e.message+'</h3><p style="color:var(--text-muted);margin-top:8px">请检查网络后刷新页面</p></div>';
+156|  }
+157|}
+158|
+159|// ===== INIT =====
+160|function init() {
+161|  restoreTheme();
+162|  renderHome();
+163|  renderQuote();
+164|  setupSearch();
+165|  setupSidebarToggle();
+166|  setupKeyboard();
+167|  loadUserData();
+168|  // If returning to browse mode, restore
+169|  if (st.m) {
+170|    document.getElementById('hm').style.display = 'none';
+171|    document.getElementById('qs').style.display = 'none';
+172|    document.getElementById('br').classList.add('sh');
+173|    renderModuleTabs();
+174|    renderSidebar();
+175|    renderResults();
+176|  }
+177|}
+178|
+179|// ===== THEME =====
+180|function toggleTheme() {
+181|  const html = document.documentElement;
+182|  const btn = document.getElementById('themeBtn');
+183|  if (html.getAttribute('data-theme') === 'dark') {
+184|    html.removeAttribute('data-theme');
+185|    btn.textContent = '🌙';
+186|    localStorage.setItem( STORE_KEY + '_theme', 'light');
+187|  } else {
+188|    html.setAttribute('data-theme', 'dark');
+189|    btn.textContent = '☀️';
+190|    localStorage.setItem( STORE_KEY + '_theme', 'dark');
+191|  }
+192|}
+193|function restoreTheme() {
+194|  const saved = localStorage.getItem( STORE_KEY + '_theme');
+195|  const btn = document.getElementById('themeBtn');
+196|  if (saved === 'dark' || (!saved && preferDark)) {
+197|    document.documentElement.setAttribute('data-theme', 'dark');
+198|    btn.textContent = '☀️';
+199|  } else {
+200|    btn.textContent = '🌙';
+201|  }
+202|}
+203|
+204|// ===== HOME =====
+205|function renderHome() {
+206|  const el = document.getElementById('hm');
+207|  let h = '';
+208|  h += `<div class="cd m4" onclick="enterTextbook()">
+209|    <div class="dv"></div>
+210|    <div class="top"><div class="ico">📚</div>
+211|    <div><div class="nm">教材库</div><div class="ct">${TB.length} 本教材 · 共 ${TB.reduce((s,b)=>s+b.chapters.length,0)} 章</div></div></div>
+212|    <div class="desc">按教材目录组织章节，逐节学习知识内容</div>
+213|    <div class="cs">
+214|      <span class="tg">📘 8 套教材已收录</span>
+215|      <span class="tg">📋 ${TB.reduce((s,b)=>s+b.chapters.length,0)} 章 · ${TB.reduce((s,b)=>s+b.chapters.reduce((s2,c)=>s2+c.sections.length,0),0)} 节</span>
+216|      <span class="tg">🔄 持续更新中</span>
+217|    </div></div>`;
+218|  for (const k of ['小学','初中','中考']) {
+219|    const mk = {'小学':'小学','初中':'初中','中考':'中考数学'}[k];
+220|    const s = S[mk] || {n:0, cs:{}};
+221|    const icons = {'小学':'🎒','初中':'📐','中考数学':'🎯'};
+222|    const descs = {'小学':'从加减乘除到几何图形，打下坚实的数学基础','初中':'代数方程与几何证明，构建系统的数学思维','中考数学':'把握考情趋势，直击中考热点与难点'};
+223|    const cats = Object.entries(s.cs).sort((a,b) => b[1]-a[1]).slice(0,16);
+224|    const chips = cats.map(x => `<span class="tg">${esc(x[0])} <span class="nu">${x[1]}</span></span>`).join('');
+225|    const cls = {'小学':'m1','初中':'m2','中考数学':'m3'}[mk];
+226|    h += `<div class="cd ${cls}" onclick="enterModule('${k}')">
+227|      <div class="dv"></div>
+228|      <div class="top"><div class="ico">${icons[mk]||'💭'}</div>
+229|      <div><div class="nm">${k}</div><div class="ct">${s.n} 条知识</div></div></div>
+230|      <div class="desc">${descs[mk]||''}</div>
+231|      <div class="cs">${chips}</div></div>`;
+232|  }
+233|  el.innerHTML = h;
+234|}
+235|
+236|function renderQuote() {
+237|  const el = document.getElementById('qs');
+238|  if (!el || !Q.length) return;
+239|  const q = Q[Math.floor(Math.random() * Q.length)];
+240|  el.innerHTML = `<div class="qc"><div class="qt"><span class="star">★</span> ${esc(q[0])} <span class="star">★</span></div><div class="qa">${esc(q[1])||''}</div></div>`;
+241|}
+242|
+243|// ===== NAVIGATION =====
+244|function enterModule(m) {
+245|  if (!requireAuth()) return;
+246|  st = {m:{'小学':'小学','初中':'初中','中考':'中考数学'}[m],c1:'',c2:'',tp:'all',q:'',ar:''};
+247|  document.getElementById('sq').value = '';
+248|  document.getElementById('hm').style.display = 'none';
+249|  document.getElementById('qs').style.display = 'none';
+250|  document.getElementById('br').classList.add('sh');
+251|  renderModuleTabs();
+252|  renderSidebar();
+253|  renderResults();
+254|}
+255|
+256|function goHome() {
+257|  st = {m:'',c1:'',c2:'',tp:'all',q:'',ar:''};
+258|  document.getElementById('hm').style.display = 'grid';
+259|  document.getElementById('qs').style.display = 'block';
+260|  document.getElementById('br').classList.remove('sh');
+261|  document.getElementById('tbv').style.display = 'none';
+262|  document.getElementById('extraPanels').innerHTML = '';
+263|  renderHome();
+264|  renderQuote();
+265|}
+266|
+267|// ===== TEXTBOOK VIEW =====
 let currentTB = null;
 let currentChapter = null;
+let bookListCollapsed = false;
 
 function enterTextbook() {
   if (!requireAuth()) return;
@@ -274,6 +275,9 @@ function enterTextbook() {
   document.getElementById('qs').style.display = 'none';
   document.getElementById('br').classList.remove('sh');
   document.getElementById('tbv').style.display = 'block';
+  currentTB = null;
+  currentChapter = null;
+  bookListCollapsed = false;
   renderTextbookView();
 }
 
@@ -283,20 +287,18 @@ function goHomeFromTB() {
   goHome();
 }
 
+function toggleBookList() {
+  bookListCollapsed = !bookListCollapsed;
+  document.getElementById('tbvToggle').textContent = bookListCollapsed ? '▶' : '▼';
+  document.getElementById('tbvBookList').style.display = bookListCollapsed ? 'none' : 'block';
+}
+
 function renderTextbookView() {
-  const colMid = document.getElementById('tbvColMid');
-  const placeholder = document.getElementById('tbvPlaceholder');
-  const sections = document.getElementById('tbvSections');
-  
-  colMid.style.display = 'none';
-  placeholder.style.display = 'flex';
-  sections.style.display = 'none';
-  
-  // Reset placeholder text
-  document.querySelector('#tbvPlaceholder .tbv-placeholder-text').textContent = '请先从左侧选择教材版本';
-  document.querySelector('#tbvPlaceholder .tbv-placeholder-icon').textContent = '📚';
-  
-  // Render book list in left column
+  document.getElementById('tbvColMid').style.display = 'none';
+  document.getElementById('tbvToggle').textContent = '▼';
+  document.getElementById('tbvBookList').style.display = 'block';
+  document.getElementById('tbvColRight').innerHTML = '';
+
   let h = '';
   for (const book of TB) {
     const active = currentTB && currentTB.id === book.id ? 'on' : '';
@@ -318,21 +320,12 @@ function selectTextbook(id) {
   currentTB = book;
   currentChapter = null;
   
-  // Update book list highlight
   document.querySelectorAll('#tbvBookList .tbv-book-item').forEach(el => el.classList.remove('on'));
   const items = document.querySelectorAll('#tbvBookList .tbv-book-item');
   TB.forEach((b, i) => { if (b.id === id) items[i]?.classList.add('on'); });
   
-  // Show middle column with chapters
-  const colMid = document.getElementById('tbvColMid');
-  colMid.style.display = 'block';
-  
-  // Hide sections
-  document.getElementById('tbvSections').style.display = 'none';
-  document.querySelector('#tbvPlaceholder .tbv-placeholder-text').textContent = '请从中间列选择章节';
-  document.querySelector('#tbvPlaceholder .tbv-placeholder-icon').textContent = '📖';
-  document.getElementById('tbvPlaceholder').style.display = 'flex';
-  
+  document.getElementById('tbvColMid').style.display = 'block';
+  document.getElementById('tbvColRight').innerHTML = '';
   renderChapterList();
 }
 
@@ -356,7 +349,6 @@ function selectChapter(idx) {
   if (!currentTB || idx < 0 || idx >= currentTB.chapters.length) return;
   currentChapter = currentTB.chapters[idx];
   
-  // Update chapter list highlight
   document.querySelectorAll('#tbvChapterList .tbv-chapter-item').forEach(el => el.classList.remove('on'));
   const items = document.querySelectorAll('#tbvChapterList .tbv-chapter-item');
   if (items[idx]) items[idx].classList.add('on');
@@ -365,633 +357,128 @@ function selectChapter(idx) {
 }
 
 function renderSections() {
-  const placeholder = document.getElementById('tbvPlaceholder');
-  const sections = document.getElementById('tbvSections');
-  
   if (!currentChapter) {
-    placeholder.style.display = 'block';
-    sections.style.display = 'none';
+    document.getElementById('tbvColRight').innerHTML = '';
     return;
   }
-  
-  placeholder.style.display = 'none';
-  sections.style.display = 'block';
   
   document.getElementById('tbvTitle').textContent = `${currentTB.icon||'📘'} ${currentTB.label} · 第${currentChapter.num}章 ${currentChapter.name}`;
-  document.getElementById('tbvSectionHeader').textContent = `📖 第${currentChapter.num}章 ${esc(currentChapter.name)} · ${currentChapter.sections.length} 节`;
   
-  let h = '';
+  let h = `<div class="tbv-section-list">`;
   for (const sec of currentChapter.sections) {
-    h += `<div class="tbv-section-card">
-      <div class="tbv-sec-num">${esc(sec.num)}</div>
-      <div class="tbv-sec-name">${esc(sec.name)}</div>
+    h += `<div class="tbv-section-row">
+      <span class="tbv-sr-num">${esc(sec.num)}</span>
+      <span class="tbv-sr-name">${esc(sec.name)}</span>
     </div>`;
-  }
-  document.getElementById('tbvSectionGrid').innerHTML = h;
-}
-
-// ===== MODULE TABS =====
-function renderModuleTabs() {
-  const el = document.getElementById('mt');
-  const modules = ['全部','小学','初中','中考'];
-  let h = '';
-  for (const m of modules) {
-    const mk = {'小学':'小学','初中':'初中','中考':'中考数学'}[m] || m;
-    const t = m==='全部' ? D.length : (S[mk]?.n || 0);
-    const a = (!st.m && m==='全部') || m===st.m ? 'on' : '';
-    h += `<div class="mtb ${a}" onclick="switchModule('${m}')">${m} <span class="bg">${t}</span></div>`;
-  }
-  el.innerHTML = h;
-}
-
-function switchModule(m) {
-  if (m==='全部' && !st.m) return;
-  if (m==='全部') { goHome(); return; }
-  st.m = {'小学':'小学','初中':'初中','中考':'中考数学'}[m];
-  st.c1=''; st.c2=''; st.ar='';
-  document.getElementById('extraPanels').innerHTML = '';
-  renderModuleTabs();
-  renderSidebar();
-  renderResults();
-}
-
-// ===== SIDEBAR =====
-function renderSidebar() {
-  const sd = document.getElementById('sd');
-  if (!st.m) { sd.innerHTML=''; sd.classList.remove('sh'); return; }
-  sd.classList.add('sh');
-  const cats = T[st.m] || {};
-  const c1s = Object.keys(cats).sort((a,b) => (S[st.m]?.cs?.[b]||0) - (S[st.m]?.cs?.[a]||0));
-  let h = '<div class="sl"><div class="shd">📂 分类筛选</div>';
-  if (st.c1 && cats[st.c1]) {
-    h += `<div class="sbk" onclick="selectC1()">← ${esc(st.c1)}</div>`;
-    const c2s = cats[st.c1];
-    const ns = Object.keys(c2s).sort((a,b) => (c2s[b]||0)-(c2s[a]||0));
-    for (const c2 of ns) {
-      if (!c2) continue;
-      const a = st.c2===c2?'on':'';
-      h += `<div class="si ${a}" onclick="selectC2('${escQ(st.c1)}','${escQ(c2)}')"><span class="nm">${esc(c2)}</span><span class="cn">${c2s[c2]}</span></div>`;
-    }
-  } else {
-    for (const c1 of c1s) {
-      const c2s = cats[c1];
-      let tot = 0;
-      for (const k in c2s) tot += c2s[k];
-      const a = st.c1===c1?'on':'';
-      h += `<div class="si ${a}" onclick="selectC1('${escQ(c1)}')"><span class="ar">▶</span><span class="nm">${esc(c1)}</span><span class="cn">${tot}</span></div>`;
-    }
   }
   h += '</div>';
-  sd.innerHTML = h;
-}
-
-function selectC1(c1) {
-  if (c1) { st.c1=c1; st.c2=''; } else { st.c1=''; st.c2=''; }
-  renderSidebar(); renderResults();
-}
-function selectC2(c1,c2) {
-  st.c2 = st.c2===c2 ? '' : c2;
-  renderSidebar(); renderResults();
-}
-
-// ===== TYPE FILTER =====
-function renderTypeFilter() {
-  const el = document.getElementById('cps');
-  const types = {all:'📋 全部',basic:'📖 基础',extend:'✨ 拓展',exam:'🎯 考情'};
-  let h = '';
-  for (const [k,v] of Object.entries(types)) {
-    const a = st.tp===k?'on':'';
-    h += `<span class="cp ${a}" onclick="setType('${k}')">${v}</span>`;
-  }
-  el.innerHTML = h;
-}
-function setType(t) { st.tp=t; renderResults(); }
-
-// ===== AREA FILTER (for 中考) =====
-function renderAreaFilter(fil) {
-  const el = document.getElementById('ac');
-  if (st.m !== '中考数学') { el.innerHTML=''; return; }
-  const am = {};
-  fil.forEach(e => (e.areas||[]).forEach(a => { if(a) am[a]=(am[a]||0)+1; }));
-  const ss = Object.entries(am).sort((a,b)=>b[1]-a[1]);
-  if (!ss.length) { el.innerHTML=''; return; }
-  let h = '<span style="font-size:12px;color:var(--text-muted);font-weight:600;margin-right:4px">📍 地区</span>';
-  for (const [area, cnt] of ss) {
-    const col = C[area]||'#64748b';
-    const on = st.ar===area?'on':'';
-    h += `<span class="act ${on}" style="background:${col}22;color:${col};border-color:${col}44" onclick="setArea('${escQ(area)}')">${esc(area)} <span style="opacity:.6;font-size:11px">${cnt}</span></span>`;
-  }
-  el.innerHTML = h;
-}
-function setArea(a) { st.ar = st.ar===a ? '' : a; renderResults(); }
-
-// ===== BREADCRUMB =====
-function renderBreadcrumb() {
-  const el = document.getElementById('cb');
-  if (st.m === '中考数学') { el.innerHTML=''; return; }
-  let parts = [];
-  if (st.m) parts.push(st.m);
-  if (st.c1) {
-    parts.push(`<span class="c" onclick="selectC1()">${esc(st.c1)}</span>`);
-    const c2s = (T[st.m]||{})[st.c1]||{};
-    const ns = Object.keys(c2s).sort((a,b)=>(c2s[b]||0)-(c2s[a]||0));
-    for (const c2 of ns) {
-      if (!c2) continue;
-      const a = st.c2===c2 ? ' style="color:var(--accent);font-weight:600"' : '';
-      parts.push(`<span class="c"${a} onclick="selectC2('${escQ(st.c1)}','${escQ(c2)}')">${esc(c2)}</span>`);
-    }
-  }
-  el.innerHTML = parts.join(' <span style="color:var(--text-muted)">›</span> ');
-}
-
-// ===== RESULTS =====
-function renderResults() {
-  // Filter
-  let fil = [];
-  for (const e of D) {
-    if (st.m && e.m !== st.m) continue;
-    if (st.c1 && e.c1 !== st.c1) continue;
-    if (st.c2 && e.c2 !== st.c2) continue;
-    if (st.tp !== 'all' && e.tp !== st.tp) continue;
-    if (st.ar && (!e.areas || e.areas.indexOf(st.ar) < 0)) continue;
-    if (st.q) {
-      const q = st.q.toLowerCase();
-      if (e.t.toLowerCase().indexOf(q)<0 && e.d.toLowerCase().indexOf(q)<0 &&
-          e.c1.toLowerCase().indexOf(q)<0 && (e.c2||'').toLowerCase().indexOf(q)<0 &&
-          (e.c3||'').toLowerCase().indexOf(q)<0 && (e.x||'').toLowerCase().indexOf(q)<0) continue;
-    }
-    fil.push(e);
-  }
-
-  // Info
-  const pts = ['共 <strong>'+fil.length+'</strong> 条知识'];
-  if (st.q) pts.push('搜索: "'+esc(st.q)+'"');
-  if (st.m && st.m!=='中考数学') pts.push(st.m);
-  if (st.c1 && st.m!=='中考数学') pts.push(st.c1+(st.c2?' → '+st.c2:''));
-  document.getElementById('st').innerHTML = pts.join(' · ');
-
-  renderAreaFilter(fil);
-  renderBreadcrumb();
-  renderTypeFilter();
-
-  // Close extra panels
-  document.getElementById('extraPanels').innerHTML = '';
-
-  // Empty state
-  if (fil.length === 0) {
-    document.getElementById('rs').innerHTML = '<div class="em"><div class="e">🔍</div><h3>没有找到匹配的知识</h3></div>';
-    return;
-  }
-
-  // Render cards
-  const page = 100;
-  let h = '';
-  const max = Math.min(page, fil.length);
-  for (let i=0; i<max; i++) {
-    const e = fil[i];
-    const tc = e.tp==='basic'?'t1':(e.tp==='extend'?'t2':'t3');
-    const lastSubCat = e.c2 || e.c1;
-    const desc = e.d ? highlight(esc(e.d), st.q) : '';
-    let extra = '';
-    if (e.x) extra = '<strong>备注：</strong>'+highlight(esc(e.x), st.q);
-    let ah = '';
-    if (e.areas && e.areas.length) {
-      ah = '<div class="as">'+e.areas.map(a => {
-        const col = C[a]||'#64748b';
-        return '<span class="at" style="background:'+col+'">'+esc(a)+'</span>';
-      }).join('')+'</div>';
-    }
-    const modBadge = '<span class="mt '+{'小学':'a','初中':'b','中考数学':'c'}[e.m]+'">'+(ND[e.m]||e.m)+'</span>';
-    const typeLabel = {basic:'基础',extend:'拓展',exam:'高频考点'}[e.tp];
-    const isZK = e.m === '中考数学';
-    const typeClass = isZK?'pk':{basic:'t1',extend:'t2',exam:'t3'}[e.tp];
-    const headerHtml = modBadge+'<div class="r1c"><span class="ttl '+typeClass+'">'+typeLabel+'</span><span class="scat">'+esc(lastSubCat)+'</span></div>';
-
-    // Favorites + progress buttons
-    const favBtn = isFav(e) 
-      ? '<span class="action-btn active" onclick="toggleFav('+i+',event)">⭐ 已收藏</span>'
-      : '<span class="action-btn" onclick="toggleFav('+i+',event)">☆ 收藏</span>';
-    const learnBtn = isLearned(e)
-      ? '<span class="action-btn learned" onclick="toggleLearned('+i+',event)">✅ 已掌握</span>'
-      : '<span class="action-btn" onclick="toggleLearned('+i+',event)">📖 标记</span>';
-
-    h += `<div class="ey ${tc}" data-idx="${i}">
-      ${headerHtml}
-      <h3>${highlight(esc(e.t), st.q)}</h3>
-      ${desc ? '<div class="de">'+desc+'</div>' : ''}
-      ${e.imt ? '<img class="im" src="data:image/png;base64,'+e.imt+'" onclick="showImg(\''+e.img+'\')" title="点击查看大图">' : (e.img && e.img.startsWith('image') ? '<img class="im" src="images/'+e.img+'" onclick="showImgFile(this.src)" title="点击查看大图">' : '')}
-      ${extra ? '<div class="ex">'+extra+'</div>' : ''}
-      ${ah}
-      <div class="actions">${favBtn}${learnBtn}</div>
-    </div>`;
-  }
-
-  if (fil.length > page) {
-    h += '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px">显示前 '+page+' 条，共 '+fil.length+' 条（输入更精确的关键词缩小范围）</div>';
-  }
-  document.getElementById('rs').innerHTML = h;
-}
-
-// ===== FAVORITES =====
-function isFav(e) {
-  const favs = JSON.parse(localStorage.getItem(STORE_KEY+'_favs') || '[]');
-  return favs.some(f => f.t === e.t && f.m === e.m);
-}
-function toggleFav(idx, event) {
-  if (event) event.stopPropagation();
-  const e = filterCurrentResults()[idx];
-  if (!e) return;
-  let favs = JSON.parse(localStorage.getItem(STORE_KEY+'_favs') || '[]');
-  const existing = favs.findIndex(f => f.t === e.t && f.m === e.m);
-  if (existing >= 0) {
-    favs.splice(existing, 1);
-  } else {
-    favs.push({t: e.t, m: e.m, d: e.d ? e.d.slice(0,60) : '', c1: e.c1, savedAt: Date.now()});
-  }
-  localStorage.setItem(STORE_KEY+'_favs', JSON.stringify(favs));
-  renderResults();
-}
-function showFavorites() {
-  const panel = document.getElementById('extraPanels');
-  const favs = JSON.parse(localStorage.getItem(STORE_KEY+'_favs') || '[]');
-  if (!favs.length) {
-    panel.innerHTML = '<div class="fav-panel"><h4>⭐ 收藏夹</h4><div class="fav-empty">还没有收藏的知识点</div></div>';
-    return;
-  }
-  let h = '<div class="fav-panel"><h4>⭐ 收藏夹 <span style="font-weight:400;font-size:12px;color:var(--text-muted)">('+favs.length+')</span></h4><div class="fav-list">';
-  for (const f of favs) {
-    h += `<span class="fav-tag" onclick="searchFav('${escQ(f.t)}')">${esc(f.t)}</span>`;
-  }
-  h += '</div></div>';
-  panel.innerHTML = h;
-}
-
-function searchFav(title) {
-  st.q = title;
-  document.getElementById('sq').value = title;
-  if (!st.m) {
-    st.m = '小学';
-    document.getElementById('hm').style.display='none';
-    document.getElementById('qs').style.display='none';
-    document.getElementById('br').classList.add('sh');
-    renderModuleTabs();
-    renderSidebar();
-  }
-  renderResults();
-}
-
-// ===== LEARNING PROGRESS =====
-function isLearned(e) {
-  const learned = JSON.parse(localStorage.getItem(STORE_KEY+'_learned') || '[]');
-  return learned.some(f => f.t === e.t && f.m === e.m);
-}
-function toggleLearned(idx, event) {
-  if (event) event.stopPropagation();
-  const e = filterCurrentResults()[idx];
-  if (!e) return;
-  let learned = JSON.parse(localStorage.getItem(STORE_KEY+'_learned') || '[]');
-  const existing = learned.findIndex(f => f.t === e.t && f.m === e.m);
-  if (existing >= 0) {
-    learned.splice(existing, 1);
-  } else {
-    learned.push({t: e.t, m: e.m, learnedAt: Date.now()});
-  }
-  localStorage.setItem(STORE_KEY+'_learned', JSON.stringify(learned));
-  renderResults();
-}
-function showLearningProgress() {
-  const panel = document.getElementById('extraPanels');
-  const learned = JSON.parse(localStorage.getItem(STORE_KEY+'_learned') || '[]');
-  const total = D.length;
-  const done = learned.length;
-  const pct = total ? Math.round(done/total*100) : 0;
-  let stats = {};
-  for (const l of learned) {
-    stats[l.m] = (stats[l.m]||0) + 1;
-  }
-  let h = `<div class="fav-panel">
-    <h4>📖 学习进度</h4>
-    <div style="display:flex;gap:16px;margin:8px 0;flex-wrap:wrap">
-      <span style="font-size:13px;color:var(--text-muted)">已掌握 <strong style="color:var(--accent)">${done}</strong> / ${total} 条</span>
-      <span style="font-size:13px;color:var(--text-muted)">完成度 <strong style="color:#22c55e">${pct}%</strong></span>
-    </div>
-    <div style="height:6px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:12px">
-      <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#22c55e,#4ade80);border-radius:4px;transition:width .5s"></div>
-    </div>`;
-  if (done) {
-    h += '<div class="fav-list">';
-    for (const [m,cnt] of Object.entries(stats)) {
-      h += `<span class="fav-tag" style="background:var(--tag-bg);color:var(--text);cursor:default">${esc(m)}: ${cnt}</span>`;
-    }
-    h += '</div>';
-  }
-  h += '</div>';
-  panel.innerHTML = h;
-}
-
-// ===== RANDOM KNOWLEDGE =====
-function randomKnowledge() {
-  if (!requireAuth()) return;
-  const e = D[Math.floor(Math.random() * D.length)];
-  st.m = e.m;
-  st.c1 = e.c1;
-  st.c2 = e.c2 || '';
-  st.tp = 'all';
-  st.q = '';
-  st.ar = '';
-  document.getElementById('sq').value = '';
-  document.getElementById('hm').style.display = 'none';
-  document.getElementById('qs').style.display = 'none';
-  document.getElementById('br').classList.add('sh');
-  document.getElementById('extraPanels').innerHTML = '';
-  // Scroll to top
-  window.scrollTo({top:0,behavior:'smooth'});
-  renderModuleTabs();
-  renderSidebar();
-  renderResults();
-  // Highlight
-  setTimeout(() => {
-    const cards = document.querySelectorAll('.ey');
-    if (cards.length) {
-      cards[0].scrollIntoView({behavior:'smooth',block:'center'});
-      cards[0].style.boxShadow = '0 0 0 3px var(--accent), 0 8px 30px rgba(0,0,0,0.08)';
-      setTimeout(() => { cards[0].style.boxShadow = ''; }, 2000);
-    }
-  }, 100);
-}
-
-// ===== KNOWLEDGE GRAPH =====
-function showGraph() {
-  const panel = document.getElementById('extraPanels');
-  let h = `<div class="graph-panel">
-    <h4>📊 知识图谱 — 知识点关联图</h4>
-    <canvas id="graphCanvas" class="graph-canvas"></canvas>
-    <div style="margin-top:8px;font-size:12px;color:var(--text-muted);text-align:center">
-      知识点按模块分类，连线表示同属一个分类
-    </div>
-  </div>`;
-  panel.innerHTML = h;
-
-  setTimeout(() => renderGraph(), 100);
-}
-
-function renderGraph() {
-  const canvas = document.getElementById('graphCanvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const rect = canvas.parentElement.getBoundingClientRect();
-  canvas.width = canvas.parentElement.clientWidth || 800;
-  canvas.height = 400;
-
-  // Build graph: modules as center nodes, categories as surrounding nodes
-  const modules = ['小学','初中','中考数学'];
-  const colors = ['#f97316','#22c55e','#a855f7'];
-  const centerX = canvas.width / 2;
-  const centerY = 200;
-  
-  // Module positions (bottom row)
-  const mPos = {};
-  const mCount = modules.length;
-  modules.forEach((m,i) => {
-    mPos[m] = {
-      x: centerX + (i-1) * 200,
-      y: 340
-    };
-  });
-
-  // Get top categories
-  const allCats = [];
-  const used = new Set();
-  for (const m of modules) {
-    const c1s = Object.keys(T[m]||{});
-    for (const c1 of c1s) {
-      if (!used.has(c1)) {
-        allCats.push({name: c1, module: m, count: S[m]?.cs?.[c1] || 0});
-        used.add(c1);
-      }
-    }
-  }
-  // Pick top categories by count
-  allCats.sort((a,b) => b.count - a.count);
-  const topCats = allCats.slice(0, 24);
-
-  // Category positions (radial around top)
-  const angleStep = (Math.PI * 2) / topCats.length;
-  const radius = Math.min(canvas.width, canvas.height) * 0.32;
-
-  // Draw edges first
-  ctx.strokeStyle = 'rgba(99,102,241,0.08)';
-  ctx.lineWidth = 1;
-  for (let i=0; i<topCats.length; i++) {
-    const cat = topCats[i];
-    const angle = angleStep * i - Math.PI/2;
-    const cx = centerX + Math.cos(angle) * radius;
-    const cy = centerY + Math.sin(angle) * radius - 40;
-    
-    // Connect to its module
-    const mp = mPos[cat.module];
-    if (mp) {
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(mp.x, mp.y);
-      ctx.stroke();
-    }
-  }
-
-  // Draw category nodes
-  for (let i=0; i<topCats.length; i++) {
-    const cat = topCats[i];
-    const angle = angleStep * i - Math.PI/2;
-    const cx = centerX + Math.cos(angle) * radius;
-    const cy = centerY + Math.sin(angle) * radius - 40;
-    
-    const size = Math.max(8, Math.min(20, cat.count / 8));
-    const mIdx = modules.indexOf(cat.module);
-    const col = colors[mIdx] || '#6366f1';
-    
-    ctx.beginPath();
-    ctx.arc(cx, cy, size, 0, Math.PI*2);
-    ctx.fillStyle = col + '33';
-    ctx.fill();
-    ctx.strokeStyle = col;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // Label
-    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text').trim() || '#1e293b';
-    ctx.font = '11px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(cat.name.length > 6 ? cat.name.slice(0,5)+'..' : cat.name, cx, cy + size + 14);
-  }
-
-  // Draw module nodes (bottom)
-  for (const m of modules) {
-    const p = mPos[m];
-    const mIdx = modules.indexOf(m);
-    const col = colors[mIdx];
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, 28, 0, Math.PI*2);
-    ctx.fillStyle = col;
-    ctx.fill();
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 12px sans-serif';
-    ctx.textAlign = 'center';
-    const label = {'小学':'小学','初中':'初中','中考数学':'中考'}[m];
-    ctx.fillText(label, p.x, p.y + 4);
-  }
-
-  // Center label
-  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim() || '#94a3b8';
-  ctx.font = '13px sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('知识点关联图 · ' + D.length + ' 条知识', centerX, 20);
-}
-
-// ===== UTILITY =====
-function filterCurrentResults() {
-  const fil = [];
-  for (const e of D) {
-    if (st.m && e.m !== st.m) continue;
-    if (st.c1 && e.c1 !== st.c1) continue;
-    if (st.c2 && e.c2 !== st.c2) continue;
-    if (st.tp !== 'all' && e.tp !== st.tp) continue;
-    if (st.ar && (!e.areas || e.areas.indexOf(st.ar) < 0)) continue;
-    if (st.q) {
-      const q = st.q.toLowerCase();
-      if (e.t.toLowerCase().indexOf(q)<0 && e.d.toLowerCase().indexOf(q)<0 &&
-          e.c1.toLowerCase().indexOf(q)<0 && (e.c2||'').toLowerCase().indexOf(q)<0 &&
-          (e.c3||'').toLowerCase().indexOf(q)<0) continue;
-    }
-    fil.push(e);
-  }
-  return fil;
-}
-
-function loadUserData() {
-  // Favorites and learning progress are loaded on demand
-}
-
-// ===== SEARCH =====
-let searchTimer = null;
-function setupSearch() {
-  document.getElementById('sq').addEventListener('input', function() {
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => {
-      st.q = this.value.trim();
-      if (st.q && document.getElementById('hm').style.display !== 'none') {
-        document.getElementById('hm').style.display = 'none';
-        document.getElementById('qs').style.display = 'none';
-        document.getElementById('br').classList.add('sh');
-        renderModuleTabs();
-        renderSidebar();
-      }
-      renderResults();
-    }, 200);
-  });
-}
-
-function setupKeyboard() {
-  document.addEventListener('keydown', function(e) {
-    if (e.key === '/' && !e.ctrlKey && !e.metaKey && document.activeElement !== document.getElementById('sq')) {
-      e.preventDefault();
-      document.getElementById('sq').focus();
-    }
-    if (e.key === 'Escape') document.getElementById('sq').blur();
-  });
-}
-
-function setupSidebarToggle() {
-  document.getElementById('tg').addEventListener('click', function() {
-    document.getElementById('sd').classList.toggle('mo');
-  });
-}
-
-// ===== IMAGE VIEWER =====
-function showImg(b64) {
-  const el = document.getElementById('mv');
-  el.innerHTML = '<span class=mclose onclick="hideImg()">×</span>';
-  if (b64) el.innerHTML += '<img src="data:image/png;base64,'+b64+'" onclick="hideImg()">';
-  el.classList.add('sh');
-}
-function showImgFile(src) {
-  const el = document.getElementById('mv');
-  el.innerHTML = '<span class=mclose onclick="hideImg()">×</span>';
-  el.innerHTML += '<img src="'+src+'" onclick="hideImg()">';
-  el.classList.add('sh');
-}
-function hideImg() { document.getElementById('mv').classList.remove('sh'); }
-
-// ===== AUTH =====
-const AUTH_PWD = 'math2024';
-const AUTH_KEY = STORE_KEY + '_auth_expire';
-
-function isAuthed() {
-  const expire = localStorage.getItem(AUTH_KEY);
-  return expire && Date.now() < parseInt(expire);
-}
-function checkAuth() {
-  const pwd = document.getElementById('authPwd').value;
-  document.getElementById('authErr').style.display = 'none';
-  if (pwd === AUTH_PWD) {
-    const expire = Date.now() + 30 * 24 * 60 * 60 * 1000;
-    localStorage.setItem(AUTH_KEY, expire.toString());
-    document.getElementById('authOverlay').style.display = 'none';
-    renderResults();
-  } else {
-    document.getElementById('authErr').style.display = 'block';
-  }
-}
-function requireAuth() {
-  if (isAuthed()) return true;
-  document.getElementById('authOverlay').style.display = 'flex';
-  document.getElementById('authPwd').value = '';
-  document.getElementById('authErr').style.display = 'none';
-  return false;
-}
-
-// ===== WRAPPERS =====
-(function() {
-  const origRS = window.renderResults;
-  if (origRS) {
-    window.renderResults = function() {
-      if (!isAuthed()) {
-        const rs = document.getElementById('rs');
-        if (rs) rs.innerHTML = '<div class="em"><div class="e">🔐</div><h3>内容已锁定，请输入密码访问</h3></div>';
-        return;
-      }
-      return origRS.apply(this, arguments);
-    };
-  }
-})();
-
-// ===== HELPERS =====
-function esc(s) {
-  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function escQ(s) {
-  return (s||'').replace(/'/g,"\\'");
-}
-function highlight(s, q) {
-  if (!q || !s) return s;
-  try {
-    const r = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return s.replace(new RegExp('('+r+')','gi'), '<mark>$1</mark>');
-  } catch(e) { return s; }
-}
-const ND = {'小学':'小学','初中':'初中','中考数学':'中考'};
-
-// Handle window resize for graph
-window.addEventListener('resize', () => {
-  const canvas = document.getElementById('graphCanvas');
-  if (canvas) renderGraph();
-});
-
-// ===== START =====
-loadData();
-</script>
-</body>
-</html>
+  document.getElementById('tbvColRight').innerHTML = h;
+}// ===== MODULE TABS =====
+394|function renderModuleTabs() {
+395|  const el = document.getElementById('mt');
+396|  const modules = ['全部','小学','初中','中考'];
+397|  let h = '';
+398|  for (const m of modules) {
+399|    const mk = {'小学':'小学','初中':'初中','中考':'中考数学'}[m] || m;
+400|    const t = m==='全部' ? D.length : (S[mk]?.n || 0);
+401|    const a = (!st.m && m==='全部') || m===st.m ? 'on' : '';
+402|    h += `<div class="mtb ${a}" onclick="switchModule('${m}')">${m} <span class="bg">${t}</span></div>`;
+403|  }
+404|  el.innerHTML = h;
+405|}
+406|
+407|function switchModule(m) {
+408|  if (m==='全部' && !st.m) return;
+409|  if (m==='全部') { goHome(); return; }
+410|  st.m = {'小学':'小学','初中':'初中','中考':'中考数学'}[m];
+411|  st.c1=''; st.c2=''; st.ar='';
+412|  document.getElementById('extraPanels').innerHTML = '';
+413|  renderModuleTabs();
+414|  renderSidebar();
+415|  renderResults();
+416|}
+417|
+418|// ===== SIDEBAR =====
+419|function renderSidebar() {
+420|  const sd = document.getElementById('sd');
+421|  if (!st.m) { sd.innerHTML=''; sd.classList.remove('sh'); return; }
+422|  sd.classList.add('sh');
+423|  const cats = T[st.m] || {};
+424|  const c1s = Object.keys(cats).sort((a,b) => (S[st.m]?.cs?.[b]||0) - (S[st.m]?.cs?.[a]||0));
+425|  let h = '<div class="sl"><div class="shd">📂 分类筛选</div>';
+426|  if (st.c1 && cats[st.c1]) {
+427|    h += `<div class="sbk" onclick="selectC1()">← ${esc(st.c1)}</div>`;
+428|    const c2s = cats[st.c1];
+429|    const ns = Object.keys(c2s).sort((a,b) => (c2s[b]||0)-(c2s[a]||0));
+430|    for (const c2 of ns) {
+431|      if (!c2) continue;
+432|      const a = st.c2===c2?'on':'';
+433|      h += `<div class="si ${a}" onclick="selectC2('${escQ(st.c1)}','${escQ(c2)}')"><span class="nm">${esc(c2)}</span><span class="cn">${c2s[c2]}</span></div>`;
+434|    }
+435|  } else {
+436|    for (const c1 of c1s) {
+437|      const c2s = cats[c1];
+438|      let tot = 0;
+439|      for (const k in c2s) tot += c2s[k];
+440|      const a = st.c1===c1?'on':'';
+441|      h += `<div class="si ${a}" onclick="selectC1('${escQ(c1)}')"><span class="ar">▶</span><span class="nm">${esc(c1)}</span><span class="cn">${tot}</span></div>`;
+442|    }
+443|  }
+444|  h += '</div>';
+445|  sd.innerHTML = h;
+446|}
+447|
+448|function selectC1(c1) {
+449|  if (c1) { st.c1=c1; st.c2=''; } else { st.c1=''; st.c2=''; }
+450|  renderSidebar(); renderResults();
+451|}
+452|function selectC2(c1,c2) {
+453|  st.c2 = st.c2===c2 ? '' : c2;
+454|  renderSidebar(); renderResults();
+455|}
+456|
+457|// ===== TYPE FILTER =====
+458|function renderTypeFilter() {
+459|  const el = document.getElementById('cps');
+460|  const types = {all:'📋 全部',basic:'📖 基础',extend:'✨ 拓展',exam:'🎯 考情'};
+461|  let h = '';
+462|  for (const [k,v] of Object.entries(types)) {
+463|    const a = st.tp===k?'on':'';
+464|    h += `<span class="cp ${a}" onclick="setType('${k}')">${v}</span>`;
+465|  }
+466|  el.innerHTML = h;
+467|}
+468|function setType(t) { st.tp=t; renderResults(); }
+469|
+470|// ===== AREA FILTER (for 中考) =====
+471|function renderAreaFilter(fil) {
+472|  const el = document.getElementById('ac');
+473|  if (st.m !== '中考数学') { el.innerHTML=''; return; }
+474|  const am = {};
+475|  fil.forEach(e => (e.areas||[]).forEach(a => { if(a) am[a]=(am[a]||0)+1; }));
+476|  const ss = Object.entries(am).sort((a,b)=>b[1]-a[1]);
+477|  if (!ss.length) { el.innerHTML=''; return; }
+478|  let h = '<span style="font-size:12px;color:var(--text-muted);font-weight:600;margin-right:4px">📍 地区</span>';
+479|  for (const [area, cnt] of ss) {
+480|    const col = C[area]||'#64748b';
+481|    const on = st.ar===area?'on':'';
+482|    h += `<span class="act ${on}" style="background:${col}22;color:${col};border-color:${col}44" onclick="setArea('${escQ(area)}')">${esc(area)} <span style="opacity:.6;font-size:11px">${cnt}</span></span>`;
+483|  }
+484|  el.innerHTML = h;
+485|}
+486|function setArea(a) { st.ar = st.ar===a ? '' : a; renderResults(); }
+487|
+488|// ===== BREADCRUMB =====
+489|function renderBreadcrumb() {
+490|  const el = document.getElementById('cb');
+491|  if (st.m === '中考数学') { el.innerHTML=''; return; }
+492|  let parts = [];
+493|  if (st.m) parts.push(st.m);
+494|  if (st.c1) {
+495|    parts.push(`<span class="c" onclick="selectC1()">${esc(st.c1)}</span>`);
+496|    const c2s = (T[st.m]||{})[st.c1]||{};
+497|    const ns = Object.keys(c2s).sort((a,b)=>(c2s[b]||0)-(c2s[a]||0));
+498|    for (const c2 of ns) {
+499|      if (!c2) continue;
+500|      const a = st.c2===c2 ? ' style="color:var(--accent);font-weight:600"' : '';
+501|
