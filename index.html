@@ -226,7 +226,8 @@ function renderModuleTabs() {
   const modules = ['全部','小学','初中','中考'];
   let h = '';
   for (const m of modules) {
-    const t = m==='全部' ? D.length : (S[m]?.n || 0);
+    const mk = {'小学':'小学','初中':'初中','中考':'中考数学'}[m] || m;
+    const t = m==='全部' ? D.length : (S[mk]?.n || 0);
     const a = (!st.m && m==='全部') || m===st.m ? 'on' : '';
     h += `<div class="mtb ${a}" onclick="switchModule('${m}')">${m} <span class="bg">${t}</span></div>`;
   }
