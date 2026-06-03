@@ -70,18 +70,23 @@
     </div>
   </div>
   <div class="tbv-body">
-    <div class="tbv-sidebar" id="tbvSidebar">
-      <div class="tbv-sb-header">📚 选择教材</div>
-      <div id="tbvBookList" class="tbv-book-list"></div>
-      <div class="tbv-sb-header tbv-ch-hdr" id="tbvChHdr" style="display:none">📖 章节</div>
-      <div id="tbvChapterList" class="tbv-book-list"></div>
+    <div class="tbv-col tbv-col-left" id="tbvColLeft">
+      <div class="tbv-col-header">📚 教材版本</div>
+      <div id="tbvBookList"></div>
     </div>
-    <div class="tbv-content" id="tbvContent">
+    <div class="tbv-col tbv-col-mid" id="tbvColMid" style="display:none">
+      <div class="tbv-col-header">📖 章节</div>
+      <div id="tbvChapterList"></div>
+    </div>
+    <div class="tbv-col tbv-col-right" id="tbvColRight">
       <div class="tbv-placeholder" id="tbvPlaceholder">
         <div class="tbv-placeholder-icon">📚</div>
-        <div class="tbv-placeholder-text">请从左侧选择教材和章节</div>
+        <div class="tbv-placeholder-text">请先从左侧选择教材版本</div>
       </div>
-      <div id="tbvSections" style="display:none"></div>
+      <div id="tbvSections" style="display:none">
+        <div class="tbv-col-header" id="tbvSectionHeader">📖 小节</div>
+        <div class="tbv-section-grid" id="tbvSectionGrid"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -279,16 +284,19 @@ function goHomeFromTB() {
 }
 
 function renderTextbookView() {
-  const bookList = document.getElementById('tbvBookList');
-  const chList = document.getElementById('tbvChapterList');
+  const colMid = document.getElementById('tbvColMid');
   const placeholder = document.getElementById('tbvPlaceholder');
   const sections = document.getElementById('tbvSections');
-  const chHdr = document.getElementById('tbvChHdr');
   
-  placeholder.style.display = 'block';
+  colMid.style.display = 'none';
+  placeholder.style.display = 'flex';
   sections.style.display = 'none';
-  chHdr.style.display = 'none';
   
+  // Reset placeholder text
+  document.querySelector('#tbvPlaceholder .tbv-placeholder-text').textContent = '请先从左侧选择教材版本';
+  document.querySelector('#tbvPlaceholder .tbv-placeholder-icon').textContent = '📚';
+  
+  // Render book list in left column
   let h = '';
   for (const book of TB) {
     const active = currentTB && currentTB.id === book.id ? 'on' : '';
@@ -301,12 +309,7 @@ function renderTextbookView() {
       </div>
     </div>`;
   }
-  bookList.innerHTML = h;
-  
-  if (currentTB) {
-    chHdr.style.display = 'block';
-    renderChapterList();
-  }
+  document.getElementById('tbvBookList').innerHTML = h;
 }
 
 function selectTextbook(id) {
@@ -314,7 +317,23 @@ function selectTextbook(id) {
   if (!book) return;
   currentTB = book;
   currentChapter = null;
-  renderTextbookView();
+  
+  // Update book list highlight
+  document.querySelectorAll('#tbvBookList .tbv-book-item').forEach(el => el.classList.remove('on'));
+  const items = document.querySelectorAll('#tbvBookList .tbv-book-item');
+  TB.forEach((b, i) => { if (b.id === id) items[i]?.classList.add('on'); });
+  
+  // Show middle column with chapters
+  const colMid = document.getElementById('tbvColMid');
+  colMid.style.display = 'block';
+  
+  // Hide sections
+  document.getElementById('tbvSections').style.display = 'none';
+  document.querySelector('#tbvPlaceholder .tbv-placeholder-text').textContent = '请从中间列选择章节';
+  document.querySelector('#tbvPlaceholder .tbv-placeholder-icon').textContent = '📖';
+  document.getElementById('tbvPlaceholder').style.display = 'flex';
+  
+  renderChapterList();
 }
 
 function renderChapterList() {
@@ -336,7 +355,12 @@ function renderChapterList() {
 function selectChapter(idx) {
   if (!currentTB || idx < 0 || idx >= currentTB.chapters.length) return;
   currentChapter = currentTB.chapters[idx];
-  renderChapterList();
+  
+  // Update chapter list highlight
+  document.querySelectorAll('#tbvChapterList .tbv-chapter-item').forEach(el => el.classList.remove('on'));
+  const items = document.querySelectorAll('#tbvChapterList .tbv-chapter-item');
+  if (items[idx]) items[idx].classList.add('on');
+  
   renderSections();
 }
 
@@ -354,17 +378,16 @@ function renderSections() {
   sections.style.display = 'block';
   
   document.getElementById('tbvTitle').textContent = `${currentTB.icon||'📘'} ${currentTB.label} · 第${currentChapter.num}章 ${currentChapter.name}`;
+  document.getElementById('tbvSectionHeader').textContent = `📖 第${currentChapter.num}章 ${esc(currentChapter.name)} · ${currentChapter.sections.length} 节`;
   
-  let h = `<div class="tbv-chapter-title">📖 第${currentChapter.num}章 ${esc(currentChapter.name)}</div>`;
-  h += '<div class="tbv-section-grid">';
+  let h = '';
   for (const sec of currentChapter.sections) {
     h += `<div class="tbv-section-card">
       <div class="tbv-sec-num">${esc(sec.num)}</div>
       <div class="tbv-sec-name">${esc(sec.name)}</div>
     </div>`;
   }
-  h += '</div>';
-  sections.innerHTML = h;
+  document.getElementById('tbvSectionGrid').innerHTML = h;
 }
 
 // ===== MODULE TABS =====
