@@ -409,7 +409,7 @@ function renderResults() {
       ${headerHtml}
       <h3>${highlight(esc(e.t), st.q)}</h3>
       ${desc ? '<div class="de">'+desc+'</div>' : ''}
-      ${e.imt ? '<img class="im" src="data:image/png;base64,'+e.imt+'" onclick="showImg(\''+e.img+'\')" title="点击查看大图">' : ''}
+      ${e.imt ? '<img class="im" src="data:image/png;base64,'+e.imt+'" onclick="showImg(\''+e.img+'\')" title="点击查看大图">' : (e.img && e.img.startsWith('image') ? '<img class="im" src="images/'+e.img+'" onclick="showImgFile(this.src)" title="点击查看大图">' : '')}
       ${extra ? '<div class="ex">'+extra+'</div>' : ''}
       ${ah}
       <div class="actions">${favBtn}${learnBtn}</div>
@@ -745,6 +745,12 @@ function showImg(b64) {
   const el = document.getElementById('mv');
   el.innerHTML = '<span class=mclose onclick="hideImg()">×</span>';
   if (b64) el.innerHTML += '<img src="data:image/png;base64,'+b64+'" onclick="hideImg()">';
+  el.classList.add('sh');
+}
+function showImgFile(src) {
+  const el = document.getElementById('mv');
+  el.innerHTML = '<span class=mclose onclick="hideImg()">×</span>';
+  el.innerHTML += '<img src="'+src+'" onclick="hideImg()">';
   el.classList.add('sh');
 }
 function hideImg() { document.getElementById('mv').classList.remove('sh'); }
