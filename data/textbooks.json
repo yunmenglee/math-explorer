@@ -125,7 +125,9 @@
           }
         ]
       }
-    ]
+    ],
+    "iconText": "苏科",
+    "iconBg": "#0ea5e9"
   },
   {
     "id": "hebei-9a",
@@ -279,7 +281,9 @@
           }
         ]
       }
-    ]
+    ],
+    "iconText": "冀教",
+    "iconBg": "#e11d48"
   },
   {
     "id": "renjiao-9a",
@@ -393,7 +397,9 @@
           }
         ]
       }
-    ]
+    ],
+    "iconText": "人教",
+    "iconBg": "#16a34a"
   },
   {
     "id": "beishida-8b",
@@ -515,7 +521,9 @@
           }
         ]
       }
-    ]
+    ],
+    "iconText": "北师",
+    "iconBg": "#d97706"
   },
   {
     "id": "beijing-9a",
@@ -655,7 +663,9 @@
           }
         ]
       }
-    ]
+    ],
+    "iconText": "九上",
+    "iconBg": "#7c3aed"
   },
   {
     "id": "beijing-7a",
@@ -799,7 +809,9 @@
           }
         ]
       }
-    ]
+    ],
+    "iconText": "七上",
+    "iconBg": "#0891b2"
   },
   {
     "id": "beijing-8b",
@@ -921,7 +933,9 @@
           }
         ]
       }
-    ]
+    ],
+    "iconText": "八下",
+    "iconBg": "#dc2626"
   },
   {
     "id": "beijing-8a",
@@ -1063,6 +1077,8 @@
           }
         ]
       }
-    ]
+    ],
+    "iconText": "八上",
+    "iconBg": "#ca8a04"
   }
 ]

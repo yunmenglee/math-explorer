@@ -150,7 +150,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hira
 .tbv-picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
 .tbv-picker-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:18px 12px;text-align:center;cursor:pointer;transition:all .2s}
 .tbv-picker-card:hover{background:var(--active-bg);border-color:var(--accent);transform:translateY(-3px);box-shadow:0 4px 16px rgba(99,102,241,0.12)}
-.tbv-pc-icon{font-size:32px;margin-bottom:6px}
+.tbv-pc-icon{width:40px;height:40px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;margin-bottom:8px}
 .tbv-pc-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.4}
 .tbv-chapter-item{display:flex;align-items:center;gap:6px;padding:10px 16px;cursor:pointer;transition:all .15s;border-left:3px solid transparent;flex-wrap:wrap}
 .tbv-chapter-item:hover{background:var(--hover-bg);border-left-color:var(--accent-light)}

@@ -290,9 +290,9 @@ function showBookPicker() {
   const grid = document.getElementById('tbvPickerGrid');
   let h = '';
   for (const book of TB) {
-    const totalSec = book.chapters.reduce((s, ch) => s + ch.sections.length, 0);
+    const bg = book.iconBg || '#6366f1';
     h += `<div class="tbv-picker-card" onclick="pickTextbook('${escQ(book.id)}')">
-      <div class="tbv-pc-icon">${book.icon||'📘'}</div>
+      <div class="tbv-pc-icon" style="background:${bg}">${book.iconText||'📘'}</div>
       <div class="tbv-pc-name">${esc(book.label)}</div>
     </div>`;
   }
@@ -311,7 +311,7 @@ function pickTextbook(id) {
   currentTB = book;
   currentChapter = null;
   document.getElementById('tbvPicker').style.display = 'none';
-  document.getElementById('tbvSelLabel').textContent = `${book.icon||'📘'} ${book.label} ▾`;
+  document.getElementById('tbvSelLabel').textContent = `${book.iconText||'📘'} ${book.label} ▾`;
   document.getElementById('tbvColMid').style.display = 'block';
   document.getElementById('tbvColRight').innerHTML = '';
   renderChapterList();
