@@ -71,8 +71,12 @@
   </div>
   <div class="tbv-body">
     <div class="tbv-col tbv-col-left" id="tbvColLeft">
-      <div class="tbv-col-header">📚 教材版本 <span class="tbv-toggle" id="tbvToggle" onclick="toggleBookList()">▼</span></div>
-      <div id="tbvBookList"></div>
+      <div class="tbv-col-header">📚 教材版本</div>
+      <div class="tbv-book-select" id="tbvBookSelect" onclick="toggleBookDropdown()">
+        <span id="tbvSelectedLabel">请选择教材</span>
+        <span class="tbv-dropdown-arrow">▾</span>
+      </div>
+      <div class="tbv-book-dropdown" id="tbvBookDropdown" style="display:none"></div>
     </div>
     <div class="tbv-col tbv-col-mid" id="tbvColMid" style="display:none">
       <div class="tbv-col-header">📖 章节</div>
@@ -258,7 +262,7 @@ function goHome() {
 // ===== TEXTBOOK VIEW =====
 let currentTB = null;
 let currentChapter = null;
-let bookListCollapsed = false;
+let dropdownOpen = false;
 
 function enterTextbook() {
   if (!requireAuth()) return;
@@ -268,7 +272,6 @@ function enterTextbook() {
   document.getElementById('tbv').style.display = 'block';
   currentTB = null;
   currentChapter = null;
-  bookListCollapsed = false;
   renderTextbookView();
 }
 
@@ -278,23 +281,25 @@ function goHomeFromTB() {
   goHome();
 }
 
-function toggleBookList() {
-  bookListCollapsed = !bookListCollapsed;
-  document.getElementById('tbvToggle').textContent = bookListCollapsed ? '▶' : '▼';
-  document.getElementById('tbvBookList').style.display = bookListCollapsed ? 'none' : 'block';
+function toggleBookDropdown() {
+  dropdownOpen = !dropdownOpen;
+  document.getElementById('tbvBookDropdown').style.display = dropdownOpen ? 'block' : 'none';
 }
 
 function renderTextbookView() {
   document.getElementById('tbvColMid').style.display = 'none';
-  document.getElementById('tbvToggle').textContent = '▼';
-  document.getElementById('tbvBookList').style.display = 'block';
+  document.getElementById('tbvSelectedLabel').textContent = '请选择教材';
   document.getElementById('tbvColRight').innerHTML = '';
+  renderBookDropdown();
+}
 
+function renderBookDropdown() {
+  const dd = document.getElementById('tbvBookDropdown');
   let h = '';
   for (const book of TB) {
-    const active = currentTB && currentTB.id === book.id ? 'on' : '';
     const totalSec = book.chapters.reduce((s, ch) => s + ch.sections.length, 0);
-    h += `<div class="tbv-book-item ${active}" onclick="selectTextbook('${escQ(book.id)}')">
+    const active = currentTB && currentTB.id === book.id ? ' on' : '';
+    h += `<div class="tbv-book-option${active}" onclick="selectTextbook('${escQ(book.id)}')">
       <span class="tbv-book-icon">${book.icon||'📘'}</span>
       <div class="tbv-book-info">
         <div class="tbv-book-name">${esc(book.label)}</div>
@@ -302,7 +307,7 @@ function renderTextbookView() {
       </div>
     </div>`;
   }
-  document.getElementById('tbvBookList').innerHTML = h;
+  dd.innerHTML = h;
 }
 
 function selectTextbook(id) {
@@ -310,11 +315,9 @@ function selectTextbook(id) {
   if (!book) return;
   currentTB = book;
   currentChapter = null;
-  
-  document.querySelectorAll('#tbvBookList .tbv-book-item').forEach(el => el.classList.remove('on'));
-  const items = document.querySelectorAll('#tbvBookList .tbv-book-item');
-  TB.forEach((b, i) => { if (b.id === id) items[i]?.classList.add('on'); });
-  
+  dropdownOpen = false;
+  document.getElementById('tbvBookDropdown').style.display = 'none';
+  document.getElementById('tbvSelectedLabel').textContent = `${book.icon||'📘'} ${book.label}`;
   document.getElementById('tbvColMid').style.display = 'block';
   document.getElementById('tbvColRight').innerHTML = '';
   renderChapterList();
@@ -365,6 +368,15 @@ function renderSections() {
   h += '</div>';
   document.getElementById('tbvColRight').innerHTML = h;
 }
+
+// Close textbook dropdown on outside click
+document.addEventListener('click', function(e) {
+  const left = document.getElementById('tbvColLeft');
+  if (left && !left.contains(e.target)) {
+    document.getElementById('tbvBookDropdown').style.display = 'none';
+    dropdownOpen = false;
+  }
+});
 
 // ===== MODULE TABS =====
 function renderModuleTabs() {

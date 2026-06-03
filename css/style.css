@@ -138,11 +138,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hira
 .tbv-col-right{flex:1;min-width:0}
 @media(max-width:1000px){.tbv-col-left,.tbv-col-mid{width:100%}}
 .tbv-col-header{padding:14px 18px;font-weight:700;font-size:14px;color:var(--text);border-bottom:2px solid var(--active-bg);display:flex;align-items:center;gap:8px}
-.tbv-toggle{margin-left:auto;cursor:pointer;font-size:10px;color:var(--text-muted);padding:2px 6px;border-radius:4px}
-.tbv-toggle:hover{background:var(--hover-bg);color:var(--text)}
-.tbv-book-item{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;transition:all .15s;border-left:3px solid transparent}
-.tbv-book-item:hover{background:var(--hover-bg);border-left-color:var(--accent-light)}
-.tbv-book-item.on{background:var(--active-bg);border-left-color:var(--accent)}
+.tbv-book-select{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;transition:all .15s;border-bottom:1px solid var(--border-light)}
+.tbv-book-select:hover{background:var(--hover-bg)}
+.tbv-book-select .tbv-dropdown-arrow{margin-left:auto;font-size:12px;color:var(--text-muted)}
+.tbv-book-dropdown{max-height:360px;overflow-y:auto}
+.tbv-book-option{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;transition:all .15s;border-left:3px solid transparent}
+.tbv-book-option:hover,.tbv-book-option.on{background:var(--active-bg);border-left-color:var(--accent)}
 .tbv-book-icon{font-size:24px;flex-shrink:0}
 .tbv-book-info{flex:1;min-width:0}
 .tbv-book-name{font-size:13px;font-weight:600;color:var(--text)}
