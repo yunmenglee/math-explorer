@@ -315,9 +315,6 @@ function selectTextbook(id) {
   currentTB = book;
   currentChapter = null;
   renderTextbookView();
-  if (book.chapters.length > 0) {
-    selectChapter(0);
-  }
 }
 
 function renderChapterList() {
