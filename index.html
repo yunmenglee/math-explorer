@@ -72,13 +72,23 @@
   <div class="tbv-body">
     <div class="tbv-col tbv-col-left" id="tbvColLeft">
       <div class="tbv-col-header">📚 教材版本</div>
-      <div id="tbvBookSelector"></div>
+      <div class="tbv-sel-bar" id="tbvSelBar" onclick="showBookPicker()">
+        <span id="tbvSelLabel">点击选择教材 ▾</span>
+      </div>
     </div>
     <div class="tbv-col tbv-col-mid" id="tbvColMid" style="display:none">
       <div class="tbv-col-header">📖 章节</div>
       <div id="tbvChapterList"></div>
     </div>
     <div class="tbv-col tbv-col-right" id="tbvColRight"></div>
+  </div>
+</div>
+
+<!-- Textbook picker modal -->
+<div class="tbv-picker-overlay" id="tbvPicker" style="display:none" onclick="hideBookPicker(event)">
+  <div class="tbv-picker-modal" onclick="event.stopPropagation()">
+    <div class="tbv-picker-header">📚 选择教材版本 <span class="tbv-picker-close" onclick="hideBookPicker()">✕</span></div>
+    <div class="tbv-picker-grid" id="tbvPickerGrid"></div>
   </div>
 </div>
 
@@ -199,11 +209,11 @@ function renderHome() {
   h += `<div class="cd m4" onclick="enterTextbook()">
     <div class="dv"></div>
     <div class="top"><div class="ico">📚</div>
-    <div><div class="nm">教材库</div><div class="ct">${TB.length} 本教材 · 共 ${TB.reduce((s,b)=>s+b.chapters.length,0)} 章</div></div></div>
+    <div><div class="nm">教材库</div><div class="ct">8 本教材 · 共 39 章</div></div></div>
     <div class="desc">按教材目录组织章节，逐节学习知识内容</div>
     <div class="cs">
       <span class="tg">📘 8 套教材已收录</span>
-      <span class="tg">📋 ${TB.reduce((s,b)=>s+b.chapters.length,0)} 章 · ${TB.reduce((s,b)=>s+b.chapters.reduce((s2,c)=>s2+c.sections.length,0),0)} 节</span>
+      <span class="tg">📋 39 章 · 188 节</span>
       <span class="tg">🔄 持续更新中</span>
     </div></div>`;
   for (const k of ['小学','初中','中考']) {
@@ -276,33 +286,42 @@ function goHomeFromTB() {
   goHome();
 }
 
-function renderTextbookView() {
-  document.getElementById('tbvColMid').style.display = 'none';
-  document.getElementById('tbvColRight').innerHTML = '';
-
+function showBookPicker() {
+  const grid = document.getElementById('tbvPickerGrid');
   let h = '';
   for (const book of TB) {
     const totalSec = book.chapters.reduce((s, ch) => s + ch.sections.length, 0);
-    const active = currentTB && currentTB.id === book.id ? 'on' : '';
-    h += `<div class="tbv-book-pill ${active}" onclick="selectTextbook('${escQ(book.id)}')">
-      <span class="tbv-bp-icon">${book.icon||'📘'}</span>
-      <span class="tbv-bp-label">${esc(book.label)}</span>
-      <span class="tbv-bp-meta">${book.chapters.length}章 ${totalSec}节</span>
-      ${active ? '<span class="tbv-bp-check">✓</span>' : ''}
+    h += `<div class="tbv-picker-card" onclick="pickTextbook('${escQ(book.id)}')">
+      <div class="tbv-pc-icon">${book.icon||'📘'}</div>
+      <div class="tbv-pc-name">${esc(book.label)}</div>
+      <div class="tbv-pc-meta">${book.chapters.length} 章 · ${totalSec} 节</div>
     </div>`;
   }
-  document.getElementById('tbvBookSelector').innerHTML = h;
+  grid.innerHTML = h;
+  document.getElementById('tbvPicker').style.display = 'flex';
 }
 
-function selectTextbook(id) {
+function hideBookPicker(e) {
+  if (e && e.target !== e.currentTarget) return;
+  document.getElementById('tbvPicker').style.display = 'none';
+}
+
+function pickTextbook(id) {
   const book = TB.find(b => b.id === id);
   if (!book) return;
   currentTB = book;
   currentChapter = null;
-  renderTextbookView();
+  document.getElementById('tbvPicker').style.display = 'none';
+  document.getElementById('tbvSelLabel').textContent = `${book.icon||'📘'} ${book.label} ▾`;
   document.getElementById('tbvColMid').style.display = 'block';
   document.getElementById('tbvColRight').innerHTML = '';
   renderChapterList();
+}
+
+function renderTextbookView() {
+  document.getElementById('tbvSelLabel').textContent = '点击选择教材 ▾';
+  document.getElementById('tbvColMid').style.display = 'none';
+  document.getElementById('tbvColRight').innerHTML = '';
 }
 
 function renderChapterList() {
@@ -324,11 +343,9 @@ function renderChapterList() {
 function selectChapter(idx) {
   if (!currentTB || idx < 0 || idx >= currentTB.chapters.length) return;
   currentChapter = currentTB.chapters[idx];
-  
   document.querySelectorAll('#tbvChapterList .tbv-chapter-item').forEach(el => el.classList.remove('on'));
   const items = document.querySelectorAll('#tbvChapterList .tbv-chapter-item');
   if (items[idx]) items[idx].classList.add('on');
-  
   renderSections();
 }
 
@@ -337,9 +354,7 @@ function renderSections() {
     document.getElementById('tbvColRight').innerHTML = '';
     return;
   }
-  
   document.getElementById('tbvTitle').textContent = `${currentTB.icon||'📘'} ${currentTB.label} · 第${currentChapter.num}章 ${currentChapter.name}`;
-  
   let h = `<div class="tbv-section-list">`;
   for (const sec of currentChapter.sections) {
     h += `<div class="tbv-section-row">

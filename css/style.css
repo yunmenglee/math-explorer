@@ -132,24 +132,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hira
 .tbv{display:none;max-width:1200px;margin:0 auto;padding:0 32px 48px}
 .tbv-body{display:flex;gap:16px;margin-top:16px;min-height:520px}
 @media(max-width:1000px){.tbv-body{flex-direction:column}}
-.tbv-col{background:var(--card-bg);border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.05);border:1px solid var(--border)}
+.tbv-col{background:var(--card-bg);border-radius:16px;overflow:visible;box-shadow:0 2px 12px rgba(0,0,0,0.05);border:1px solid var(--border)}
 .tbv-col-left{width:240px;flex-shrink:0}
 .tbv-col-mid{width:250px;flex-shrink:0;display:none}
 .tbv-col-right{flex:1;min-width:0}
 @media(max-width:1000px){.tbv-col-left,.tbv-col-mid{width:100%}}
 .tbv-col-header{padding:14px 18px;font-weight:700;font-size:14px;color:var(--text);border-bottom:2px solid var(--active-bg);display:flex;align-items:center;gap:8px}
-.tbv-book-pill{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;transition:all .2s;border-left:3px solid transparent;border-bottom:1px solid var(--border-light)}
-.tbv-book-pill:hover{background:var(--hover-bg);border-left-color:var(--accent-light)}
-.tbv-book-pill.on{background:var(--accent-bg);border-left-color:var(--accent);border-bottom-color:transparent}
-.tbv-bp-icon{font-size:22px;flex-shrink:0;width:30px;text-align:center}
-.tbv-bp-label{font-size:13px;font-weight:600;color:var(--text);flex:1}
-.tbv-book-pill.on .tbv-bp-label{color:var(--accent)}
-.tbv-bp-meta{font-size:10px;color:var(--text-muted);white-space:nowrap}
-.tbv-book-pill.on .tbv-bp-meta{color:var(--accent);opacity:.7}
-.tbv-bp-check{font-size:14px;color:var(--accent);font-weight:700}
-.tbv-book-info{flex:1;min-width:0}
-.tbv-book-name{font-size:13px;font-weight:600;color:var(--text)}
-.tbv-book-meta{font-size:11px;color:var(--text-muted);margin-top:1px}
+.tbv-sel-bar{padding:16px 18px;cursor:pointer;text-align:center;transition:all .2s}
+.tbv-sel-bar:hover{background:var(--hover-bg)}
+.tbv-sel-bar span{font-size:14px;color:var(--accent);font-weight:600}
+/* Textbook picker modal */
+.tbv-picker-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--modal-overlay);z-index:1000;display:none;align-items:center;justify-content:center;animation:fi .2s ease}
+.tbv-picker-modal{background:var(--card-bg);border-radius:20px;padding:28px;max-width:640px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.tbv-picker-header{font-size:18px;font-weight:700;color:var(--text);margin-bottom:20px;display:flex;align-items:center;gap:8px;justify-content:space-between}
+.tbv-picker-close{cursor:pointer;font-size:18px;color:var(--text-muted);padding:4px 8px;border-radius:8px}
+.tbv-picker-close:hover{background:var(--hover-bg);color:var(--text)}
+.tbv-picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.tbv-picker-card{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:20px 14px;text-align:center;cursor:pointer;transition:all .25s cubic-bezier(.34,1.56,.64,1)}
+.tbv-picker-card:hover{box-shadow:0 8px 30px rgba(0,0,0,0.1);transform:translateY(-4px) scale(1.03);border-color:var(--accent-light)}
+.tbv-pc-icon{font-size:36px;margin-bottom:8px}
+.tbv-pc-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.tbv-pc-meta{font-size:12px;color:var(--text-muted)}
 .tbv-chapter-item{display:flex;align-items:center;gap:6px;padding:10px 16px;cursor:pointer;transition:all .15s;border-left:3px solid transparent;flex-wrap:wrap}
 .tbv-chapter-item:hover{background:var(--hover-bg);border-left-color:var(--accent-light)}
 .tbv-chapter-item.on{background:var(--active-bg);border-left-color:var(--accent)}
