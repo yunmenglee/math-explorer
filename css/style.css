@@ -138,9 +138,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hira
 .tbv-col-right{flex:1;min-width:0}
 @media(max-width:1000px){.tbv-col-left,.tbv-col-mid{width:100%}}
 .tbv-col-header{padding:14px 18px;font-weight:700;font-size:14px;color:var(--text);border-bottom:2px solid var(--active-bg);display:flex;align-items:center;gap:8px}
-.tbv-sel-bar{padding:16px 18px;cursor:pointer;text-align:center;transition:all .2s}
+.tbv-sel-bar{padding:12px 14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px}
 .tbv-sel-bar:hover{background:var(--hover-bg)}
-.tbv-sel-bar span{font-size:14px;color:var(--accent);font-weight:600}
+.tbv-sel-badge{width:32px;height:32px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.tbv-sel-name{font-size:13px;font-weight:500;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tbv-sel-arrow{font-size:10px;color:var(--text-muted);flex-shrink:0}
 /* Textbook picker modal */
 .tbv-picker-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--modal-overlay);z-index:1000;display:none;align-items:center;justify-content:center;animation:fi .2s ease}
 .tbv-picker-modal{background:var(--card-bg);border-radius:20px;padding:28px;max-width:640px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
