@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>数学探索中心 · 知识宝典</title>
-<link rel="stylesheet" href="css/style.css?v=3">
+<link rel="stylesheet" href="css/style.css?v=2">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#302b63">
 <meta name="description" content="小学数学、初中数学、中考数学知识点全收录 - 2835条知识">
@@ -69,7 +69,7 @@
       <span class="bh bh-sm" id="tbvTitle" style="font-weight:700;font-size:15px">📘 教材库</span>
     </div>
   </div>
-  <div class="tbv-body">
+  <div class="tbv-body" id="tbvBody">
     <div class="tbv-col tbv-col-left" id="tbvColLeft">
       <div class="tbv-col-header">📚 教材版本</div>
       <div class="tbv-sel-bar" id="tbvSelBar" onclick="showBookPicker()">
@@ -80,7 +80,28 @@
       <div class="tbv-col-header">📖 章节</div>
       <div id="tbvChapterList"></div>
     </div>
-    <div class="tbv-col tbv-col-right" id="tbvColRight"></div>
+    <div class="tbv-col tbv-col-right" id="tbvColRight">
+      <div class="tbv-col-header">📄 小节</div>
+      <div class="tbv-section-list" id="tbvSectionList"></div>
+    </div>
+  </div>
+  <!-- Comparison section -->
+  <div class="tbv-compare" id="tbvCompare">
+    <div class="tbv-compare-left">
+      <div class="tbv-compare-btn" id="tbvCompareBtn" onclick="toggleCompare()">📊 教材对比</div>
+    </div>
+    <div class="tbv-compare-body" id="tbvCompareBody" style="display:none">
+      <div class="tbv-compare-row">
+        <div class="tbv-compare-pick" onclick="pickComparePrimary()">
+          <span id="tbvCpLabel">点击选择主教材</span>
+        </div>
+        <span class="tbv-compare-vs">VS</span>
+        <div class="tbv-compare-pick" onclick="pickCompareTarget()">
+          <span id="tbvCtLabel">点击选择对比教材</span>
+        </div>
+      </div>
+      <div class="tbv-compare-results" id="tbvCompareResults"><div class="tbv-cr-empty">请选择主教材和对比教材</div></div>
+    </div>
   </div>
 </div>
 
@@ -268,6 +289,10 @@ function goHome() {
 // ===== TEXTBOOK VIEW =====
 let currentTB = null;
 let currentChapter = null;
+let comparePrimary = null;
+let compareTarget = null;
+let compareMode = 'primary'; // 'primary' or 'target'
+let compareOpen = false;
 
 function enterTextbook() {
   if (!requireAuth()) return;
@@ -277,15 +302,20 @@ function enterTextbook() {
   document.getElementById('tbv').style.display = 'block';
   currentTB = null;
   currentChapter = null;
+  document.getElementById('tbvCompareBody').style.display = 'none';
+  compareOpen = false;
   renderTextbookView();
 }
 
 function goHomeFromTB() {
   currentTB = null;
   currentChapter = null;
+  comparePrimary = null;
+  compareTarget = null;
   goHome();
 }
 
+// === Book picker modal ===
 function showBookPicker() {
   const grid = document.getElementById('tbvPickerGrid');
   let h = '';
@@ -313,16 +343,17 @@ function pickTextbook(id) {
   document.getElementById('tbvPicker').style.display = 'none';
   document.getElementById('tbvSelBar').innerHTML = `<span class="tbv-sel-badge" style="background:${book.iconBg||'#6366f1'}">${book.iconText||'📘'}</span><span class="tbv-sel-name">${esc(book.grade)}</span><span class="tbv-sel-arrow">▾</span>`;
   document.getElementById('tbvColMid').style.display = 'block';
-  document.getElementById('tbvColRight').innerHTML = '';
+  document.getElementById('tbvSectionList').innerHTML = '';
   renderChapterList();
 }
 
 function renderTextbookView() {
   document.getElementById('tbvSelBar').innerHTML = '<span id="tbvSelLabel" style="color:var(--accent);font-weight:600;font-size:14px">点击选择教材 ▾</span>';
   document.getElementById('tbvColMid').style.display = 'none';
-  document.getElementById('tbvColRight').innerHTML = '';
+  document.getElementById('tbvSectionList').innerHTML = '';
 }
 
+// === Chapter/Section rendering ===
 function renderChapterList() {
   const chList = document.getElementById('tbvChapterList');
   if (!currentTB) { chList.innerHTML = ''; return; }
@@ -349,20 +380,148 @@ function selectChapter(idx) {
 }
 
 function renderSections() {
-  if (!currentChapter) {
-    document.getElementById('tbvColRight').innerHTML = '';
-    return;
-  }
-  document.getElementById('tbvTitle').textContent = `${currentTB.icon||'📘'} ${currentTB.label} · 第${currentChapter.num}章 ${currentChapter.name}`;
-  let h = `<div class="tbv-section-list">`;
+  const list = document.getElementById('tbvSectionList');
+  if (!currentChapter) { list.innerHTML = ''; return; }
+  document.getElementById('tbvTitle').textContent = `${currentTB.iconText||'📘'} ${currentTB.label} · 第${currentChapter.num}章 ${currentChapter.name}`;
+  let h = '';
   for (const sec of currentChapter.sections) {
     h += `<div class="tbv-section-row">
       <span class="tbv-sr-num">${esc(sec.num)}</span>
       <span class="tbv-sr-name">${esc(sec.name)}</span>
     </div>`;
   }
-  h += '</div>';
-  document.getElementById('tbvColRight').innerHTML = h;
+  list.innerHTML = h;
+}
+
+// === Comparison feature ===
+function toggleCompare() {
+  compareOpen = !compareOpen;
+  document.getElementById('tbvCompareBody').style.display = compareOpen ? 'block' : 'none';
+}
+
+function pickComparePrimary() {
+  compareMode = 'primary';
+  showBookPickerForCompare();
+}
+
+function pickCompareTarget() {
+  compareMode = 'target';
+  showBookPickerForCompare();
+}
+
+function showBookPickerForCompare() {
+  const grid = document.getElementById('tbvPickerGrid');
+  let h = '';
+  for (const book of TB) {
+    const bg = book.iconBg || '#6366f1';
+    h += `<div class="tbv-picker-card" onclick="pickCompareBook('${escQ(book.id)}')">
+      <div class="tbv-pc-icon" style="background:${bg}">${book.iconText||'📘'}</div>
+      <div class="tbv-pc-name">${esc(book.label)}</div>
+    </div>`;
+  }
+  grid.innerHTML = h;
+  document.getElementById('tbvPicker').style.display = 'flex';
+}
+
+function pickCompareBook(id) {
+  const book = TB.find(b => b.id === id);
+  if (!book) return;
+  document.getElementById('tbvPicker').style.display = 'none';
+  if (compareMode === 'primary') {
+    comparePrimary = book;
+    const bg = book.iconBg||'#6366f1';
+    document.getElementById('tbvCpLabel').innerHTML = `<span class="tbv-sel-badge" style="background:${bg}">${book.iconText||'📘'}</span> ${esc(book.label)}`;
+  } else {
+    compareTarget = book;
+    const bg = book.iconBg||'#6366f1';
+    document.getElementById('tbvCtLabel').innerHTML = `<span class="tbv-sel-badge" style="background:${bg}">${book.iconText||'📘'}</span> ${esc(book.label)}`;
+  }
+  if (comparePrimary && compareTarget) {
+    runComparison();
+  }
+}
+
+function runComparison() {
+  const results = document.getElementById('tbvCompareResults');
+  if (!comparePrimary || !compareTarget) return;
+  
+  // Gather all sections from primary textbook
+  const primarySections = new Set();
+  const primaryChapterNames = new Set();
+  for (const ch of comparePrimary.chapters) {
+    primaryChapterNames.add(ch.name);
+    for (const sec of ch.sections) {
+      primarySections.add(sec.name);
+    }
+  }
+  
+  // Gather same-publisher lower grades as "already learned"
+  const alreadyLearnedSections = new Set(primarySections);
+  const alreadyLearnedChapters = new Set(primaryChapterNames);
+  
+  // For same-publisher, include lower-grade textbooks' content
+  const gradeOrder = {'七年级上册':1,'七年级下册':2,'八年级上册':3,'八年级下册':4,'九年级上册':5,'九年级下册':6};
+  if (comparePrimary.publisher === compareTarget.publisher) {
+    const pGrade = gradeOrder[comparePrimary.grade] || 3;
+    for (const book of TB) {
+      if (book.publisher === comparePrimary.publisher) {
+        const bGrade = gradeOrder[book.grade] || 0;
+        if (bGrade < pGrade || book.id === comparePrimary.id) {
+          for (const ch of book.chapters) {
+            alreadyLearnedChapters.add(ch.name);
+            for (const sec of ch.sections) {
+              alreadyLearnedSections.add(sec.name);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Find over-standard content in target textbook
+  let overCount = 0;
+  let matchCount = 0;
+  let h = `<div class="tbv-cr-header">${esc(compareTarget.label)} → ${esc(comparePrimary.label)}</div>`;
+  
+  for (const ch of compareTarget.chapters) {
+    const chMatched = alreadyLearnedChapters.has(ch.name);
+    const overSections = [];
+    const matchedSections = [];
+    
+    for (const sec of ch.sections) {
+      if (alreadyLearnedSections.has(sec.name)) {
+        matchedSections.push(sec);
+        matchCount++;
+      } else {
+        overSections.push(sec);
+        overCount++;
+      }
+    }
+    
+    if (overSections.length > 0) {
+      h += `<div class="tbv-cr-chapter">📖 第${ch.num}章 ${esc(ch.name)} <span class="tbv-cr-tag over">${overSections.length}节超纲</span></div>`;
+      for (const sec of overSections) {
+        h += `<div class="tbv-cr-section"><span class="tbv-cr-tag over">超纲</span> ${esc(sec.num)} ${esc(sec.name)}</div>`;
+      }
+      if (matchedSections.length > 0) {
+        h += `<div class="tbv-cr-section" style="color:var(--text-muted);font-size:11px">↳ 其中 ${matchedSections.length} 节已匹配</div>`;
+      }
+    } else {
+      h += `<div class="tbv-cr-chapter">📖 第${ch.num}章 ${esc(ch.name)} <span class="tbv-cr-tag match">全部匹配</span></div>`;
+      matchCount += ch.sections.length;
+    }
+  }
+  
+  if (overCount === 0) {
+    h = `<div class="tbv-cr-header">${esc(compareTarget.label)} → ${esc(comparePrimary.label)}</div>
+      <div class="tbv-cr-empty" style="padding:20px">✅ 全部 ${matchCount} 节内容均在主教材覆盖范围内，无超纲</div>`;
+  } else {
+    h += `<div class="tbv-cr-section" style="padding:10px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--text-muted);background:var(--hover-bg)">
+      共 ${overCount} 节超纲 · ${matchCount} 节已匹配
+    </div>`;
+  }
+  
+  results.innerHTML = h;
 }
 
 // ===== MODULE TABS =====
