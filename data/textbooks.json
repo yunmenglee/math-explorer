@@ -664,7 +664,7 @@
         ]
       }
     ],
-    "iconText": "九上",
+    "iconText": "北京",
     "iconBg": "#7c3aed"
   },
   {
@@ -810,7 +810,7 @@
         ]
       }
     ],
-    "iconText": "七上",
+    "iconText": "北京",
     "iconBg": "#0891b2"
   },
   {
@@ -934,7 +934,7 @@
         ]
       }
     ],
-    "iconText": "八下",
+    "iconText": "北京",
     "iconBg": "#dc2626"
   },
   {
@@ -1078,7 +1078,7 @@
         ]
       }
     ],
-    "iconText": "八上",
+    "iconText": "北京",
     "iconBg": "#ca8a04"
   }
 ]
