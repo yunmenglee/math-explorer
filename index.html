@@ -4,10 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>数学探索中心 · 知识宝典</title>
-<link rel="stylesheet" href="css/style.css?v=3">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
+<link rel="stylesheet" href="css/style.css?v=2">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#302b63">
 <meta name="description" content="小学数学、初中数学、中考数学知识点全收录 - 2835条知识">
@@ -64,6 +61,31 @@
   </div>
 </div>
 
+<!-- ===== TEXTBOOK VIEW ===== -->
+<div class="tbv" id="tbv" style="display:none">
+  <div class="tb">
+    <span class="bh" onclick="goHomeFromTB()">← 返回首页</span>
+    <div class="bh-group">
+      <span class="bh bh-sm" id="tbvTitle" style="font-weight:700;font-size:15px">📘 教材库</span>
+    </div>
+  </div>
+  <div class="tbv-body">
+    <div class="tbv-sidebar" id="tbvSidebar">
+      <div class="tbv-sb-header">📚 选择教材</div>
+      <div id="tbvBookList"></div>
+      <div class="tbv-sb-header tbv-ch-hdr" id="tbvChHdr" style="display:none">📖 章节</div>
+      <div id="tbvChapterList"></div>
+    </div>
+    <div class="tbv-content" id="tbvContent">
+      <div class="tbv-placeholder" id="tbvPlaceholder">
+        <div class="tbv-placeholder-icon">📚</div>
+        <div class="tbv-placeholder-text">请从左侧选择教材和章节</div>
+      </div>
+      <div id="tbvSections" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
 <div class="mmodal" id="mv"><span class="mclose" onclick="hideImg()">×</span></div>
 
 <!-- Auth overlay -->
@@ -94,6 +116,7 @@ let T = {};
 let C = {};
 let Q = [];
 let meta = {};
+let TB = [];
 let st = {m:'',c1:'',c2:'',tp:'all',q:'',ar:''};
 let isDataLoaded = false;
 let preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -101,13 +124,14 @@ let preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 // ===== DATA LOADING =====
 async function loadData() {
   try {
-    const [entries, summary, cats, regions, quotes, metadata] = await Promise.all([
+    const [entries, summary, cats, regions, quotes, metadata, textbooks] = await Promise.all([
       fetch('data/entries.json?v=2').then(r=>r.json()),
       fetch('data/summary.json?v=2').then(r=>r.json()),
       fetch('data/categories.json?v=2').then(r=>r.json()),
       fetch('data/regions.json?v=2').then(r=>r.json()),
       fetch('data/quotes.json?v=2').then(r=>r.json()),
       fetch('data/meta.json?v=2').then(r=>r.json()),
+      fetch('data/textbooks.json?v=2').then(r=>r.json()),
     ]);
     D = entries;
     S = summary;
@@ -115,6 +139,7 @@ async function loadData() {
     C = regions;
     Q = quotes;
     meta = metadata;
+    TB = textbooks || [];
     isDataLoaded = true;
     document.getElementById('loadingScreen').style.display = 'none';
     document.getElementById('hm').style.display = 'grid';
@@ -175,6 +200,16 @@ function restoreTheme() {
 function renderHome() {
   const el = document.getElementById('hm');
   let h = '';
+  h += `<div class="cd m4" onclick="enterTextbook()">
+    <div class="dv"></div>
+    <div class="top"><div class="ico">📚</div>
+    <div><div class="nm">教材库</div><div class="ct">苏科版·九年级上册</div></div></div>
+    <div class="desc">按教材目录组织章节，逐节学习知识内容</div>
+    <div class="cs">
+      <span class="tg">📘 苏科版九上</span>
+      <span class="tg">📋 5 章 · 22 节</span>
+      <span class="tg">🔄 更多版本陆续更新</span>
+    </div></div>`;
   for (const k of ['小学','初中','中考']) {
     const mk = {'小学':'小学','初中':'初中','中考':'中考数学'}[k];
     const s = S[mk] || {n:0, cs:{}};
@@ -218,9 +253,121 @@ function goHome() {
   document.getElementById('hm').style.display = 'grid';
   document.getElementById('qs').style.display = 'block';
   document.getElementById('br').classList.remove('sh');
+  document.getElementById('tbv').style.display = 'none';
   document.getElementById('extraPanels').innerHTML = '';
   renderHome();
   renderQuote();
+}
+
+// ===== TEXTBOOK VIEW =====
+let currentTB = null;
+let currentChapter = null;
+
+function enterTextbook() {
+  if (!requireAuth()) return;
+  document.getElementById('hm').style.display = 'none';
+  document.getElementById('qs').style.display = 'none';
+  document.getElementById('br').classList.remove('sh');
+  document.getElementById('tbv').style.display = 'block';
+  renderTextbookView();
+}
+
+function goHomeFromTB() {
+  currentTB = null;
+  currentChapter = null;
+  goHome();
+}
+
+function renderTextbookView() {
+  const bookList = document.getElementById('tbvBookList');
+  const chList = document.getElementById('tbvChapterList');
+  const placeholder = document.getElementById('tbvPlaceholder');
+  const sections = document.getElementById('tbvSections');
+  const chHdr = document.getElementById('tbvChHdr');
+  
+  placeholder.style.display = 'block';
+  sections.style.display = 'none';
+  chHdr.style.display = 'none';
+  
+  let h = '';
+  for (const book of TB) {
+    const active = currentTB && currentTB.id === book.id ? 'on' : '';
+    const totalSec = book.chapters.reduce((s, ch) => s + ch.sections.length, 0);
+    h += `<div class="tbv-book-item ${active}" onclick="selectTextbook('${escQ(book.id)}')">
+      <span class="tbv-book-icon">${book.icon||'📘'}</span>
+      <div class="tbv-book-info">
+        <div class="tbv-book-name">${esc(book.label)}</div>
+        <div class="tbv-book-meta">${book.chapters.length} 章 · ${totalSec} 节</div>
+      </div>
+    </div>`;
+  }
+  bookList.innerHTML = h;
+  
+  if (currentTB) {
+    chHdr.style.display = 'block';
+    renderChapterList();
+  }
+}
+
+function selectTextbook(id) {
+  const book = TB.find(b => b.id === id);
+  if (!book) return;
+  currentTB = book;
+  currentChapter = null;
+  renderTextbookView();
+  if (book.chapters.length > 0) {
+    selectChapter(0);
+  }
+}
+
+function renderChapterList() {
+  const chList = document.getElementById('tbvChapterList');
+  if (!currentTB) { chList.innerHTML = ''; return; }
+  let h = '';
+  for (let i = 0; i < currentTB.chapters.length; i++) {
+    const ch = currentTB.chapters[i];
+    const active = currentChapter && currentChapter.num === ch.num ? 'on' : '';
+    h += `<div class="tbv-chapter-item ${active}" onclick="selectChapter(${i})">
+      <span class="tbv-ch-num">第${ch.num}章</span>
+      <span class="tbv-ch-name">${esc(ch.name)}</span>
+      <span class="tbv-ch-cnt">${ch.sections.length} 节</span>
+    </div>`;
+  }
+  chList.innerHTML = h;
+}
+
+function selectChapter(idx) {
+  if (!currentTB || idx < 0 || idx >= currentTB.chapters.length) return;
+  currentChapter = currentTB.chapters[idx];
+  renderChapterList();
+  renderSections();
+}
+
+function renderSections() {
+  const placeholder = document.getElementById('tbvPlaceholder');
+  const sections = document.getElementById('tbvSections');
+  
+  if (!currentChapter) {
+    placeholder.style.display = 'block';
+    sections.style.display = 'none';
+    return;
+  }
+  
+  placeholder.style.display = 'none';
+  sections.style.display = 'block';
+  
+  document.getElementById('tbvTitle').textContent = `${currentTB.icon||'📘'} ${currentTB.label} · 第${currentChapter.num}章 ${currentChapter.name}`;
+  
+  let h = `<div class="tbv-chapter-title">📖 第${currentChapter.num}章 ${esc(currentChapter.name)}</div>`;
+  h += '<div class="tbv-section-grid">';
+  for (const sec of currentChapter.sections) {
+    h += `<div class="tbv-section-card">
+      <div class="tbv-sec-num">${esc(sec.num)}</div>
+      <div class="tbv-sec-name">${esc(sec.name)}</div>
+    </div>`;
+  }
+  h += '</div>';
+  sections.innerHTML = h;
 }
 
 // ===== MODULE TABS =====
@@ -412,7 +559,7 @@ function renderResults() {
       ${headerHtml}
       <h3>${highlight(esc(e.t), st.q)}</h3>
       ${desc ? '<div class="de">'+desc+'</div>' : ''}
-      ${e.imt ? '<img class="im" src="data:image/png;base64,'+e.imt+'" alt="图示" onclick="showImg(\''+e.imt+'\')">' : (e.img ? e.img.split(',').map(f => '<img class="im" src="images/'+f.trim()+'" alt="图示" onclick="showImgFile(\'images/'+f.trim()+'\')">').join('') : '')}
+      ${e.imt ? '<img class="im" src="data:image/png;base64,'+e.imt+'" onclick="showImg(\''+e.img+'\')" title="点击查看大图">' : (e.img && e.img.startsWith('image') ? '<img class="im" src="images/'+e.img+'" onclick="showImgFile(this.src)" title="点击查看大图">' : '')}
       ${extra ? '<div class="ex">'+extra+'</div>' : ''}
       ${ah}
       <div class="actions">${favBtn}${learnBtn}</div>
