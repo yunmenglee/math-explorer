@@ -368,9 +368,9 @@ function renderGroupedBookList(callback) {
     h += `<div class="tbv-pub-group">`;
     for (const book of groups[pub]) {
       const bg = book.iconBg || '#6366f1';
-      h += `<div class="tbv-picker-card" onclick="${callback}('${escQ(book.id)}')">
-        <div class="tbv-pc-icon" style="background:${bg}">${book.iconText||'📘'}</div>
-        <div class="tbv-pc-name">${esc(book.grade)}</div>
+      h += `<div class="tbv-picker-row" onclick="${callback}('${escQ(book.id)}')">
+        <span class="tbv-pc-icon" style="background:${bg}">${book.iconText||'📘'}</span>
+        <span class="tbv-pc-name">${esc(book.grade)}</span>
       </div>`;
     }
     h += `</div>`;
