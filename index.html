@@ -180,7 +180,7 @@ async function loadData() {
       fetch('data/regions.json').then(r=>r.json()),
       fetch('data/quotes.json').then(r=>r.json()),
       fetch('data/meta.json').then(r=>r.json()),
-      fetch('data/textbooks.json?v=4').then(r=>r.json()),
+      fetch('data/textbooks.json?v=5').then(r=>r.json()),
     ]);
     D = entries;
     S = summary;
@@ -367,9 +367,9 @@ function renderGroupedBookList(callback) {
     const col = pubColors[pub] || '#6366f1';
     // Publisher section header (collapsible)
     h += `<div class="tbv-pub-header" onclick="togglePubGroup(this)" style="cursor:pointer;padding:8px 12px;margin-top:6px;border-radius:8px;background:${col}15;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:${col}">
-      <span style="font-size:10px">▼</span> ${pub} <span style="font-size:10px;opacity:.6">${groups[pub].length}本</span>
+      <span style="font-size:10px">▶</span> ${pub} <span style="font-size:10px;opacity:.6">${groups[pub].length}本</span>
     </div>`;
-    h += `<div class="tbv-pub-group">`;
+    h += `<div class="tbv-pub-group" style="display:none">`;
     for (const book of groups[pub]) {
       const bg = book.iconBg || '#6366f1';
       h += `<div class="tbv-picker-row" onclick="${callback}('${escQ(book.id)}')">
