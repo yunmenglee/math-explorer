@@ -581,11 +581,11 @@ function pickLearnedTarget() {
 
 function refreshLearnedPicker() {
   const grid = document.getElementById('tbvPickerGrid');
-  let h = '<div style="grid-column:1/-1;text-align:right;font-size:11px;color:var(--text-muted);padding:4px 0">选完后点击背景或 ✕ 关闭</div>';
+  let h = '<div style="grid-column:1/-1;text-align:right;font-size:11px;color:var(--text-muted);padding:4px 0">选完后点击背景关闭</div>';
   for (const book of TB) {
     if (learnedTargets.some(t => t.id === book.id)) continue;
     const bg = book.iconBg || '#6366f1';
-    h += `<div class="tbv-picker-card" onclick="pickLearnedTargetBook('${escQ(book.id)}')">
+    h += `<div class="tbv-picker-card" onclick="event.stopPropagation();pickLearnedTargetBook('${escQ(book.id)}')">
       <div class="tbv-pc-icon" style="background:${bg}">${book.iconText||'📘'}</div>
       <div class="tbv-pc-name">${esc(book.label)}</div>
     </div>`;
@@ -596,10 +596,16 @@ function refreshLearnedPicker() {
 function pickLearnedTargetBook(id) {
   const book = TB.find(b => b.id === id);
   if (!book) return;
-  // Don't close picker - allow continuous selection
   learnedTargets.push(book);
   renderLearnedTags();
-  refreshLearnedPicker();
+  // Just hide the selected card instead of full refresh
+  const cards = document.querySelectorAll('#tbvPickerGrid .tbv-picker-card');
+  for (const card of cards) {
+    if (card.getAttribute('onclick') && card.getAttribute('onclick').includes(id)) {
+      card.style.display = 'none';
+      break;
+    }
+  }
   if (learnedPrimary && learnedTargets.length > 0) runLearnedCheck();
 }
 
