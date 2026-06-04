@@ -347,12 +347,16 @@ function showBookPicker() {
 }
 
 function renderGroupedBookList(callback) {
-  // Group books by publisher
   const groups = {};
+  const gradeOrder = {'六年级上册':1,'六年级下册':2,'七年级上册':3,'七年级下册':4,'八年级上册':5,'八年级下册':6,'九年级上册':7,'九年级下册':8};
   for (const book of TB) {
     const pub = book.publisher;
     if (!groups[pub]) groups[pub] = [];
     groups[pub].push(book);
+  }
+  // Sort books within each publisher by grade
+  for (const pub in groups) {
+    groups[pub].sort((a, b) => (gradeOrder[a.grade]||99) - (gradeOrder[b.grade]||99));
   }
   const pubOrder = ['苏科版','冀教版','人教版','北师大版','北京版','沪教版五四制'];
   
