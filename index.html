@@ -542,7 +542,7 @@ function runOverComparison() {
     for (const sec of ch.sections) learnedSects.add(sec.name);
   }
   
-  const gradeOrder = {'七年级上册':1,'七年级下册':2,'八年级上册':3,'八年级下册':4,'九年级上册':5,'九年级下册':6};
+  const gradeOrder = {'六年级上册':1,'六年级下册':2,'七年级上册':3,'七年级下册':4,'八年级上册':5,'八年级下册':6,'九年级上册':7,'九年级下册':8};
   const pGrade = gradeOrder[comparePrimary.grade] || 3;
   for (const book of TB) {
     if (book.publisher === comparePrimary.publisher && book.id !== comparePrimary.id) {
@@ -692,7 +692,7 @@ function runLearnedCheck() {
   }
   
   // Also include same-publisher lower grades
-  const gradeOrder = {'七年级上册':1,'七年级下册':2,'八年级上册':3,'八年级下册':4,'九年级上册':5,'九年级下册':6};
+  const gradeOrder = {'六年级上册':1,'六年级下册':2,'七年级上册':3,'七年级下册':4,'八年级上册':5,'八年级下册':6,'九年级上册':7,'九年级下册':8};
   const pGrade = gradeOrder[learnedPrimary.grade] || 3;
   for (const book of TB) {
     if (book.publisher === learnedPrimary.publisher && book.id !== learnedPrimary.id) {
