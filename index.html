@@ -251,11 +251,11 @@ function renderHome() {
   h += `<div class="cd m4" onclick="enterTextbook()">
     <div class="dv"></div>
     <div class="top"><div class="ico">📚</div>
-    <div><div class="nm">教材库</div><div class="ct">8 本教材 · 共 39 章</div></div></div>
+    <div><div class="nm">教材库</div><div class="ct">${TB.length} 本教材 · 共 ${TB.reduce((s,b)=>s+b.chapters.length,0)} 章</div></div></div>
     <div class="desc">按教材目录组织章节，逐节学习知识内容</div>
     <div class="cs">
-      <span class="tg">📘 8 套教材已收录</span>
-      <span class="tg">📋 39 章 · 188 节</span>
+      <span class="tg">📘 ${TB.length} 套教材已收录</span>
+      <span class="tg">📋 ${TB.reduce((s,b)=>s+b.chapters.length,0)} 章 · ${TB.reduce((s,b)=>s+b.chapters.reduce((s2,c)=>s2+c.sections.length,0),0)} 节</span>
       <span class="tg">🔄 持续更新中</span>
     </div></div>`;
   for (const k of ['小学','初中','中考']) {
