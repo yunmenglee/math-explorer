@@ -341,16 +341,53 @@ function goHomeFromTB() {
 // === Book picker modal ===
 function showBookPicker() {
   const grid = document.getElementById('tbvPickerGrid');
-  let h = '';
-  for (const book of TB) {
-    const bg = book.iconBg || '#6366f1';
-    h += `<div class="tbv-picker-card" onclick="pickTextbook('${escQ(book.id)}')">
-      <div class="tbv-pc-icon" style="background:${bg}">${book.iconText||'📘'}</div>
-      <div class="tbv-pc-name">${esc(book.label)}</div>
-    </div>`;
-  }
+  let h = renderGroupedBookList('pickTextbook');
   grid.innerHTML = h;
   document.getElementById('tbvPicker').style.display = 'flex';
+}
+
+function renderGroupedBookList(callback) {
+  // Group books by publisher
+  const groups = {};
+  for (const book of TB) {
+    const pub = book.publisher;
+    if (!groups[pub]) groups[pub] = [];
+    groups[pub].push(book);
+  }
+  const pubOrder = ['苏科版','冀教版','人教版','北师大版','北京版','沪教版五四制'];
+  
+  let h = '';
+  for (const pub of pubOrder) {
+    if (!groups[pub] || groups[pub].length === 0) continue;
+    const pubColors = {'苏科版':'#0ea5e9','冀教版':'#e11d48','人教版':'#16a34a','北师大版':'#d97706','北京版':'#7c3aed','沪教版五四制':'#d97706'};
+    const col = pubColors[pub] || '#6366f1';
+    // Publisher section header (collapsible)
+    h += `<div class="tbv-pub-header" onclick="togglePubGroup(this)" style="cursor:pointer;padding:8px 12px;margin-top:6px;border-radius:8px;background:${col}15;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:${col}">
+      <span style="font-size:10px">▼</span> ${pub} <span style="font-size:10px;opacity:.6">${groups[pub].length}本</span>
+    </div>`;
+    h += `<div class="tbv-pub-group">`;
+    for (const book of groups[pub]) {
+      const bg = book.iconBg || '#6366f1';
+      h += `<div class="tbv-picker-card" onclick="${callback}('${escQ(book.id)}')">
+        <div class="tbv-pc-icon" style="background:${bg}">${book.iconText||'📘'}</div>
+        <div class="tbv-pc-name">${esc(book.grade)}</div>
+      </div>`;
+    }
+    h += `</div>`;
+  }
+  return h;
+}
+
+function togglePubGroup(el) {
+  const group = el.nextElementSibling;
+  const arrow = el.querySelector('span:first-child');
+  if (group.style.display === 'none') {
+    group.style.display = 'grid';
+    arrow.textContent = '▼';
+  } else {
+    group.style.display = 'none';
+    arrow.textContent = '▶';
+  }
 }
 
 function hideBookPicker(e) {
