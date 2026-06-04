@@ -310,11 +310,6 @@ function goHome() {
 // ===== TEXTBOOK VIEW =====
 let currentTB = null;
 let currentChapter = null;
-let comparePrimary = null;
-let compareTarget = null;
-let compareMode = 'primary'; // 'primary' or 'target'
-let compareOpen = false;
-
 function enterTextbook() {
   if (!requireAuth()) return;
   document.getElementById('hm').style.display = 'none';
