@@ -1134,15 +1134,18 @@ function toggleGraph() {
   graphActive = !graphActive;
   const cards = document.querySelector('.ct');
   const graphContainer = document.getElementById('graphContainer');
-  if (!graphContainer) return;
+  const results = document.getElementById('rs');
+  if (!graphContainer || !cards) return;
 
   if (graphActive) {
-    cards.style.display = 'none';
+    // Move graph into the content area and show it
+    cards.appendChild(graphContainer);
+    results.style.display = 'none';
     graphContainer.style.display = 'block';
     if (!graphBuilt) setTimeout(buildGraph, 100);
     document.querySelector('[onclick*="toggleGraph"]').textContent = '📇 卡片';
   } else {
-    cards.style.display = '';
+    results.style.display = '';
     graphContainer.style.display = 'none';
     document.querySelector('[onclick*="toggleGraph"]').textContent = '📊 图谱';
   }
@@ -1285,7 +1288,7 @@ function buildGraph() {
     graphActive = false;
     document.getElementById('graphContainer').style.display = 'none';
     document.querySelector('[onclick*="toggleGraph"]').textContent = '📊 图谱';
-    document.querySelector('.ct').style.display = '';
+    document.getElementById('rs').style.display = '';
 
     st.m = mod; st.c1 = c1; st.c2 = c2; st.tp = 'all'; st.q = ''; st.ar = '';
     document.getElementById('sq').value = '';
