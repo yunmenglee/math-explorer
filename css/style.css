@@ -347,6 +347,7 @@ mark{background:var(--mark-bg);padding:1px 4px;border-radius:4px;font-weight:500
   box-shadow: var(--card-shadow);
   overflow: hidden;
   margin-top: 16px;
+  position: relative;
 }
 .graph-toolbar {
   display: flex; align-items: center; gap: 12px;
