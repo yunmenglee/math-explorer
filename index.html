@@ -1132,16 +1132,17 @@ let graphBuilt = false;
 
 function toggleGraph() {
   graphActive = !graphActive;
-  const cards = document.querySelector('.ct');
-  const graphContainer = document.getElementById('graphContainer');
   const results = document.getElementById('rs');
-  if (!graphContainer || !cards) return;
+  const graphContainer = document.getElementById('graphContainer');
+  if (!results) return;
 
   if (graphActive) {
-    // Move graph into the content area and show it
-    cards.appendChild(graphContainer);
-    results.style.display = 'none';
+    // Show graph in the results area
     graphContainer.style.display = 'block';
+    // Insert graph right after the "loading" bar but in the results spot
+    const parent = results.parentNode;
+    parent.insertBefore(graphContainer, results);
+    results.style.display = 'none';
     if (!graphBuilt) setTimeout(buildGraph, 100);
     document.querySelector('[onclick*="toggleGraph"]').textContent = '📇 卡片';
   } else {
