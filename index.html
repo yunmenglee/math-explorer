@@ -11,6 +11,8 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 </head>
+<!-- D3.js for interactive knowledge graph -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
 <body>
 <div class="header">
   <div class="dec"><span></span><span></span><span></span><span></span><span></span><span></span></div>
@@ -42,7 +44,7 @@
       <span class="bh bh-sm" onclick="randomKnowledge()" title="随机知识点">🎲 随机</span>
       <span class="bh bh-sm" onclick="showFavorites()" title="收藏夹">⭐ 收藏</span>
       <span class="bh bh-sm" onclick="showLearningProgress()" title="学习进度">📖 进度</span>
-      <span class="bh bh-sm" onclick="showGraph()" title="知识图谱">📊 图谱</span>
+      <span class="bh bh-sm" onclick="toggleGraph()" title="知识图谱">📊 图谱</span>
     </div>
   </div>
   <div class="mt" id="mt"></div>
@@ -135,6 +137,16 @@
     <div class="tbv-picker-header">📚 选择教材版本 <span class="tbv-picker-close" onclick="hideBookPicker()">✕</span></div>
     <div class="tbv-picker-grid" id="tbvPickerGrid"></div>
   </div>
+</div>
+
+<!-- ===== KNOWLEDGE GRAPH CONTAINER ===== -->
+<div id="graphContainer" class="graph-container" style="display:none">
+  <div class="graph-toolbar">
+    <span class="graph-title">📊 知识图谱</span>
+    <div class="graph-legend" id="graphLegend"></div>
+    <span class="graph-hint">拖拽节点 · 滚轮缩放 · 悬停查看 · 点击筛选</span>
+  </div>
+  <div id="graphSvg" class="graph-svg"></div>
 </div>
 
 <div class="mmodal" id="mv"><span class="mclose" onclick="hideImg()">×</span></div>
@@ -1114,134 +1126,176 @@ function randomKnowledge() {
 }
 
 // ===== KNOWLEDGE GRAPH =====
-function showGraph() {
-  const panel = document.getElementById('extraPanels');
-  let h = `<div class="graph-panel">
-    <h4>📊 知识图谱 — 知识点关联图</h4>
-    <canvas id="graphCanvas" class="graph-canvas"></canvas>
-    <div style="margin-top:8px;font-size:12px;color:var(--text-muted);text-align:center">
-      知识点按模块分类，连线表示同属一个分类
-    </div>
-  </div>`;
-  panel.innerHTML = h;
+// ===== KNOWLEDGE GRAPH (D3.js) =====
+let graphActive = false;
+let graphBuilt = false;
 
-  setTimeout(() => renderGraph(), 100);
+function toggleGraph() {
+  graphActive = !graphActive;
+  const cards = document.querySelector('.ct');
+  const graphContainer = document.getElementById('graphContainer');
+  if (!graphContainer) return;
+
+  if (graphActive) {
+    cards.style.display = 'none';
+    graphContainer.style.display = 'block';
+    if (!graphBuilt) setTimeout(buildGraph, 100);
+    document.querySelector('[onclick*="toggleGraph"]').textContent = '📇 卡片';
+  } else {
+    cards.style.display = '';
+    graphContainer.style.display = 'none';
+    document.querySelector('[onclick*="toggleGraph"]').textContent = '📊 图谱';
+  }
 }
 
-function renderGraph() {
-  const canvas = document.getElementById('graphCanvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const rect = canvas.parentElement.getBoundingClientRect();
-  canvas.width = canvas.parentElement.clientWidth || 800;
-  canvas.height = 400;
+function buildGraph() {
+  if (!D || !D.length || typeof d3 === 'undefined') return;
 
-  // Build graph: modules as center nodes, categories as surrounding nodes
-  const modules = ['小学','初中','中考数学'];
-  const colors = ['#f97316','#22c55e','#a855f7'];
-  const centerX = canvas.width / 2;
-  const centerY = 200;
-  
-  // Module positions (bottom row)
-  const mPos = {};
-  const mCount = modules.length;
-  modules.forEach((m,i) => {
-    mPos[m] = {
-      x: centerX + (i-1) * 200,
-      y: 340
-    };
+  // Build tree: module → c1 → c2
+  const treeData = { name: '数学探索中心', children: [] };
+  const moduleMap = {};
+
+  for (const e of D) {
+    const m = e.m || '其他', c1 = e.c1 || '未分类', c2 = e.c2 || '';
+    if (!moduleMap[m]) moduleMap[m] = { name: m, children: [], _count: 0 };
+    moduleMap[m]._count++;
+    let n1 = moduleMap[m].children.find(c => c.name === c1);
+    if (!n1) { n1 = { name: c1, children: [], _count: 0 }; moduleMap[m].children.push(n1); }
+    n1._count++;
+    if (c2) {
+      let n2 = n1.children.find(s => s.name === c2);
+      if (!n2) { n2 = { name: c2, children: [], _count: 0 }; n1.children.push(n2); }
+      n2._count++;
+    }
+  }
+
+  for (const mod of Object.values(moduleMap)) {
+    for (const c1 of mod.children) {
+      c1.children.sort((a, b) => b._count - a._count);
+      if (c1.children.length > 8) c1.children = c1.children.slice(0, 8);
+    }
+    mod.children.sort((a, b) => b._count - a._count);
+  }
+  treeData.children = Object.values(moduleMap).sort((a, b) => b._count - a._count);
+
+  const modColors = { '小学': '#f97316', '初中': '#22c55e', '中考数学': '#a855f7', '其他': '#64748b' };
+  const modLabels = { '小学': '🎒 小学', '初中': '📐 初中', '中考数学': '🎯 中考', '其他': '其他' };
+
+  const container = document.getElementById('graphSvg');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const W = container.clientWidth || 800;
+  const H = Math.max(500, window.innerHeight * 0.65);
+
+  const legendEl = document.getElementById('graphLegend');
+  if (legendEl) {
+    legendEl.innerHTML = Object.entries(modColors).map(([k, v]) =>
+      `<span class="gl-item" style="background:${v}22;color:${v}">${modLabels[k] || k}</span>`
+    ).join('');
+  }
+
+  const svg = d3.select(container).append('svg').attr('width', W).attr('height', H).attr('viewBox', [0, 0, W, H]);
+  const tooltip = d3.select(container.parentElement).append('div').attr('class', 'graph-tooltip');
+  const root = d3.hierarchy(treeData);
+  const nodes = root.descendants(), links = root.links();
+
+  function nodeId(d) { return d.ancestors().reverse().slice(1).map(n => n.data.name).join('/'); }
+
+  const showNodes = nodes.filter(n => n.depth === 0 || n.depth === 1 || n.depth === 2 ||
+    (n.depth === 3 && n.parent && n.parent.children.indexOf(n) < 4));
+  const ns = new Set(showNodes.map(n => nodeId(n)));
+  const showLinks = links.filter(l => ns.has(nodeId(l.source)) && ns.has(nodeId(l.target)));
+
+  function nc(d) {
+    if (d.depth === 0) return '#6366f1';
+    if (d.depth === 1) return modColors[d.data.name] || '#64748b';
+    return modColors[d.depth === 2 ? d.parent.data.name : d.parent.parent.data.name] || '#64748b';
+  }
+  function nl(d) {
+    if (d.depth === 0) return '🧮 数学探索中心';
+    if (d.depth === 1) return modLabels[d.data.name] || d.data.name;
+    return d.data.name;
+  }
+  function sz(d) {
+    const base = { 0: 32, 1: 26, 2: 18, 3: 10 };
+    const extra = d.depth >= 2 ? Math.min((d.data._count || 1) / 15, 10) : 0;
+    return (base[d.depth] || 8) + extra;
+  }
+
+  const g = svg.append('g');
+  const zoom = d3.zoom().scaleExtent([0.3, 4]).on('zoom', e => g.attr('transform', e.transform));
+  svg.call(zoom);
+
+  g.selectAll('.link').data(showLinks).join('line').attr('class', 'link');
+  const ng = g.selectAll('.node').data(showNodes).join('g').attr('class', 'node');
+
+  ng.append('text').attr('text-anchor', 'middle').attr('dy', d => d.depth >= 2 ? 4 : 5)
+    .style('font-size', d => d.depth === 0 ? 14 : d.depth === 1 ? 13 : 11)
+    .style('fill', '#f1f5f9').style('stroke', 'none').text(d => nl(d));
+
+  ng.append('text').attr('text-anchor', 'middle').attr('dy', d => d.depth >= 2 ? 4 : 5)
+    .style('font-size', d => d.depth === 0 ? 14 : d.depth === 1 ? 13 : 11)
+    .style('font-weight', d => d.depth <= 1 ? 700 : 500)
+    .style('fill', d => d.depth === 0 ? '#4338ca' : '#1e293b').text(d => nl(d));
+
+  ng.append('circle').attr('r', d => sz(d))
+    .style('fill', d => { const c = nc(d); return d.depth <= 1 ? c : c + '30'; })
+    .style('stroke', d => nc(d));
+
+  ng.filter(d => d.depth >= 2).append('text').attr('text-anchor', 'middle')
+    .attr('dy', d => sz(d) + 14).style('font-size', '10px').style('fill', '#94a3b8')
+    .text(d => `${d.data._count} 条`);
+
+  const sim = d3.forceSimulation(showNodes)
+    .force('link', d3.forceLink(showLinks).id(d => nodeId(d))
+      .distance(d => d.source.depth === 0 ? 80 : d.source.depth === 1 ? 100 : 60))
+    .force('charge', d3.forceManyBody().strength(d => d.depth === 0 ? -500 : d.depth === 1 ? -300 : d.depth === 2 ? -150 : -40))
+    .force('center', d3.forceCenter(W / 2, H / 2))
+    .force('collision', d3.forceCollide().radius(d => sz(d) + 20))
+    .alphaDecay(0.02)
+    .on('tick', () => {
+      ng.attr('transform', d => `translate(${d.x},${d.y})`);
+      g.selectAll('.link').attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+        .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+    });
+
+  ng.call(d3.drag()
+    .on('start', (e, d) => { if (!e.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+    .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y; })
+    .on('end', (e, d) => { if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; })
+  );
+
+  ng.on('mouseenter', (e, d) => {
+    tooltip.style('background', nc(d))
+      .html(`<strong>${nl(d)}</strong><br><span style="opacity:.8">${d.data._count || D.length} 条</span>`)
+      .classed('visible', true);
+  }).on('mousemove', e => {
+    const r = container.getBoundingClientRect();
+    tooltip.style('left', (e.clientX - r.left + 14) + 'px').style('top', (e.clientY - r.top - 10) + 'px');
+  }).on('mouseleave', () => tooltip.classed('visible', false));
+
+  ng.on('click', (e, d) => {
+    if (d.depth < 2) return;
+    const p = d.parent; if (!p) return;
+    const mod = d.depth === 2 ? p.data.name : p.parent.data.name;
+    const c1 = d.depth === 2 ? d.data.name : p.data.name;
+    const c2 = d.depth === 3 ? d.data.name : '';
+
+    graphActive = false;
+    document.getElementById('graphContainer').style.display = 'none';
+    document.querySelector('[onclick*="toggleGraph"]').textContent = '📊 图谱';
+    document.querySelector('.ct').style.display = '';
+
+    st.m = mod; st.c1 = c1; st.c2 = c2; st.tp = 'all'; st.q = ''; st.ar = '';
+    document.getElementById('sq').value = '';
+    if (typeof renderModuleTabs === 'function') renderModuleTabs();
+    if (typeof renderSidebar === 'function') renderSidebar();
+    if (typeof renderResults === 'function') renderResults();
   });
 
-  // Get top categories
-  const allCats = [];
-  const used = new Set();
-  for (const m of modules) {
-    const c1s = Object.keys(T[m]||{});
-    for (const c1 of c1s) {
-      if (!used.has(c1)) {
-        allCats.push({name: c1, module: m, count: S[m]?.cs?.[c1] || 0});
-        used.add(c1);
-      }
-    }
-  }
-  // Pick top categories by count
-  allCats.sort((a,b) => b.count - a.count);
-  const topCats = allCats.slice(0, 24);
-
-  // Category positions (radial around top)
-  const angleStep = (Math.PI * 2) / topCats.length;
-  const radius = Math.min(canvas.width, canvas.height) * 0.32;
-
-  // Draw edges first
-  ctx.strokeStyle = 'rgba(99,102,241,0.08)';
-  ctx.lineWidth = 1;
-  for (let i=0; i<topCats.length; i++) {
-    const cat = topCats[i];
-    const angle = angleStep * i - Math.PI/2;
-    const cx = centerX + Math.cos(angle) * radius;
-    const cy = centerY + Math.sin(angle) * radius - 40;
-    
-    // Connect to its module
-    const mp = mPos[cat.module];
-    if (mp) {
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(mp.x, mp.y);
-      ctx.stroke();
-    }
-  }
-
-  // Draw category nodes
-  for (let i=0; i<topCats.length; i++) {
-    const cat = topCats[i];
-    const angle = angleStep * i - Math.PI/2;
-    const cx = centerX + Math.cos(angle) * radius;
-    const cy = centerY + Math.sin(angle) * radius - 40;
-    
-    const size = Math.max(8, Math.min(20, cat.count / 8));
-    const mIdx = modules.indexOf(cat.module);
-    const col = colors[mIdx] || '#6366f1';
-    
-    ctx.beginPath();
-    ctx.arc(cx, cy, size, 0, Math.PI*2);
-    ctx.fillStyle = col + '33';
-    ctx.fill();
-    ctx.strokeStyle = col;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // Label
-    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text').trim() || '#1e293b';
-    ctx.font = '11px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(cat.name.length > 6 ? cat.name.slice(0,5)+'..' : cat.name, cx, cy + size + 14);
-  }
-
-  // Draw module nodes (bottom)
-  for (const m of modules) {
-    const p = mPos[m];
-    const mIdx = modules.indexOf(m);
-    const col = colors[mIdx];
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, 28, 0, Math.PI*2);
-    ctx.fillStyle = col;
-    ctx.fill();
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 12px sans-serif';
-    ctx.textAlign = 'center';
-    const label = {'小学':'小学','初中':'初中','中考数学':'中考'}[m];
-    ctx.fillText(label, p.x, p.y + 4);
-  }
-
-  // Center label
-  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim() || '#94a3b8';
-  ctx.font = '13px sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('知识点关联图 · ' + D.length + ' 条知识', centerX, 20);
+  svg.call(zoom.transform, d3.zoomIdentity);
+  graphBuilt = true;
 }
 
 // ===== UTILITY =====
@@ -1376,12 +1430,6 @@ function highlight(s, q) {
   } catch(e) { return s; }
 }
 const ND = {'小学':'小学','初中':'初中','中考数学':'中考'};
-
-// Handle window resize for graph
-window.addEventListener('resize', () => {
-  const canvas = document.getElementById('graphCanvas');
-  if (canvas) renderGraph();
-});
 
 // ===== START =====
 loadData();

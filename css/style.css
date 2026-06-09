@@ -339,10 +339,48 @@ mark{background:var(--mark-bg);padding:1px 4px;border-radius:4px;font-weight:500
 .toolbar-btn{padding:8px 18px;border-radius:12px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;border:1px solid var(--border);background:var(--card-bg);color:var(--text-secondary);display:flex;align-items:center;gap:6px}
 .toolbar-btn:hover{background:var(--accent-bg);color:var(--accent);border-color:var(--accent-light)}
 
-/* ===== KNOWLEDGE GRAPH ===== */
-.graph-panel{background:var(--card-bg);border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid var(--border)}
-.graph-panel h4{font-size:15px;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
-.graph-canvas{width:100%;height:400px;border-radius:12px;background:var(--chart-bg);border:1px solid var(--border);cursor:grab}
+/* ===== KNOWLEDGE GRAPH (D3.js) ===== */
+.graph-container {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  margin-top: 16px;
+}
+.graph-toolbar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.graph-title { font-size: 15px; font-weight: 700; color: var(--text); }
+.graph-legend { display: flex; gap: 10px; font-size: 11px; }
+.graph-legend .gl-item {
+  display: flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 4px; font-weight: 500;
+}
+.graph-hint { font-size: 11px; color: var(--text-muted); margin-left: auto; }
+.graph-svg { width: 100%; min-height: 500px; position: relative; }
+.graph-svg svg { display: block; width: 100%; min-height: 500px; }
+.graph-svg .node circle { stroke-width: 2px; cursor: pointer; }
+.graph-svg .node:hover circle { stroke-width: 3px; }
+.graph-svg .node text {
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 11px; pointer-events: none; user-select: none;
+}
+.graph-svg .link {
+  fill: none; stroke: #cbd5e1; stroke-width: 1.5px; stroke-opacity: 0.5;
+}
+.graph-tooltip {
+  position: absolute; padding: 8px 12px;
+  background: #1e293b; color: white;
+  border-radius: 8px; font-size: 12px; line-height: 1.4;
+  pointer-events: none; opacity: 0; transition: opacity 0.15s;
+  z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  white-space: nowrap;
+}
+.graph-tooltip.visible { opacity: 1; }
 
 /* ===== LOADING ===== */
 .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;color:var(--text-muted)}
