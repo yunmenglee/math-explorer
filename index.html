@@ -134,7 +134,7 @@
 <!-- Textbook picker modal -->
 <div class="tbv-picker-overlay" id="tbvPicker" style="display:none" onclick="hideBookPicker(event)">
   <div class="tbv-picker-modal" onclick="event.stopPropagation()">
-    <div class="tbv-picker-header">📚 选择教材版本 <span class="tbv-picker-close" onclick="hideBookPicker()">✕</span></div>
+    <div class="tbv-picker-header" id="tbvPickerHeader">📚 选择教材版本 <span class="tbv-picker-close" onclick="hideBookPicker()">✕</span></div>
     <div class="tbv-picker-grid" id="tbvPickerGrid"></div>
   </div>
 </div>
@@ -331,44 +331,10 @@ function toggleTbFav(id) {
   if (idx >= 0) favs.splice(idx, 1); else favs.push(id);
   localStorage.setItem(FAV_TB_KEY, JSON.stringify(favs));
   if (document.getElementById('tbvPicker').style.display === 'flex') {
-    document.getElementById('tbvPickerGrid').innerHTML = renderGroupedBookList('pickTextbook');
+    document.getElementById('tbvPickerGrid').innerHTML = ''; renderPublishers();
   }
 }
-// Patch renderGroupedBookList for favorites
-const _origRenderGrouped = renderGroupedBookList;
-renderGroupedBookList = function(callback) {
-  const groups = {};
-  const gradeOrder = {'六年级上册':1,'六年级下册':2,'七年级上册':3,'七年级下册':4,'八年级上册':5,'八年级下册':6,'九年级上册':7,'九年级下册':8};
-  const favs = getTbFavs();
-  const favBooks = [], normalBooks = [];
-  for (const book of TB) { (favs.includes(book.id) ? favBooks : normalBooks).push(book); }
-  favBooks.sort((a,b) => (gradeOrder[a.grade]||99) - (gradeOrder[b.grade]||99));
-  normalBooks.sort((a,b) => (gradeOrder[a.grade]||99) - (gradeOrder[b.grade]||99));
-  for (const book of [...favBooks, ...normalBooks]) {
-    if (!groups[book.publisher]) groups[book.publisher] = [];
-    groups[book.publisher].push(book);
-  }
-  const pubOrder = ['苏科版','冀教版','人教版','北师大版','北京版','沪教版五四制','浙教版'];
-  const colMap = {'苏科版':'#0ea5e9','冀教版':'#e11d48','人教版':'#16a34a','北师大版':'#d97706','北京版':'#7c3aed','沪教版五四制':'#d97706','浙教版':'#059669'};
-  let h = favBooks.length ? '<div style="padding:6px 12px;font-size:11px;color:#eab308;font-weight:600">⭐ 已收藏</div>' : '';
-  for (const pub of pubOrder) {
-    if (!groups[pub]) continue;
-    const col = colMap[pub]||'#6366f1';
-    h += `<div class="tbv-pub-header" onclick="togglePubGroup(this)" style="cursor:pointer;padding:8px 12px;margin-top:6px;border-radius:8px;background:${col}15;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:${col}"><span style="font-size:10px">▶</span> ${pub} <span style="font-size:10px;opacity:.6">${groups[pub].length}本</span></div>`;
-    h += `<div class="tbv-pub-group" style="display:none">`;
-    for (const book of groups[pub]) {
-      const isFav = favs.includes(book.id);
-      const bg = book.iconBg||'#6366f1';
-      h += `<div class="tbv-picker-row" onclick="${callback}('${escQ(book.id)}')">
-        <span class="tbv-pc-icon" style="background:${bg}">${book.iconText||'📘'}</span>
-        <span class="tbv-pc-name">${esc(book.grade)}</span>
-        <span class="tbv-fav-star" onclick="event.stopPropagation();toggleTbFav('${escQ(book.id)}')" style="margin-left:auto;cursor:pointer;font-size:14px;color:${isFav?'#eab308':'#d1d5db'}">${isFav?'★':'☆'}</span>
-      </div>`;
-    }
-    h += `</div>`;
-  }
-  return h;
-};
+
 // Textbook search + heatmap
 const _origRenderCh = renderChapterList;
 renderChapterList = function(query) {
@@ -473,75 +439,82 @@ function goHomeFromTB() {
 }
 
 // === Book picker modal ===
-function showBookPicker() {
-  const grid = document.getElementById('tbvPickerGrid');
-  let h = renderGroupedBookList('pickTextbook');
-  grid.innerHTML = h;
+// === Two-step Book Picker: Publisher → Grade ===
+let _bkCb = 'pickTextbook';
+let _bkPub = null;
+const pubColors = {'苏科版':'#0ea5e9','冀教版':'#e11d48','人教版':'#16a34a','北师大版':'#d97706','北京版':'#7c3aed','沪教版五四制':'#d97706','浙教版':'#059669'};
+const gradeOrder = {'六年级上册':1,'六年级下册':2,'七年级上册':3,'七年级下册':4,'八年级上册':5,'八年级下册':6,'九年级上册':7,'九年级下册':8};
+
+function showBookPicker(cb) {
+  if (cb) _bkCb = cb;
+  _bkPub = null;
+  document.getElementById('tbvPickerHeader').textContent = '📚 选择教材版本';
+  renderPublishers();
   document.getElementById('tbvPicker').style.display = 'flex';
 }
-
-function renderGroupedBookList(callback) {
-  const groups = {};
-  const gradeOrder = {'六年级上册':1,'六年级下册':2,'七年级上册':3,'七年级下册':4,'八年级上册':5,'八年级下册':6,'九年级上册':7,'九年级下册':8};
-  for (const book of TB) {
-    const pub = book.publisher;
-    if (!groups[pub]) groups[pub] = [];
-    groups[pub].push(book);
-  }
-  // Sort books within each publisher by grade
-  for (const pub in groups) {
-    groups[pub].sort((a, b) => (gradeOrder[a.grade]||99) - (gradeOrder[b.grade]||99));
-  }
-  const pubOrder = ['苏科版','冀教版','人教版','北师大版','北京版','沪教版五四制','浙教版'];
-  
-  let h = '';
-  for (const pub of pubOrder) {
-    if (!groups[pub] || groups[pub].length === 0) continue;
-    const pubColors = {'苏科版':'#0ea5e9','冀教版':'#e11d48','人教版':'#16a34a','北师大版':'#d97706','北京版':'#7c3aed','沪教版五四制':'#d97706','浙教版':'#059669'};
-    const col = pubColors[pub] || '#6366f1';
-    // Publisher section header (collapsible)
-    h += `<div class="tbv-pub-header" onclick="togglePubGroup(this)" style="cursor:pointer;padding:8px 12px;margin-top:6px;border-radius:8px;background:${col}15;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:${col}">
-      <span style="font-size:10px">▶</span> ${pub} <span style="font-size:10px;opacity:.6">${groups[pub].length}本</span>
-    </div>`;
-    h += `<div class="tbv-pub-group" style="display:none">`;
-    for (const book of groups[pub]) {
-      const bg = book.iconBg || '#6366f1';
-      h += `<div class="tbv-picker-row" onclick="${callback}('${escQ(book.id)}')">
-        <span class="tbv-pc-icon" style="background:${bg}">${book.iconText||'📘'}</span>
-        <span class="tbv-pc-name">${esc(book.grade)}</span>
-      </div>`;
-    }
-    h += `</div>`;
-  }
-  return h;
-}
-
-function togglePubGroup(el) {
-  const group = el.nextElementSibling;
-  const arrow = el.querySelector('span:first-child');
-  if (group.style.display === 'none') {
-    group.style.display = 'grid';
-    arrow.textContent = '▼';
-  } else {
-    group.style.display = 'none';
-    arrow.textContent = '▶';
-  }
-}
-
 function hideBookPicker(e) {
   if (e && e.target !== e.currentTarget) return;
   document.getElementById('tbvPicker').style.display = 'none';
 }
-
+function renderPublishers() {
+  const grid = document.getElementById('tbvPickerGrid');
+  const favs = getTbFavs();
+  const pubs = {};
+  for (const book of TB) {
+    if (!pubs[book.publisher]) pubs[book.publisher] = {count:0,grades:[]};
+    pubs[book.publisher].count++;
+    if (!pubs[book.publisher].grades.includes(book.grade)) pubs[book.publisher].grades.push(book.grade);
+  }
+  const pubOrder = ['苏科版','冀教版','人教版','北师大版','北京版','沪教版五四制','浙教版'];
+  const allFavs = favs.length ? `<div style="grid-column:1/-1;font-size:11px;color:#eab308;font-weight:600;margin-bottom:4px">⭐ 已收藏</div>` : '';
+  let h = allFavs;
+  for (const pub of pubOrder) {
+    if (!pubs[pub]) continue;
+    const col = pubColors[pub]||'#6366f1';
+    const hasFav = favs.some(id => TB.find(b=>b.id===id)?.publisher === pub);
+    h += `<div class="tbv-picker-card" onclick="selectPublisher('${pub}')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;text-align:left;border-left:4px solid ${col}">
+      <div style="font-size:28px">${pubIcons(pub)}</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:15px;color:${col}">${pub}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${pubs[pub].count}本 · ${pubs[pub].grades.join('、')}</div>
+      </div>
+      <div style="font-size:20px;color:var(--text-muted)">›</div>
+    </div>`;
+  }
+  grid.innerHTML = h;
+}
+function pubIcons(pub) {
+  const icons = {'苏科版':'📘','冀教版':'📗','人教版':'📕','北师大版':'📙','北京版':'📒','沪教版五四制':'📓','浙教版':'📔'};
+  return icons[pub]||'📚';
+}
+function selectPublisher(pub) {
+  _bkPub = pub;
+  const grid = document.getElementById('tbvPickerGrid');
+  document.getElementById('tbvPickerHeader').innerHTML = `<span onclick="renderPublishers();document.getElementById('tbvPickerHeader').textContent='📚 选择教材版本'" style="cursor:pointer;font-size:14px;color:var(--accent)">←</span> ${pub} <span style="font-size:12px;color:var(--text-muted);font-weight:400">选择年级</span>`;
+  const books = TB.filter(b => b.publisher === pub).sort((a,b) => (gradeOrder[a.grade]||99)-(gradeOrder[b.grade]||99));
+  const col = pubColors[pub]||'#6366f1';
+  const favs = getTbFavs();
+  let h = '';
+  for (const book of books) {
+    const isFav = favs.includes(book.id);
+    h += `<div class="tbv-picker-card" onclick="${_bkCb}('${escQ(book.id)}')" style="padding:16px;text-align:center;border:2px solid ${isFav?'#eab308':col+'44'};position:relative">
+      <div style="font-size:32px;margin-bottom:4px">${book.iconText||'📘'}</div>
+      <div style="font-weight:700;font-size:15px;color:var(--text)">${esc(book.grade)}</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${book.chapters.length}章 · ${book.chapters.reduce((s,c)=>s+c.sections.length,0)}节</div>
+      <span class="tbv-fav-star" onclick="event.stopPropagation();toggleTbFav('${escQ(book.id)}');selectPublisher('${pub}')" style="position:absolute;top:6px;right:8px;cursor:pointer;font-size:16px;color:${isFav?'#eab308':'#d1d5db'}">${isFav?'★':'☆'}</span>
+    </div>`;
+  }
+  grid.innerHTML = h;
+}
 function pickTextbook(id) {
   const book = TB.find(b => b.id === id);
   if (!book) return;
-  currentTB = book;
-  currentChapter = null;
+  currentTB = book; currentChapter = null;
   document.getElementById('tbvPicker').style.display = 'none';
-  document.getElementById('tbvSelBar').innerHTML = `<span class="tbv-sel-badge" style="background:${book.iconBg||'#6366f1'}">${book.iconText||'📘'}</span><span class="tbv-sel-name">${esc(book.grade)}</span><span class="tbv-sel-arrow">▾</span>`;
+  document.getElementById('tbvSelBar').innerHTML = `<span class="tbv-sel-badge" style="background:${book.iconBg||'#6366f1'}">${book.iconText||'📘'}</span><span class="tbv-sel-name">${pubColors[book.publisher]||''} ${esc(book.grade)}</span><span class="tbv-sel-arrow">▾</span>`;
   document.getElementById('tbvColMid').style.display = 'block';
   document.getElementById('tbvSectionList').innerHTML = '';
+  document.getElementById('tbvTitle').textContent = `📘 ${book.label||book.grade}`;
   renderChapterList();
 }
 
