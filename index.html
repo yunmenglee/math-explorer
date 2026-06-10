@@ -322,6 +322,126 @@ function goHome() {
   renderQuote();
 }
 
+// ===== TEXTBOOK ENHANCEMENTS =====
+const FAV_TB_KEY = STORE_KEY + '_tb_favs';
+function getTbFavs() { return JSON.parse(localStorage.getItem(FAV_TB_KEY) || '[]'); }
+function toggleTbFav(id) {
+  let favs = getTbFavs();
+  const idx = favs.indexOf(id);
+  if (idx >= 0) favs.splice(idx, 1); else favs.push(id);
+  localStorage.setItem(FAV_TB_KEY, JSON.stringify(favs));
+  if (document.getElementById('tbvPicker').style.display === 'flex') {
+    document.getElementById('tbvPickerGrid').innerHTML = renderGroupedBookList('pickTextbook');
+  }
+}
+// Patch renderGroupedBookList for favorites
+const _origRenderGrouped = renderGroupedBookList;
+renderGroupedBookList = function(callback) {
+  const groups = {};
+  const gradeOrder = {'六年级上册':1,'六年级下册':2,'七年级上册':3,'七年级下册':4,'八年级上册':5,'八年级下册':6,'九年级上册':7,'九年级下册':8};
+  const favs = getTbFavs();
+  const favBooks = [], normalBooks = [];
+  for (const book of TB) { (favs.includes(book.id) ? favBooks : normalBooks).push(book); }
+  favBooks.sort((a,b) => (gradeOrder[a.grade]||99) - (gradeOrder[b.grade]||99));
+  normalBooks.sort((a,b) => (gradeOrder[a.grade]||99) - (gradeOrder[b.grade]||99));
+  for (const book of [...favBooks, ...normalBooks]) {
+    if (!groups[book.publisher]) groups[book.publisher] = [];
+    groups[book.publisher].push(book);
+  }
+  const pubOrder = ['苏科版','冀教版','人教版','北师大版','北京版','沪教版五四制','浙教版'];
+  const colMap = {'苏科版':'#0ea5e9','冀教版':'#e11d48','人教版':'#16a34a','北师大版':'#d97706','北京版':'#7c3aed','沪教版五四制':'#d97706','浙教版':'#059669'};
+  let h = favBooks.length ? '<div style="padding:6px 12px;font-size:11px;color:#eab308;font-weight:600">⭐ 已收藏</div>' : '';
+  for (const pub of pubOrder) {
+    if (!groups[pub]) continue;
+    const col = colMap[pub]||'#6366f1';
+    h += `<div class="tbv-pub-header" onclick="togglePubGroup(this)" style="cursor:pointer;padding:8px 12px;margin-top:6px;border-radius:8px;background:${col}15;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:${col}"><span style="font-size:10px">▶</span> ${pub} <span style="font-size:10px;opacity:.6">${groups[pub].length}本</span></div>`;
+    h += `<div class="tbv-pub-group" style="display:none">`;
+    for (const book of groups[pub]) {
+      const isFav = favs.includes(book.id);
+      const bg = book.iconBg||'#6366f1';
+      h += `<div class="tbv-picker-row" onclick="${callback}('${escQ(book.id)}')">
+        <span class="tbv-pc-icon" style="background:${bg}">${book.iconText||'📘'}</span>
+        <span class="tbv-pc-name">${esc(book.grade)}</span>
+        <span class="tbv-fav-star" onclick="event.stopPropagation();toggleTbFav('${escQ(book.id)}')" style="margin-left:auto;cursor:pointer;font-size:14px;color:${isFav?'#eab308':'#d1d5db'}">${isFav?'★':'☆'}</span>
+      </div>`;
+    }
+    h += `</div>`;
+  }
+  return h;
+};
+// Textbook search + heatmap
+const _origRenderCh = renderChapterList;
+renderChapterList = function(query) {
+  const chList = document.getElementById('tbvChapterList');
+  if (!currentTB) { chList.innerHTML = ''; return; }
+  const q = (query||'').toLowerCase();
+  const maxSects = Math.max(...currentTB.chapters.map(c=>c.sections.length),1);
+  let h = `<div style="padding:0 0 8px"><input id="tbvSearch" placeholder="🔍 搜索章节..." oninput="clearTimeout(window._tbs);window._tbs=setTimeout(()=>renderChapterList(this.value),200)" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--card-bg);color:var(--text);outline:none;box-sizing:border-box"></div>`;
+  for (let i=0; i<currentTB.chapters.length; i++) {
+    const ch = currentTB.chapters[i];
+    if (q && !ch.name.toLowerCase().includes(q) && !ch.sections.some(s=>s.name.toLowerCase().includes(q))) continue;
+    const active = currentChapter&&currentChapter.num===ch.num?'on':'';
+    const pct = ch.sections.length/maxSects;
+    const barCol = pct>0.7?'#ef4444':pct>0.4?'#f97316':'#22c55e';
+    h += `<div class="tbv-chapter-item ${active}" onclick="selectChapter(${i})">
+      <span class="tbv-ch-num">第${ch.num}章</span>
+      <span class="tbv-ch-name">${esc(ch.name)}</span>
+      <div style="flex:1;display:flex;align-items:center;justify-content:flex-end;gap:6px">
+        <div style="width:50px;height:5px;background:var(--border);border-radius:3px;overflow:hidden">
+          <div style="width:${pct*100}%;height:100%;background:${barCol};border-radius:3px"></div></div>
+        <span class="tbv-ch-cnt">${ch.sections.length}节</span>
+      </div>
+    </div>`;
+  }
+  if (q&&!h) h+='<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px">未找到匹配章节</div>';
+  chList.innerHTML = h;
+};
+// Knowledge entries under sections
+const _origRenderSec = renderSections;
+renderSections = function() {
+  const list = document.getElementById('tbvSectionList');
+  if (!currentChapter) { list.innerHTML=''; return; }
+  document.getElementById('tbvTitle').textContent = `${currentTB.iconText||'📘'} ${currentTB.label} · 第${currentChapter.num}章 ${currentChapter.name}`;
+  let h='';
+  for (const sec of currentChapter.sections) {
+    const keywords = sec.name.replace(/[（(].*?[）)]/g,'').split(/[、，,]/).filter(s=>s.trim().length>2);
+    const matches = D.filter(e=>{const t=(e.t+e.d+(e.c2||'')+(e.c3||'')).toLowerCase();return keywords.some(k=>t.includes(k.toLowerCase().trim()));}).slice(0,8);
+    h+=`<div class="tbv-section-row" style="cursor:pointer" onclick="filterBySection('${escQ(sec.name)}')">
+      <span class="tbv-sr-num">${esc(sec.num)}</span>
+      <span class="tbv-sr-name">${esc(sec.name)}</span>
+      <span class="tbv-sr-cnt" style="margin-left:auto;font-size:11px;color:var(--text-muted)">${matches.length}知识点 ▶</span></div>`;
+    if(matches.length){
+      h+=`<div style="padding:2px 12px 8px;display:flex;flex-wrap:wrap;gap:4px">`;
+      for(const m of matches.slice(0,5))
+        h+=`<span class="tg" style="font-size:11px;cursor:pointer" onclick="event.stopPropagation();goHome();st.m='${escQ(m.m)}';st.c1='${escQ(m.c1)}';st.c2='${escQ(m.c2||'')}';document.getElementById('sq').value='${escQ(m.t)}';st.q='${escQ(m.t)}';document.getElementById('hm').style.display='none';document.getElementById('qs').style.display='none';document.getElementById('br').classList.add('sh');renderModuleTabs();renderSidebar();renderResults();">${esc(m.t)}</span>`;
+      if(matches.length>5) h+=`<span style="font-size:11px;color:var(--text-muted)">+${matches.length-5}更多</span>`;
+      h+=`</div>`;
+    }
+  }
+  list.innerHTML = h;
+};
+function filterBySection(name) { goHome(); st.q=name; document.getElementById('sq').value=name; document.getElementById('hm').style.display='none'; document.getElementById('qs').style.display='none'; document.getElementById('br').classList.add('sh'); renderModuleTabs(); renderSidebar(); renderResults(); }
+// Textbook location index for entry cards
+let tbIndex = null;
+function buildTbIndex() {
+  if (tbIndex||!TB.length) return;
+  tbIndex={};
+  for(const book of TB) for(const ch of book.chapters) for(const sec of ch.sections) {
+    const k=sec.name.trim();
+    if(!tbIndex[k]) tbIndex[k]=[];
+    tbIndex[k].push({pub:book.publisher,grade:book.grade,ch:ch.num,chName:ch.name});
+  }
+}
+function findTbLocation(entry) {
+  buildTbIndex();
+  const candidates=[];
+  for(const term of [entry.t,entry.c2,entry.c3,entry.c1].filter(Boolean)) {
+    const m=tbIndex[term.trim()];
+    if(m) candidates.push(...m);
+  }
+  return candidates.slice(0,3);
+}
+
 // ===== TEXTBOOK VIEW =====
 let currentTB = null;
 let currentChapter = null;
@@ -987,6 +1107,7 @@ function renderResults() {
       ${e.imt ? '<img class="im" src="data:image/png;base64,'+e.imt+'" onclick="showImg(\''+e.img+'\')" title="点击查看大图">' : (e.img && e.img.startsWith('image') ? '<img class="im" src="images/'+e.img+'" onclick="showImgFile(this.src)" title="点击查看大图">' : '')}
       ${extra ? '<div class="ex">'+extra+'</div>' : ''}
       ${ah}
+      ${findTbLocation(e).length ? '<div class="tb-loc" style="margin-top:6px;font-size:11px;color:var(--text-muted);display:flex;flex-wrap:wrap;gap:4px;align-items:center"><span>📖</span>'+findTbLocation(e).map(l=>`<span style="background:var(--tag-bg);padding:1px 6px;border-radius:4px">${l.pub} ${l.grade} 第${l.ch}章</span>`).join('')+'</div>' : ''}
       <div class="actions">${favBtn}${learnBtn}</div>
     </div>`;
   }
