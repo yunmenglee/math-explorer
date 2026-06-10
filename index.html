@@ -494,16 +494,17 @@ function selectPublisher(pub) {
   const books = TB.filter(b => b.publisher === pub).sort((a,b) => (gradeOrder[a.grade]||99)-(gradeOrder[b.grade]||99));
   const col = pubColors[pub]||'#6366f1';
   const favs = getTbFavs();
-  let h = '';
+  let h = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px">';
   for (const book of books) {
     const isFav = favs.includes(book.id);
-    h += `<div class="tbv-picker-card" onclick="${_bkCb}('${escQ(book.id)}')" style="padding:16px;text-align:center;border:2px solid ${isFav?'#eab308':col+'44'};position:relative">
-      <div style="font-size:32px;margin-bottom:4px">${book.iconText||'📘'}</div>
-      <div style="font-weight:700;font-size:15px;color:var(--text)">${esc(book.grade)}</div>
-      <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${book.chapters.length}章 · ${book.chapters.reduce((s,c)=>s+c.sections.length,0)}节</div>
-      <span class="tbv-fav-star" onclick="event.stopPropagation();toggleTbFav('${escQ(book.id)}');selectPublisher('${pub}')" style="position:absolute;top:6px;right:8px;cursor:pointer;font-size:16px;color:${isFav?'#eab308':'#d1d5db'}">${isFav?'★':'☆'}</span>
+    h += `<div class="tbv-picker-card" onclick="${_bkCb}('${escQ(book.id)}')" style="padding:10px 8px;text-align:center;border:2px solid ${isFav?'#eab308':col+'33'};position:relative;font-size:12px">
+      <div style="font-size:20px">${book.iconText||'📘'}</div>
+      <div style="font-weight:600;font-size:12px;color:var(--text);margin-top:2px">${esc(book.grade)}</div>
+      <div style="font-size:10px;color:var(--text-muted)">${book.chapters.length}章</div>
+      <span class="tbv-fav-star" onclick="event.stopPropagation();toggleTbFav('${escQ(book.id)}');selectPublisher('${pub}')" style="position:absolute;top:3px;right:5px;cursor:pointer;font-size:12px;color:${isFav?'#eab308':'#d1d5db'}">${isFav?'★':'☆'}</span>
     </div>`;
   }
+  h += '</div>';
   grid.innerHTML = h;
 }
 function pickTextbook(id) {
@@ -511,7 +512,7 @@ function pickTextbook(id) {
   if (!book) return;
   currentTB = book; currentChapter = null;
   document.getElementById('tbvPicker').style.display = 'none';
-  document.getElementById('tbvSelBar').innerHTML = `<span class="tbv-sel-badge" style="background:${book.iconBg||'#6366f1'}">${book.iconText||'📘'}</span><span class="tbv-sel-name">${pubColors[book.publisher]||''} ${esc(book.grade)}</span><span class="tbv-sel-arrow">▾</span>`;
+  document.getElementById('tbvSelBar').innerHTML = `<span class="tbv-sel-badge" style="background:${book.iconBg||'#6366f1'}">${book.iconText||'📘'}</span><span class="tbv-sel-name">${esc(book.grade)}</span><span class="tbv-sel-arrow">▾</span>`;
   document.getElementById('tbvColMid').style.display = 'block';
   document.getElementById('tbvSectionList').innerHTML = '';
   document.getElementById('tbvTitle').textContent = `📘 ${book.label||book.grade}`;
