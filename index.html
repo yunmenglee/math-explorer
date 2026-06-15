@@ -488,7 +488,7 @@ function hideBookPicker(e) {
   document.getElementById('tbvPicker').style.display = 'none';
 }
 function pubIcons(pub) {
-  return {'苏科版':'📘','冀教版':'📗','人教版':'📕','北师大版':'📙','北京版':'📒','沪教版五四制':'📓','浙教版':'📔','沪科版':'📗'}[pub]||'📚';
+  return {'苏科版':'📘','冀教版':'📗','人教版':'📕','北师大版':'📙','北京版':'📒','沪教版五四制':'📓','浙教版':'📔','沪科版':'沪科'}[pub]||'📚';
 }
 function pickTextbook(id) {
   const book = TB.find(b => b.id === id);
