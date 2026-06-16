@@ -442,7 +442,7 @@ function goHomeFromTB() {
 
 // === One-step Book Picker + Grade Tabs ===
 let _bkCb = 'pickTextbook';
-const pubColors = {'苏科版':'#0ea5e9','冀教版':'#e11d48','人教版':'#16a34a','北师大版':'#d97706','北京版':'#7c3aed','沪教版五四制':'#d97706','浙教版':'#059669','沪科版':'#0891b2'};
+const pubColors = {'苏科版':'#0ea5e9','冀教版':'#e11d48','人教版':'#16a34a','北师大版':'#d97706','北京版':'#7c3aed','沪教版五四制':'#d97706','浙教版':'#059669','沪科版':'#0891b2','华师版':'#dc2626','湘教版':'#ca8a04','青岛版':'#2563eb'};
 const gradeOrder = {'六年级上册':1,'六年级下册':2,'七年级上册':3,'七年级下册':4,'八年级上册':5,'八年级下册':6,'九年级上册':7,'九年级下册':8};
 
 function showBookPicker(cb) {
@@ -450,7 +450,7 @@ function showBookPicker(cb) {
   const grid = document.getElementById('tbvPickerGrid');
   const favs = getTbFavs();
   // Group books by publisher
-  const pubOrder = ['苏科版','冀教版','人教版','北师大版','北京版','沪教版五四制','浙教版','沪科版'];
+  const pubOrder = ['苏科版','冀教版','人教版','北师大版','北京版','沪教版五四制','浙教版','沪科版','华师版','湘教版','青岛版'];
   let h = '';
   if (favs.length) {
     h += '<div style="grid-column:1/-1;font-size:11px;color:#eab308;font-weight:600;margin-bottom:2px;margin-top:4px">⭐ 已收藏</div>';
@@ -488,7 +488,7 @@ function hideBookPicker(e) {
   document.getElementById('tbvPicker').style.display = 'none';
 }
 function pubIcons(pub) {
-  return {'苏科版':'📘','冀教版':'📗','人教版':'📕','北师大版':'📙','北京版':'📒','沪教版五四制':'📓','浙教版':'📔','沪科版':'沪科'}[pub]||'📚';
+  return {'苏科版':'📘','冀教版':'📗','人教版':'📕','北师大版':'📙','北京版':'📒','沪教版五四制':'📓','浙教版':'📔','沪科版':'沪科','华师版':'📕','湘教版':'📗','青岛版':'📘'}[pub]||'📚';
 }
 function pickTextbook(id) {
   const book = TB.find(b => b.id === id);
