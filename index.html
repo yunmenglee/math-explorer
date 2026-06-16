@@ -375,8 +375,8 @@ renderSections = function() {
     const keywords = sec.name.replace(/[（(].*?[）)]/g,'').split(/[、，,]/).filter(s=>s.trim().length>2);
     const matches = D.filter(e=>{const t=(e.t+e.d+(e.c2||'')+(e.c3||'')).toLowerCase();return keywords.some(k=>t.includes(k.toLowerCase().trim()));}).slice(0,8);
     h+=`<div class="tbv-section-row" style="cursor:pointer" onclick="filterBySection('${escQ(sec.name)}')">
-      <span class="tbv-sr-num">${esc(sec.num)}</span>
-      <span class="tbv-sr-name">${esc(sec.name)}</span>
+      <span class="tbv-sr-num${(sec.num.match(/\./g)||[]).length>1?' sub':''}">${esc(sec.num)}</span>
+      <span class="tbv-sr-name${(sec.num.match(/\./g)||[]).length>1?' sub':''}">${esc(sec.name)}</span>
       <span class="tbv-sr-cnt" style="margin-left:auto;font-size:11px;color:var(--text-muted)">${matches.length}知识点 ▶</span></div>`;
     if(matches.length){
       h+=`<div style="padding:2px 12px 8px;display:flex;flex-wrap:wrap;gap:4px">`;
@@ -556,8 +556,8 @@ function renderSections() {
   let h = '';
   for (const sec of currentChapter.sections) {
     h += `<div class="tbv-section-row">
-      <span class="tbv-sr-num">${esc(sec.num)}</span>
-      <span class="tbv-sr-name">${esc(sec.name)}</span>
+      <span class="tbv-sr-num${(sec.num.match(/\./g)||[]).length>1?' sub':''}">${esc(sec.num)}</span>
+      <span class="tbv-sr-name${(sec.num.match(/\./g)||[]).length>1?' sub':''}">${esc(sec.name)}</span>
     </div>`;
   }
   list.innerHTML = h;
