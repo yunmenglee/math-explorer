@@ -440,9 +440,9 @@ function goHomeFromTB() {
 }
 
 // === Publisher Icons + Grade Tabs ===
-const pubColors = {'苏科版':'#0ea5e9','冀教版':'#e11d48','人教版':'#16a34a','北师大版':'#d97706','北京版':'#7c3aed','沪教版五四制':'#d97706','浙教版':'#059669','沪科版':'#0891b2','华师版':'#dc2626','湘教版':'#ca8a04','青岛版':'#2563eb'};
+const pubColors = {'苏科版':'#0ea5e9','冀教版':'#e11d48','人教版':'#16a34a','北师大版':'#d97706','北京版':'#7c3aed','沪教版五四制':'#d97706','浙教版':'#059669','沪科版':'#0891b2','华师版':'#dc2626','湘教版':'#ca8a04','青岛版':'#2563eb','人教五四版':'#16a34a','鲁教五四版':'#dc2626'};
 const gradeOrder = {'六年级上册':1,'六年级下册':2,'七年级上册':3,'七年级下册':4,'八年级上册':5,'八年级下册':6,'九年级上册':7,'九年级下册':8};
-const pubOrder = ['苏科版','冀教版','人教版','北师大版','北京版','沪教版五四制','浙教版','沪科版','华师版','湘教版','青岛版'];
+const pubOrder = ['苏科版','冀教版','人教版','北师大版','北京版','沪教版五四制','浙教版','沪科版','华师版','湘教版','青岛版','人教五四版','鲁教五四版'];
 
 function renderPubIcons() {
   const el = document.getElementById('tbvPubIcons');
@@ -451,7 +451,7 @@ function renderPubIcons() {
     const books = TB.filter(b => b.publisher === pub);
     if (!books.length) return '';
     const col = pubColors[pub]||'#6366f1';
-    const icon = {'苏科版':'📘','冀教版':'📗','人教版':'📕','北师大版':'📙','北京版':'📒','沪教版五四制':'📓','浙教版':'📔','沪科版':'📘','华师版':'📕','湘教版':'📗','青岛版':'📘'}[pub]||'📚';
+    const icon = {'苏科版':'📘','冀教版':'📗','人教版':'📕','北师大版':'📙','北京版':'📒','沪教版五四制':'📓','浙教版':'📔','沪科版':'📘','华师版':'📕','湘教版':'📗','青岛版':'📘','人教五四版':'📕','鲁教五四版':'📗'}[pub]||'📚';
     return `<div onclick="selectPub('${pub}')" style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border-radius:8px;cursor:pointer;transition:all .15s" onmouseenter="this.style.background='${col}22'" onmouseleave="this.style.background=''">
       <div style="font-size:24px;line-height:1.2">${icon}</div>
       <div style="font-size:10px;color:${col};font-weight:600;line-height:1.1;text-align:center">${pub.replace('版','')}</div>
