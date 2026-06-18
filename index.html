@@ -451,7 +451,7 @@ function renderPubIcons() {
     const books = TB.filter(b => b.publisher === pub);
     if (!books.length) return '';
     const col = pubColors[pub]||'#6366f1';
-    const icon = {'苏科版':'📘','冀教版':'📗','人教版':'📕','北师大版':'📙','北京版':'📒','沪教版五四制':'📓','浙教版':'📔','沪科版':'沪科','华师版':'📕','湘教版':'📗','青岛版':'📘'}[pub]||'📚';
+    const icon = {'苏科版':'📘','冀教版':'📗','人教版':'📕','北师大版':'📙','北京版':'📒','沪教版五四制':'📓','浙教版':'📔','沪科版':'📖','华师版':'📕','湘教版':'📗','青岛版':'📘'}[pub]||'📚';
     return `<div onclick="selectPub('${pub}')" style="display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 6px;border-radius:6px;cursor:pointer;transition:all .15s;width:44px" onmouseenter="this.style.background='${col}22'" onmouseleave="this.style.background=''">
       <div style="font-size:16px;line-height:1.2">${icon}</div>
       <div style="font-size:8px;color:${col};font-weight:600;line-height:1.1;text-align:center">${pub.replace('版','')}</div>
