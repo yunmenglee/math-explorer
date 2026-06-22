@@ -373,10 +373,10 @@ renderSections = function() {
   for (const sec of currentChapter.sections) {
     const keywords = sec.name.replace(/[（(].*?[）)]/g,'').split(/[、，,]/).filter(s=>s.trim().length>2);
     const matches = D.filter(e=>{const t=(e.t+e.d+(e.c2||'')+(e.c3||'')).toLowerCase();return keywords.some(k=>t.includes(k.toLowerCase().trim()));}).slice(0,8);
-    h+=`<div class="tbv-section-row" style="cursor:pointer" onclick="filterBySection('${escQ(sec.name)}')">
+    h+=`<div class="tbv-section-row" style="${sec.num.indexOf('.')===-1?'cursor:pointer':'cursor:default'}" ${sec.num.indexOf('.')===-1?`onclick="filterBySection('${escQ(sec.name)}')"`:''}>
       <span class="tbv-sr-num${sec.num.indexOf('.')===-1?' sub':''}">${esc(sec.num)}</span>
       <span class="tbv-sr-name${sec.num.indexOf('.')===-1?' sub':''}">${esc(sec.name)}</span>
-      <span class="tbv-sr-cnt" style="margin-left:auto;font-size:11px;color:var(--text-muted)">${matches.length}知识点 ▶</span></div>`;
+      ${sec.num.indexOf('.')===-1?`<span class="tbv-sr-cnt" style="margin-left:auto;font-size:11px;color:var(--text-muted)">${matches.length}知识点 ▶</span>`:''}</div>`;
     if(matches.length){
       h+=`<div style="padding:2px 12px 8px;display:flex;flex-wrap:wrap;gap:4px">`;
       for(const m of matches.slice(0,5))
