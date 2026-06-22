@@ -1,61 +1,70 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" font-family="Arial, sans-serif">
-  <rect width="600" height="320" fill="#ffffff" rx="8"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 280" font-family="SimSun, serif">
+  <rect width="500" height="280" fill="#ffffff" rx="6"/>
   
   <!-- Title -->
-  <text x="300" y="32" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">平行线模型 — 橡皮擦型</text>
+  <text x="250" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f2937">平行线模型 — 橡皮擦型</text>
   
-  <!-- Two parallel lines -->
-  <line x1="50" y1="220" x2="530" y2="220" stroke="#2563eb" stroke-width="2.5"/>
-  <line x1="50" y1="80" x2="530" y2="80" stroke="#2563eb" stroke-width="2.5"/>
+  <!-- Two parallel lines with arrows -->
+  <line x1="40" y1="190" x2="460" y2="190" stroke="#2563eb" stroke-width="2.5"/>
+  <line x1="40" y1="70" x2="460" y2="70" stroke="#2563eb" stroke-width="2.5"/>
   
-  <!-- Arrow markers on parallel lines -->
-  <polygon points="220,75 230,80 220,85" fill="#2563eb"/>
-  <polygon points="370,75 380,80 370,85" fill="#2563eb"/>
-  <polygon points="220,215 230,220 220,225" fill="#2563eb"/>
-  <polygon points="370,215 380,220 370,225" fill="#2563eb"/>
+  <!-- Direction arrows on lines -->
+  <polygon points="200,65 210,70 200,75" fill="#2563eb"/>
+  <polygon points="350,65 360,70 350,75" fill="#2563eb"/>
+  <polygon points="200,185 210,190 200,195" fill="#2563eb"/>
+  <polygon points="350,185 360,190 350,195" fill="#2563eb"/>
   
-  <!-- Line labels -->
-  <text x="545" y="84" font-size="12" font-weight="bold" fill="#2563eb">l₁</text>
-  <text x="545" y="224" font-size="12" font-weight="bold" fill="#2563eb">l₂</text>
+  <text x="470" y="74" font-size="12" font-weight="bold" fill="#2563eb">l₁</text>
+  <text x="470" y="194" font-size="12" font-weight="bold" fill="#2563eb">l₂</text>
   
-  <!-- Zigzag eraser path -->
-  <!-- Points: (75,220), (165,80), (255,220), (345,80), (435,220), (515,80) -->
-  <polyline points="75,220 165,80 255,220 345,80 435,220 515,80" 
+  <!-- Eraser zigzag: l₂ → l₁ → l₂ → l₁ → l₂ → l₁ -->
+  <polyline points="50,190 110,70 170,190 230,70 290,190 350,70 410,190 440,70"
             fill="none" stroke="#374151" stroke-width="2" stroke-linejoin="round"/>
   
-  <!-- Vertex circles -->
-  <circle cx="75" cy="220" r="4" fill="white" stroke="#374151" stroke-width="1.5"/>
-  <circle cx="165" cy="80" r="4" fill="white" stroke="#374151" stroke-width="1.5"/>
-  <circle cx="255" cy="220" r="4" fill="white" stroke="#374151" stroke-width="1.5"/>
-  <circle cx="345" cy="80" r="4" fill="white" stroke="#374151" stroke-width="1.5"/>
-  <circle cx="435" cy="220" r="4" fill="white" stroke="#374151" stroke-width="1.5"/>
-  <circle cx="515" cy="80" r="4" fill="white" stroke="#374151" stroke-width="1.5"/>
+  <!-- Vertex dots -->
+  <circle cx="50" cy="190" r="3.5" fill="#374151"/>
+  <circle cx="110" cy="70" r="3.5" fill="#374151"/>
+  <circle cx="170" cy="190" r="3.5" fill="#374151"/>
+  <circle cx="230" cy="70" r="3.5" fill="#374151"/>
+  <circle cx="290" cy="190" r="3.5" fill="#374151"/>
+  <circle cx="350" cy="70" r="3.5" fill="#374151"/>
+  <circle cx="410" cy="190" r="3.5" fill="#374151"/>
+  <circle cx="440" cy="70" r="3.5" fill="#374151"/>
+
+  <!-- Blue connection segments (parallel line between vertices) -->
+  <line x1="110" y1="70" x2="170" y2="70" stroke="#2563eb" stroke-width="2.5"/>
+  <line x1="230" y1="70" x2="290" y2="70" stroke="#2563eb" stroke-width="2.5"/>
+  <line x1="350" y1="70" x2="410" y2="70" stroke="#2563eb" stroke-width="2.5"/>
+  <line x1="50" y1="190" x2="110" y2="190" stroke="#2563eb" stroke-width="2.5"/>
+  <line x1="170" y1="190" x2="230" y2="190" stroke="#2563eb" stroke-width="2.5"/>
+  <line x1="290" y1="190" x2="350" y2="190" stroke="#2563eb" stroke-width="2.5"/>
+  <line x1="410" y1="190" x2="460" y2="190" stroke="#2563eb" stroke-width="2.5"/>
   
-  <!-- Angle arcs -->
-  <!-- At (165,80): between upward segment and downward segment -->
-  <path d="M 175,80 A 10,10 0 0,1 160,70" fill="none" stroke="#dc2626" stroke-width="1.5"/>
-  <text x="188" y="68" font-size="11" font-weight="bold" fill="#dc2626">∠1</text>
+  <!-- Angle arcs (7 angles) -->
+  <path d="M 115,70 A 8,8 0 0,0 108,78" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="118" y="62" font-size="10" font-weight="bold" fill="#dc2626">∠1</text>
   
-  <!-- At (255,220): between downward and upward -->
-  <path d="M 245,220 A 10,10 0 0,1 260,230" fill="none" stroke="#dc2626" stroke-width="1.5"/>
-  <text x="248" y="248" font-size="11" font-weight="bold" fill="#dc2626">∠2</text>
+  <path d="M 168,182 A 8,8 0 0,0 162,190" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="175" y="208" font-size="10" font-weight="bold" fill="#dc2626">∠2</text>
   
-  <!-- At (345,80) -->
-  <path d="M 355,80 A 10,10 0 0,1 340,70" fill="none" stroke="#dc2626" stroke-width="1.5"/>
-  <text x="358" y="68" font-size="11" font-weight="bold" fill="#dc2626">∠3</text>
+  <path d="M 235,70 A 8,8 0 0,0 228,78" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="238" y="62" font-size="10" font-weight="bold" fill="#dc2626">∠3</text>
   
-  <!-- At (435,220) -->
-  <path d="M 425,220 A 10,10 0 0,1 440,230" fill="none" stroke="#dc2626" stroke-width="1.5"/>
-  <text x="428" y="248" font-size="11" font-weight="bold" fill="#dc2626">∠4</text>
+  <path d="M 288,182 A 8,8 0 0,0 282,190" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="295" y="208" font-size="10" font-weight="bold" fill="#dc2626">∠4</text>
   
-  <!-- At (515,80) -->
-  <path d="M 505,80 A 10,10 0 0,1 520,90" fill="none" stroke="#dc2626" stroke-width="1.5"/>
-  <text x="515" y="102" font-size="11" font-weight="bold" fill="#dc2626">∠5</text>
+  <path d="M 355,70 A 8,8 0 0,0 348,78" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="358" y="62" font-size="10" font-weight="bold" fill="#dc2626">∠5</text>
   
-  <!-- Formula box -->
-  <rect x="120" y="260" width="360" height="32" rx="6" fill="#fee2e2" stroke="#fca5a5" stroke-width="1.2"/>
-  <text x="300" y="280" text-anchor="middle" font-size="11" font-weight="bold" fill="#1f2937">∠1+∠2+∠3+∠4+∠5 = (5-1)×180° = 720°</text>
+  <path d="M 408,182 A 8,8 0 0,0 402,190" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="415" y="208" font-size="10" font-weight="bold" fill="#dc2626">∠6</text>
   
-  <!-- Conclusion -->
-  <text x="300" y="305" text-anchor="middle" font-size="10" fill="#64748b" font-style="italic">结论：n个角之和 = (n-1)×180°</text>
+  <path d="M 443,70 A 8,8 0 0,0 437,77" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="448" y="62" font-size="10" font-weight="bold" fill="#dc2626">∠7</text>
+
+  <!-- Formula -->
+  <rect x="80" y="230" width="340" height="28" rx="5" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="250" y="249" text-anchor="middle" font-size="11" font-weight="bold" fill="#1f2937">∠1+∠2+∠3+∠4+∠5+∠6+∠7 = (7-1)×180° = 1080°</text>
+  
+  <text x="250" y="272" text-anchor="middle" font-size="10" fill="#64748b" font-style="italic">结论：n个角之和 = (n-1)×180°</text>
 </svg>
