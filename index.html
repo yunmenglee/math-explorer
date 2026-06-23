@@ -380,7 +380,7 @@ renderSections = function() {
     if(matches.length){
       h+=`<div class="kp-tags">`;
       for(const m of matches.slice(0,5))
-        h+=`<span class="tg" style="font-size:11px;cursor:pointer" onclick="event.stopPropagation();goHome();st.m='${escQ(m.m)}';st.c1='${escQ(m.c1)}';st.c2='${escQ(m.c2||'')}';document.getElementById('sq').value='${escQ(m.t)}';st.q='${escQ(m.t)}';document.getElementById('hm').style.display='none';document.getElementById('qs').style.display='none';document.getElementById('br').classList.add('sh');renderModuleTabs();renderSidebar();renderResults();">${esc(m.t)}</span>`;
+        h+=`<span class="tg" style="font-size:11px;cursor:pointer" onclick="event.stopPropagation();goHome();st.m='${escQ(m.m)}';st.c1='${escQ(m.c1)}';st.c2='${escQ(m.c2||'')}';document.getElementById('sq').value='${escQ(m.t)}';st.q='${escQ(m.t)}';document.getElementById('hm').style.display='none';document.getElementById('qs').style.display='none';document.getElementById('br').classList.add('sh');renderModuleTabs();renderSidebar();renderResults();">🔹${esc(m.t)}</span>`;
       if(matches.length>5) h+=`<span style="font-size:11px;color:var(--text-muted)">+${matches.length-5}更多</span>`;
       h+=`</div>`;
     }
