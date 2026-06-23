@@ -373,12 +373,12 @@ renderSections = function() {
   for (const sec of currentChapter.sections) {
     const keywords = sec.name.replace(/[（(].*?[）)]/g,'').split(/[、，,]/).filter(s=>s.trim().length>2);
     const matches = D.filter(e=>{const t=(e.t+e.d+(e.c2||'')+(e.c3||'')).toLowerCase();return keywords.some(k=>t.includes(k.toLowerCase().trim()));}).slice(0,8);
-    h+=`<div class="tbv-section-row" style="${sec.num.indexOf('.')===-1?'cursor:pointer':'cursor:default'}" ${sec.num.indexOf('.')===-1?`onclick="filterBySection('${escQ(sec.name)}')"`:''}>
+    h+=`<div class="tbv-section-row ${sec.num.indexOf('.')===-1?'section-sub':'section-main'}" style="${sec.num.indexOf('.')===-1?'cursor:pointer':'cursor:default'}" ${sec.num.indexOf('.')===-1?`onclick="filterBySection('${escQ(sec.name)}')"`:''}>
       <span class="tbv-sr-num${sec.num.indexOf('.')===-1?' sub':''}">${esc(sec.num)}</span>
       <span class="tbv-sr-name${sec.num.indexOf('.')===-1?' sub':''}">${esc(sec.name)}</span>
-      ${sec.num.indexOf('.')===-1?`<span class="tbv-sr-cnt" style="margin-left:auto;font-size:11px;color:var(--text-muted)">${matches.length}知识点 ▶</span>`:''}</div>`;
+      ${sec.num.indexOf('.')===-1?`<span class="tbv-sr-cnt">${matches.length}知识点 ▶</span>`:''}</div>`;
     if(matches.length){
-      h+=`<div style="padding:2px 12px 8px;display:flex;flex-wrap:wrap;gap:4px">`;
+      h+=`<div class="kp-tags">`;
       for(const m of matches.slice(0,5))
         h+=`<span class="tg" style="font-size:11px;cursor:pointer" onclick="event.stopPropagation();goHome();st.m='${escQ(m.m)}';st.c1='${escQ(m.c1)}';st.c2='${escQ(m.c2||'')}';document.getElementById('sq').value='${escQ(m.t)}';st.q='${escQ(m.t)}';document.getElementById('hm').style.display='none';document.getElementById('qs').style.display='none';document.getElementById('br').classList.add('sh');renderModuleTabs();renderSidebar();renderResults();">${esc(m.t)}</span>`;
       if(matches.length>5) h+=`<span style="font-size:11px;color:var(--text-muted)">+${matches.length-5}更多</span>`;
@@ -533,7 +533,7 @@ function renderSections() {
   document.getElementById('tbvTitle').textContent = `${currentTB.iconText||'📘'} ${currentTB.label} · 第${currentChapter.num}章 ${currentChapter.name}`;
   let h = '';
   for (const sec of currentChapter.sections) {
-    h += `<div class="tbv-section-row">
+    h += `<div class="tbv-section-row ${sec.num.indexOf('.')===-1?'section-sub':'section-main'}">
       <span class="tbv-sr-num${sec.num.indexOf('.')===-1?' sub':''}">${esc(sec.num)}</span>
       <span class="tbv-sr-name${sec.num.indexOf('.')===-1?' sub':''}">${esc(sec.name)}</span>
     </div>`;
