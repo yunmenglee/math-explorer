@@ -1054,7 +1054,7 @@ function renderResults() {
       ${headerHtml}
       <h3>${highlight(esc(e.t), st.q)}</h3>
       ${desc ? '<div class="de">'+desc+'</div>' : ''}
-      ${e.imt ? '<img class="im" src="data:image/png;base64,'+e.imt+'" onclick="showImg(\''+e.img+'\')" title="点击查看大图">' : (e.img ? e.img.split(',').map(f => '<img class="im" src="images/'+f.trim()+'" onclick="showImgFile(this.src)" title="点击查看大图">').join('') : '')}
+      ${e.imt ? '<img class="im" src="data:image/png;base64,'+e.imt+'" onclick="showImg(\''+e.imt+'\')" title="点击查看大图">' : (e.img ? e.img.split(',').map(f => '<img class="im" src="images/'+f.trim()+'" onclick="showImgFile(this.src)" title="点击查看大图">').join('') : '')}
       ${extra ? '<div class="ex">'+extra+'</div>' : ''}
       ${ah}
       ${findTbLocation(e).length ? '<div class="tb-loc" style="margin-top:6px;font-size:11px;color:var(--text-muted);display:flex;flex-wrap:wrap;gap:4px;align-items:center"><span>📖</span>'+findTbLocation(e).map(l=>`<span style="background:var(--tag-bg);padding:1px 6px;border-radius:4px">${l.pub} ${l.grade} 第${l.ch}章</span>`).join('')+'</div>' : ''}
