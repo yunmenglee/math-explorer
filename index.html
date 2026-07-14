@@ -418,7 +418,15 @@ function goBackToTextbook() {
   document.getElementById('tbv').style.display = 'block';
   if (saved) { currentTB = saved.tb; currentChapter = saved.ch; }
   renderTextbookView();
-  if (currentTB && currentChapter) renderChapterList();
+  if (currentTB && currentChapter) {
+    document.getElementById('tbvColMid').style.display = 'block';
+    // Mark chapter as active
+    const items = document.querySelectorAll('#tbvChapterList .tbv-chapter-item');
+    items.forEach((el, i) => {
+      if (currentTB.chapters[i] && currentTB.chapters[i].num === currentChapter.num) el.classList.add('on');
+    });
+    renderSections();
+  }
 }
 // Textbook location index for entry cards
 let tbIndex = null;
