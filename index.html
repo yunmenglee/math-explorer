@@ -375,22 +375,25 @@ renderSections = function() {
   const list = document.getElementById('tbvSectionList');
   if (!currentChapter) { list.innerHTML=''; return; }
   document.getElementById('tbvTitle').textContent = `${currentTB.iconText||'📘'} ${currentTB.label} · 第${currentChapter.num}章 ${currentChapter.name}`;
-  let h='';
+  let h = '', kpIdx = 0;
   for (const sec of currentChapter.sections) {
     const level = secLevel(sec);
     const isSubOrTert = level === 'sub' || level === 'tert';
     const kps = sec.kps || [];
     const kpCount = kps.length;
-    const isTert = level === 'tert';
-    const showKps = kpCount > 0;
+    const kpCols = ['#ede9fe','#e0f2fe','#d1fae5','#ffedd5','#ffe4e6','#fef3c7','#cffafe','#fce7f3'];
+    const kpTextCols = ['#7c3aed','#0284c7','#059669','#ea580c','#e11d48','#d97706','#0891b2','#db2777'];
+    if (kpCount) kpIdx++;
+    const ci = (kpIdx - 1) % kpCols.length;
     h+=`<div class="tbv-section-row section-${level}" style="${isSubOrTert?'cursor:pointer':'cursor:default'}" ${isSubOrTert?`onclick="filterBySection('${escQ(sec.name)}')"`:''}>
       <span class="tbv-sr-num${isSubOrTert?' '+level:''}">${esc(sec.num)}</span>
       <span class="tbv-sr-name${isSubOrTert?' '+level:''}">${esc(sec.name)}</span>
       ${isSubOrTert?`<span class="tbv-sr-cnt">${kpCount}个重点知识点 ▶</span>`:''}</div>`;
     if(kpCount){
+      const bg = kpCols[ci], tc = kpTextCols[ci];
       h+=`<div class="kp-tags">`;
       for(const item of kps.slice(0,10))
-        h+=`<span class="tg" style="font-size:11px;cursor:pointer" onclick="event.stopPropagation();goHome();st.q='${escQ(item)}';document.getElementById('sq').value='${escQ(item)}';document.getElementById('hm').style.display='none';document.getElementById('qs').style.display='none';document.getElementById('br').classList.add('sh');renderModuleTabs();renderSidebar();renderResults();">🔹${esc(item)}</span>`;
+        h+=`<span class="tg" style="font-size:12px;cursor:pointer;padding:4px 12px;border-radius:8px;background:${bg};border:1px solid ${tc}44;color:${tc};font-weight:500;transition:all .15s" onclick="event.stopPropagation();goHome();st.q='${escQ(item)}';document.getElementById('sq').value='${escQ(item)}';document.getElementById('hm').style.display='none';document.getElementById('qs').style.display='none';document.getElementById('br').classList.add('sh');renderModuleTabs();renderSidebar();renderResults();" onmouseenter="this.style.background='${tc}';this.style.color='#fff'" onmouseleave="this.style.background='${bg}';this.style.color='${tc}'">🔹${esc(item)}</span>`;
       if(kps.length>10) h+=`<span style="font-size:11px;color:var(--text-muted)">+${kps.length-10}更多</span>`;
       h+=`</div>`;
     }
