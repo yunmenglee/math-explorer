@@ -379,17 +379,19 @@ renderSections = function() {
   for (const sec of currentChapter.sections) {
     const level = secLevel(sec);
     const isSubOrTert = level === 'sub' || level === 'tert';
-    const keywords = sec.name.replace(/[（(].*?[）)]/g,'').split(/[、，,]/).filter(s=>s.trim().length>2);
-    const matches = D.filter(e=>{const t=(e.t+e.d+(e.c2||'')+(e.c3||'')).toLowerCase();return keywords.some(k=>t.includes(k.toLowerCase().trim()));}).slice(0,8);
+    const kps = sec.kps || [];
+    const kpCount = kps.length;
+    const isTert = level === 'tert';
+    const showKps = kpCount > 0;
     h+=`<div class="tbv-section-row section-${level}" style="${isSubOrTert?'cursor:pointer':'cursor:default'}" ${isSubOrTert?`onclick="filterBySection('${escQ(sec.name)}')"`:''}>
       <span class="tbv-sr-num${isSubOrTert?' '+level:''}">${esc(sec.num)}</span>
       <span class="tbv-sr-name${isSubOrTert?' '+level:''}">${esc(sec.name)}</span>
-      ${isSubOrTert?`<span class="tbv-sr-cnt">${matches.length}知识点 ▶</span>`:''}</div>`;
-    if(matches.length){
+      ${isSubOrTert?`<span class="tbv-sr-cnt">${kpCount}个KP ▶</span>`:''}</div>`;
+    if(kpCount){
       h+=`<div class="kp-tags">`;
-      for(const m of matches.slice(0,5))
-        h+=`<span class="tg" style="font-size:11px;cursor:pointer" onclick="event.stopPropagation();goHome();st.m='${escQ(m.m)}';st.c1='${escQ(m.c1)}';st.c2='${escQ(m.c2||'')}';document.getElementById('sq').value='${escQ(m.t)}';st.q='${escQ(m.t)}';document.getElementById('hm').style.display='none';document.getElementById('qs').style.display='none';document.getElementById('br').classList.add('sh');renderModuleTabs();renderSidebar();renderResults();">🔹${esc(m.t)}</span>`;
-      if(matches.length>5) h+=`<span style="font-size:11px;color:var(--text-muted)">+${matches.length-5}更多</span>`;
+      for(const item of kps.slice(0,10))
+        h+=`<span class="tg" style="font-size:11px;cursor:pointer" onclick="event.stopPropagation();goHome();st.q='${escQ(item)}';document.getElementById('sq').value='${escQ(item)}';document.getElementById('hm').style.display='none';document.getElementById('qs').style.display='none';document.getElementById('br').classList.add('sh');renderModuleTabs();renderSidebar();renderResults();">🔹${esc(item)}</span>`;
+      if(kps.length>10) h+=`<span style="font-size:11px;color:var(--text-muted)">+${kps.length-10}更多</span>`;
       h+=`</div>`;
     }
   }
