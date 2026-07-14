@@ -382,6 +382,7 @@ renderSections = function() {
   if (!currentChapter) { list.innerHTML=''; return; }
   document.getElementById('tbvTitle').textContent = `${currentTB.iconText||'📘'} ${currentTB.label} · 第${currentChapter.num}章 ${currentChapter.name}`;
   let h = '', kpIdx = 0;
+  const hasSubSections = currentChapter.sections.some(s => !s.num.includes('.'));
   for (const sec of currentChapter.sections) {
     const level = secLevel(sec);
     const isSubOrTert = level === 'sub' || level === 'tert';
@@ -389,13 +390,14 @@ renderSections = function() {
     const kpCount = kps.length;
     const kpCols = ['#ede9fe','#e0f2fe','#d1fae5','#ffedd5','#ffe4e6','#fef3c7','#cffafe','#fce7f3'];
     const kpTextCols = ['#7c3aed','#0284c7','#059669','#ea580c','#e11d48','#d97706','#0891b2','#db2777'];
+    const showKp = isSubOrTert || (!hasSubSections && level === 'main');
     if (kpCount) kpIdx++;
     const ci = (kpIdx - 1) % kpCols.length;
     h+=`<div class="tbv-section-row section-${level}" style="${isSubOrTert?'cursor:pointer':'cursor:default'}" ${isSubOrTert?`onclick="filterBySection('${escQ(sec.name)}')"`:''}>
       <span class="tbv-sr-num${isSubOrTert?' '+level:''}">${esc(sec.num)}</span>
       <span class="tbv-sr-name${isSubOrTert?' '+level:''}">${esc(sec.name)}</span>
-      ${isSubOrTert?`<span class="tbv-sr-cnt">${kpCount}个重点知识点 ▶</span>`:''}</div>`;
-    if(kpCount){
+      ${showKp?`<span class="tbv-sr-cnt">${kpCount}个重点知识点 ▶</span>`:''}</div>`;
+    if(showKp && kpCount){
       const bg = kpCols[ci], tc = kpTextCols[ci];
       h+=`<div class="kp-tags">`;
       for(const item of kps.slice(0,10))
