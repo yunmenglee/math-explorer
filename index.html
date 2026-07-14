@@ -39,7 +39,8 @@
 
 <div class="br" id="br">
   <div class="tb">
-    <span class="bh" onclick="goHome()">← 返回首页</span>
+    <span class="bh" id="navBackBtn" onclick="goHome()">← 返回首页</span>
+    <span class="bh" id="navTbBtn" style="display:none" onclick="goBackToTextbook()">← 返回教材库</span>
     <div class="bh-group">
       <span class="bh bh-sm" onclick="randomKnowledge()" title="随机知识点">🎲 随机</span>
       <span class="bh bh-sm" onclick="showFavorites()" title="收藏夹">⭐ 收藏</span>
@@ -313,6 +314,9 @@ function enterModule(m) {
 }
 
 function goHome() {
+  _fromTextbook = null;
+  document.getElementById('navTbBtn').style.display = 'none';
+  document.getElementById('navBackBtn').style.display = '';
   st = {m:'',c1:'',c2:'',tp:'all',q:'',ar:''};
   document.getElementById('hm').style.display = 'grid';
   document.getElementById('qs').style.display = 'block';
@@ -370,6 +374,8 @@ function secLevel(sec) {
   if (dots === 1) return 'main';    // "1.1" 一个点 → 节
   return 'tert';                     // "1.1.1" 两个以上点 → 小节
 }
+let _fromTextbook = null; // {tb, ch} for KP click from textbook view
+
 const _origRenderSec = renderSections;
 renderSections = function() {
   const list = document.getElementById('tbvSectionList');
@@ -393,7 +399,7 @@ renderSections = function() {
       const bg = kpCols[ci], tc = kpTextCols[ci];
       h+=`<div class="kp-tags">`;
       for(const item of kps.slice(0,10))
-        h+=`<span class="tg" style="font-size:12px;cursor:pointer;padding:4px 12px;border-radius:8px;background:${bg};border:1px solid ${tc}44;color:${tc};font-weight:500;transition:all .15s" onclick="event.stopPropagation();goHome();st.q='${escQ(item)}';document.getElementById('sq').value='${escQ(item)}';document.getElementById('hm').style.display='none';document.getElementById('qs').style.display='none';document.getElementById('br').classList.add('sh');renderModuleTabs();renderSidebar();renderResults();" onmouseenter="this.style.background='${tc}';this.style.color='#fff'" onmouseleave="this.style.background='${bg}';this.style.color='${tc}'">🔹${esc(item)}</span>`;
+        h+=`<span class="tg" style="font-size:12px;cursor:pointer;padding:4px 12px;border-radius:8px;background:${bg};border:1px solid ${tc}44;color:${tc};font-weight:500;transition:all .15s" onclick="event.stopPropagation();_fromTextbook={tb:currentTB,ch:currentChapter};document.getElementById('navTbBtn').style.display='';document.getElementById('navBackBtn').style.display='none';goHome();st.q='${escQ(item)}';document.getElementById('sq').value='${escQ(item)}';document.getElementById('hm').style.display='none';document.getElementById('qs').style.display='none';document.getElementById('br').classList.add('sh');renderModuleTabs();renderSidebar();renderResults();" onmouseenter="this.style.background='${tc}';this.style.color='#fff'" onmouseleave="this.style.background='${bg}';this.style.color='${tc}'">🔹${esc(item)}</span>`;
       if(kps.length>10) h+=`<span style="font-size:11px;color:var(--text-muted)">+${kps.length-10}更多</span>`;
       h+=`</div>`;
     }
@@ -401,6 +407,19 @@ renderSections = function() {
   list.innerHTML = h;
 };
 function filterBySection(name) { goHome(); st.q=name; document.getElementById('sq').value=name; document.getElementById('hm').style.display='none'; document.getElementById('qs').style.display='none'; document.getElementById('br').classList.add('sh'); renderModuleTabs(); renderSidebar(); renderResults(); }
+function goBackToTextbook() {
+  const saved = _fromTextbook;
+  _fromTextbook = null;
+  document.getElementById('navTbBtn').style.display = 'none';
+  document.getElementById('navBackBtn').style.display = '';
+  document.getElementById('hm').style.display = 'none';
+  document.getElementById('qs').style.display = 'none';
+  document.getElementById('br').classList.remove('sh');
+  document.getElementById('tbv').style.display = 'block';
+  if (saved) { currentTB = saved.tb; currentChapter = saved.ch; }
+  renderTextbookView();
+  if (currentTB && currentChapter) renderChapterList();
+}
 // Textbook location index for entry cards
 let tbIndex = null;
 function buildTbIndex() {
