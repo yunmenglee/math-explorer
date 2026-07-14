@@ -386,7 +386,7 @@ renderSections = function() {
     h+=`<div class="tbv-section-row section-${level}" style="${isSubOrTert?'cursor:pointer':'cursor:default'}" ${isSubOrTert?`onclick="filterBySection('${escQ(sec.name)}')"`:''}>
       <span class="tbv-sr-num${isSubOrTert?' '+level:''}">${esc(sec.num)}</span>
       <span class="tbv-sr-name${isSubOrTert?' '+level:''}">${esc(sec.name)}</span>
-      ${isSubOrTert?`<span class="tbv-sr-cnt">${kpCount}个KP ▶</span>`:''}</div>`;
+      ${isSubOrTert?`<span class="tbv-sr-cnt">${kpCount}个重点知识点 ▶</span>`:''}</div>`;
     if(kpCount){
       h+=`<div class="kp-tags">`;
       for(const item of kps.slice(0,10))
