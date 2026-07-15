@@ -382,15 +382,18 @@ renderSections = function() {
   if (!currentChapter) { list.innerHTML=''; return; }
   document.getElementById('tbvTitle').textContent = `${currentTB.iconText||'📘'} ${currentTB.label} · 第${currentChapter.num}章 ${currentChapter.name}`;
   let h = '', kpIdx = 0;
-  const hasSubSections = currentChapter.sections.some(s => !s.num.includes('.'));
-  for (const sec of currentChapter.sections) {
+  for (let si = 0; si < currentChapter.sections.length; si++) {
+    const sec = currentChapter.sections[si];
     const level = secLevel(sec);
     const isSubOrTert = level === 'sub' || level === 'tert';
+    // Check if this section has sub-sections following it
+    const nextSec = currentChapter.sections[si + 1];
+    const hasOwnSub = isSubOrTert ? false : (nextSec && !nextSec.num.includes('.'));
     const kps = sec.kps || [];
     const kpCount = kps.length;
+    const showKp = isSubOrTert || (kpCount > 0 && !hasOwnSub);
     const kpCols = ['#ede9fe','#e0f2fe','#d1fae5','#ffedd5','#ffe4e6','#fef3c7','#cffafe','#fce7f3'];
     const kpTextCols = ['#7c3aed','#0284c7','#059669','#ea580c','#e11d48','#d97706','#0891b2','#db2777'];
-    const showKp = isSubOrTert || (!hasSubSections && level === 'main');
     if (kpCount) kpIdx++;
     const ci = (kpIdx - 1) % kpCols.length;
     h+=`<div class="tbv-section-row section-${level}" style="${isSubOrTert?'cursor:pointer':'cursor:default'}" ${isSubOrTert?`onclick="filterBySection('${escQ(sec.name)}')"`:''}>
