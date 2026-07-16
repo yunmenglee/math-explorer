@@ -403,10 +403,11 @@ renderSections = function() {
     if(showKp && kpCount){
       const bg = kpCols[ci], tc = kpTextCols[ci];
       h+=`<div class="kp-tags">`;
-            for(const item of kps.slice(0,10)){
-        const _hk = D && D.some(function(e){return e.t===item;});
-        const _attr = _hk ? `onclick="event.stopPropagation();var _tb=currentTB,_ch=currentChapter;goHome();st.q='${escQ(item)}';document.getElementById('sq').value='${escQ(item)}';document.getElementById('hm').style.display='none';document.getElementById('qs').style.display='none';document.getElementById('br').classList.add('sh');renderModuleTabs();renderSidebar();renderResults();_fromTextbook={tb:_tb,ch:_ch};document.getElementById('navTbBtn').style.display='';document.getElementById('navBackBtn').style.display='none';"` : `title="待补充内容"`;
-        h+=`<span class="tg" style="font-size:12px;padding:4px 12px;border-radius:8px;background:${bg};border:1px solid ${tc}44;color:${tc};font-weight:500;transition:all .15s${_hk?'':';opacity:0.65'}" ${_attr} onmouseenter="this.style.background='${tc}';this.style.color='#fff'" onmouseleave="this.style.background='${bg}';this.style.color='${tc}'">${esc(item)}</span>`;
+                  for(let ki=0;ki<Math.min(kps.length,10);ki++){
+        const item=kps[ki];
+        const _hk=D&&D.some(function(e){return e.t===item;});
+        const _attr=_hk?`onclick="event.stopPropagation();var _tb=currentTB,_ch=currentChapter;goHome();st.q='${escQ(item)}';document.getElementById('sq').value='${escQ(item)}';document.getElementById('hm').style.display='none';document.getElementById('qs').style.display='none';document.getElementById('br').classList.add('sh');renderModuleTabs();renderSidebar();renderResults();_fromTextbook={tb:_tb,ch:_ch};document.getElementById('navTbBtn').style.display='';document.getElementById('navBackBtn').style.display='none';"`:`title="待补充内容"`;
+        h+=`<span class="tg" style="font-size:12px;padding:4px 12px;border-radius:8px;background:${bg};border:1px solid ${tc}44;color:${tc};font-weight:500;transition:all .15s${_hk?'':';opacity:0.65'}" ${_attr} onmouseenter="this.style.background='${tc}';this.style.color='#fff'" onmouseleave="this.style.background='${bg}';this.style.color='${tc}'">🔹${ki+1}.&nbsp;${esc(item)}</span>`;
       }if(kps.length>10) h+=`<span style="font-size:11px;color:var(--text-muted)">+${kps.length-10}更多</span>`;
       h+=`</div>`;
     }
