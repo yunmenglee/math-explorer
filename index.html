@@ -377,40 +377,60 @@ function secLevel(sec) {
 let _fromTextbook = null; // {tb, ch} for KP click from textbook view
 
 const _origRenderSec = renderSections;
+// KP 兼容两种格式：字符串（初中旧数据）或 {name, evidence}（小学新数据）
+const _kpName = function (kp) { return typeof kp === 'string' ? kp : ((kp && kp.name) || ''); };
+const _kpEvidence = function (kp) { return typeof kp === 'string' ? '' : ((kp && kp.evidence) || ''); };
 renderSections = function() {
   const list = document.getElementById('tbvSectionList');
   if (!currentChapter) { list.innerHTML=''; return; }
   document.getElementById('tbvTitle').textContent = `${currentTB.iconText||'📘'} ${currentTB.label} · 第${currentChapter.num}章 ${currentChapter.name}`;
+  const KPBG = ['#ede9fe','#e0f2fe','#d1fae5','#ffedd5','#ffe4e6','#fef3c7','#cffafe','#fce7f3'];
+  const KPTX = ['#7c3aed','#0284c7','#059669','#ea580c','#e11d48','#d97706','#0891b2','#db2777'];
+  const DEBG = ['#fee2e2','#ffedd5','#fef3c7','#fce7f3'];
+  const DETX = ['#b91c1c','#c2410c','#b45309','#be185d'];
   let h = '', kpIdx = 0;
+  const tagBlock = function(items, kind, ci) {
+    const isDe = kind === 'de';
+    const bgArr = isDe ? DEBG : KPBG;
+    const tcArr = isDe ? DETX : KPTX;
+    const bg = bgArr[ci % bgArr.length], tc = tcArr[ci % tcArr.length];
+    const LIMIT = 10;
+    let out = `<div class="${isDe ? 'de-tags' : 'kp-tags'}">`;
+    const shown = items.slice(0, LIMIT);
+    for (let i = 0; i < shown.length; i++) {
+      const nm = _kpName(shown[i]);
+      if (!nm) continue;
+      const ev = _kpEvidence(shown[i]);
+      const hit = !isDe && D && D.some(function (e) { return e.t === nm; });
+      const tip = ev ? `title="${esc(ev)}"` : (hit ? '' : 'title="待补充内容"');
+      const attr = hit
+        ? `onclick="event.stopPropagation();var _tb=currentTB,_ch=currentChapter;goHome();st.q='${escQ(nm)}';document.getElementById('sq').value='${escQ(nm)}';document.getElementById('hm').style.display='none';document.getElementById('qs').style.display='none';document.getElementById('br').classList.add('sh');renderModuleTabs();renderSidebar();renderResults();_fromTextbook={tb:_tb,ch:_ch};document.getElementById('navTbBtn').style.display='';document.getElementById('navBackBtn').style.display='none';"`
+        : '';
+      out += `<span class="tg" ${tip} ${attr} style="font-size:12px;padding:4px 12px;border-radius:8px;background:${bg};border:1px solid ${tc}44;color:${tc};font-weight:500;transition:all .15s;cursor:${hit ? 'pointer' : 'default'}${hit ? '' : ';opacity:0.65'}" onmouseenter="this.style.background='${tc}';this.style.color='#fff'" onmouseleave="this.style.background='${bg}';this.style.color='${tc}'">${isDe ? '⚠️' : '🔹'}${esc(nm)}</span>`;
+    }
+    if (items.length > LIMIT) out += `<span style="font-size:11px;color:var(--text-muted)">+${items.length - LIMIT}更多</span>`;
+    out += '</div>';
+    return out;
+  };
   for (let si = 0; si < currentChapter.sections.length; si++) {
     const sec = currentChapter.sections[si];
     const level = secLevel(sec);
     const isSubOrTert = level === 'sub' || level === 'tert';
-    // Check if this section has sub-sections following it
     const nextSec = currentChapter.sections[si + 1];
-    const hasOwnSub = isSubOrTert ? false : (nextSec && !nextSec.num.includes('.'));
+    const hasOwnSub = isSubOrTert ? false : (nextSec && !String(nextSec.num).includes('.'));
     const kps = sec.kps || [];
-    const kpCount = kps.length;
-    const showKp = isSubOrTert || (kpCount > 0 && !hasOwnSub);
-    const kpCols = ['#ede9fe','#e0f2fe','#d1fae5','#ffedd5','#ffe4e6','#fef3c7','#cffafe','#fce7f3'];
-    const kpTextCols = ['#7c3aed','#0284c7','#059669','#ea580c','#e11d48','#d97706','#0891b2','#db2777'];
-    if (kpCount) kpIdx++;
-    const ci = (kpIdx - 1) % kpCols.length;
-    h+=`<div class="tbv-section-row section-${level}" style="${isSubOrTert?'cursor:pointer':'cursor:default'}" ${isSubOrTert?`onclick="filterBySection('${escQ(sec.name)}')"`:''}>
-      <span class="tbv-sr-num${isSubOrTert?' '+level:''}">${esc(sec.num)}</span>
-      <span class="tbv-sr-name${isSubOrTert?' '+level:''}">${esc(sec.name)}</span>
-      ${showKp?`<span class="tbv-sr-cnt">${kpCount}个重点知识点 ▶</span>`:''}</div>`;
-    if(showKp && kpCount){
-      const bg = kpCols[ci], tc = kpTextCols[ci];
-      h+=`<div class="kp-tags">`;
-                  for(let ki=0;ki<Math.min(kps.length,10);ki++){
-        const item=kps[ki];
-        const _hk=D&&D.some(function(e){return e.t===item;});
-        const _attr=_hk?`onclick="event.stopPropagation();var _tb=currentTB,_ch=currentChapter;goHome();st.q='${escQ(item)}';document.getElementById('sq').value='${escQ(item)}';document.getElementById('hm').style.display='none';document.getElementById('qs').style.display='none';document.getElementById('br').classList.add('sh');renderModuleTabs();renderSidebar();renderResults();_fromTextbook={tb:_tb,ch:_ch};document.getElementById('navTbBtn').style.display='';document.getElementById('navBackBtn').style.display='none';"`:`title="待补充内容"`;
-        h+=`<span class="tg" style="font-size:12px;padding:4px 12px;border-radius:8px;background:${bg};border:1px solid ${tc}44;color:${tc};font-weight:500;transition:all .15s${_hk?'':';opacity:0.65'}" ${_attr} onmouseenter="this.style.background='${tc}';this.style.color='#fff'" onmouseleave="this.style.background='${bg}';this.style.color='${tc}'">🔹${esc(item)}</span>`;
-      }if(kps.length>10) h+=`<span style="font-size:11px;color:var(--text-muted)">+${kps.length-10}更多</span>`;
-      h+=`</div>`;
-    }
+    const des = sec.des || [];
+    const kpCount = kps.length, deCount = des.length;
+    const showKp = isSubOrTert || ((kpCount > 0 || deCount > 0) && !hasOwnSub);
+    if (kpCount || deCount) kpIdx++;
+    const ci = Math.max(0, kpIdx - 1);
+    const pageTip = (sec.pages && sec.pages.length === 2) ? `title="教材 p.${sec.pages[0]}–${sec.pages[1]}"` : '';
+    h += `<div class="tbv-section-row section-${level}" style="${isSubOrTert ? 'cursor:pointer' : 'cursor:default'}" ${pageTip} ${isSubOrTert ? `onclick="filterBySection('${escQ(sec.name)}')"` : ''}>
+      <span class="tbv-sr-num${isSubOrTert ? ' ' + level : ''}">${esc(sec.num)}</span>
+      <span class="tbv-sr-name${isSubOrTert ? ' ' + level : ''}">${esc(sec.name)}</span>
+      ${showKp ? `<span class="tbv-sr-cnt">${kpCount}个知识点${deCount ? ' · ' + deCount + '个易错点' : ''} ▶</span>` : ''}</div>`;
+    if (showKp && kpCount) h += tagBlock(kps, 'kp', ci);
+    if (showKp && deCount) h += tagBlock(des, 'de', ci);
   }
   list.innerHTML = h;
 };
@@ -488,9 +508,9 @@ function goHomeFromTB() {
 }
 
 // === Publisher Icons + Grade Tabs ===
-const pubColors = {'苏科版':'#0ea5e9','冀教版':'#e11d48','人教版':'#16a34a','北师大版':'#d97706','北京版':'#7c3aed','沪教版五四制':'#d97706','浙教版':'#059669','沪科版':'#0891b2','华师版':'#dc2626','湘教版':'#ca8a04','青岛版':'#2563eb','人教五四版':'#16a34a','鲁教五四版':'#dc2626'};
-const gradeOrder = {'六年级上册':1,'六年级下册':2,'七年级上册':3,'七年级下册':4,'八年级上册':5,'八年级下册':6,'九年级上册':7,'九年级下册':8};
-const pubOrder = ['苏科版','冀教版','人教版','北师大版','北京版','沪教版五四制','浙教版','沪科版','华师版','湘教版','青岛版','人教五四版','鲁教五四版'];
+const pubColors = {'苏科版':'#0ea5e9','冀教版':'#e11d48','人教版':'#16a34a','北师大版':'#d97706','北京版':'#7c3aed','沪教版五四制':'#d97706','浙教版':'#059669','沪科版':'#0891b2','华师版':'#dc2626','湘教版':'#ca8a04','青岛版':'#2563eb','人教五四版':'#16a34a','鲁教五四版':'#dc2626','沪教版':'#2563eb','苏教版':'#0d9488','西师大版':'#c026d3','青岛五四制':'#2563eb','青岛六三制':'#0891b2'};
+const gradeOrder = {'一年级上册':1,'一年级下册':2,'二年级上册':3,'二年级下册':4,'三年级上册':5,'三年级下册':6,'四年级上册':7,'四年级下册':8,'五年级上册':9,'五年级下册':10,'六年级上册':11,'六年级下册':12,'七年级上册':13,'七年级下册':14,'八年级上册':15,'八年级下册':16,'九年级上册':17,'九年级下册':18};
+const pubOrder = ['苏科版','冀教版','人教版','北师大版','北京版','沪教版五四制','浙教版','沪科版','华师版','湘教版','青岛版','人教五四版','鲁教五四版','沪教版','苏教版','西师大版','青岛五四制','青岛六三制'];
 
 function renderPubIcons() {
   const el = document.getElementById('tbvPubIcons');
@@ -499,7 +519,7 @@ function renderPubIcons() {
     const books = TB.filter(b => b.publisher === pub);
     if (!books.length) return '';
     const col = pubColors[pub]||'#6366f1';
-    const icon = {'苏科版':'📘','冀教版':'📗','人教版':'📕','北师大版':'📙','北京版':'📒','沪教版五四制':'📓','浙教版':'📔','沪科版':'📘','华师版':'📕','湘教版':'📗','青岛版':'📘','人教五四版':'📕','鲁教五四版':'📗'}[pub]||'📚';
+    const icon = {'苏科版':'📘','冀教版':'📗','人教版':'📕','北师大版':'📙','北京版':'📒','沪教版五四制':'📓','浙教版':'📔','沪科版':'📘','华师版':'📕','湘教版':'📗','青岛版':'📘','人教五四版':'📕','鲁教五四版':'📗','沪教版':'📓','苏教版':'📗','西师大版':'📙','青岛五四制':'📘','青岛六三制':'📘'}[pub]||'📚';
     return `<div onclick="selectPub('${pub}')" style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border-radius:8px;cursor:pointer;transition:all .15s" onmouseenter="this.style.background='${col}22'" onmouseleave="this.style.background=''">
       <div style="font-size:24px;line-height:1.2">${icon}</div>
       <div style="font-size:10px;color:${col};font-weight:600;line-height:1.1;text-align:center">${pub.replace('版','')}</div>
@@ -716,7 +736,7 @@ function runOverComparison() {
     for (const sec of ch.sections) learnedSects.add(sec.name);
   }
   
-  const gradeOrder = {'六年级上册':1,'六年级下册':2,'七年级上册':3,'七年级下册':4,'八年级上册':5,'八年级下册':6,'九年级上册':7,'九年级下册':8};
+  const gradeOrder = {'一年级上册':1,'一年级下册':2,'二年级上册':3,'二年级下册':4,'三年级上册':5,'三年级下册':6,'四年级上册':7,'四年级下册':8,'五年级上册':9,'五年级下册':10,'六年级上册':11,'六年级下册':12,'七年级上册':13,'七年级下册':14,'八年级上册':15,'八年级下册':16,'九年级上册':17,'九年级下册':18};
   const pGrade = gradeOrder[comparePrimary.grade] || 3;
   for (const book of TB) {
     if (book.publisher === comparePrimary.publisher && book.id !== comparePrimary.id) {
@@ -866,7 +886,7 @@ function runLearnedCheck() {
   }
   
   // Also include same-publisher lower grades
-  const gradeOrder = {'六年级上册':1,'六年级下册':2,'七年级上册':3,'七年级下册':4,'八年级上册':5,'八年级下册':6,'九年级上册':7,'九年级下册':8};
+  const gradeOrder = {'一年级上册':1,'一年级下册':2,'二年级上册':3,'二年级下册':4,'三年级上册':5,'三年级下册':6,'四年级上册':7,'四年级下册':8,'五年级上册':9,'五年级下册':10,'六年级上册':11,'六年级下册':12,'七年级上册':13,'七年级下册':14,'八年级上册':15,'八年级下册':16,'九年级上册':17,'九年级下册':18};
   const pGrade = gradeOrder[learnedPrimary.grade] || 3;
   for (const book of TB) {
     if (book.publisher === learnedPrimary.publisher && book.id !== learnedPrimary.id) {
