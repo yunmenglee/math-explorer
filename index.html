@@ -1068,9 +1068,13 @@ function getFilteredEntries() {
     if (st.ar && (!e.areas || e.areas.indexOf(st.ar) < 0)) continue;
     if (st.q) {
       const q = st.q.toLowerCase();
+      // 备注(x) 不参与检索
       if (e.t.toLowerCase().indexOf(q)<0 && (e.d||'').toLowerCase().indexOf(q)<0 &&
           (e.c1||'').toLowerCase().indexOf(q)<0 && (e.c2||'').toLowerCase().indexOf(q)<0 &&
-          (e.c3||'').toLowerCase().indexOf(q)<0 && (e.x||'').toLowerCase().indexOf(q)<0) continue;
+          (e.c3||'').toLowerCase().indexOf(q)<0) continue;
+      // 只检索已关联到教材小节的 KP
+      buildKpLocIndex();
+      if (!(kpLocIndex[(e.t || '').trim()] || []).length) continue;
     }
     out.push(e);
   }
@@ -1294,7 +1298,7 @@ function renderResults() {
 
   // Info
   const pts = ['共 <strong>'+fil.length+'</strong> 条知识'];
-  if (st.q) pts.push('搜索: "'+esc(st.q)+'"');
+  if (st.q) pts.push('搜索: "'+esc(st.q)+'" <span style="font-weight:500;color:var(--text-muted)">(仅检索已关联教材的知识点)</span>');
   if (st.m && st.m!=='中考数学') pts.push(st.m);
   if (st.c1 && st.m!=='中考数学') pts.push(st.c1+(st.c2?' → '+st.c2:''));
   if (st.loc) {
@@ -1311,7 +1315,8 @@ function renderResults() {
 
   // Empty state
   if (fil.length === 0) {
-    document.getElementById('rs').innerHTML = '<div class="em"><div class="e">🔍</div><h3>没有找到匹配的知识</h3></div>';
+    const tip = st.q ? '<p style="font-size:13px;color:var(--text-muted);margin-top:8px">当前检索仅包含已挂到教材章节小节的 KP，备注不参与检索</p>' : '';
+    document.getElementById('rs').innerHTML = '<div class="em"><div class="e">🔍</div><h3>没有找到匹配的知识</h3>'+tip+'</div>';
     return;
   }
 
