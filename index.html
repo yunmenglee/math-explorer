@@ -1100,6 +1100,25 @@ function _secCmp(a,b) {
   }
   return 0;
 }
+let locOpen = null;
+let locOpenAll = null;
+function _locOpen(key, dflt) {
+  if (!locOpen) locOpen = {};
+  if (key in locOpen) return locOpen[key];
+  return dflt;
+}
+function toggleLocOpen(key, ev) {
+  if (ev) ev.stopPropagation();
+  if (!locOpen) locOpen = {};
+  locOpen[key] = !_locOpen(key, true);
+  locOpenAll = null;
+  renderSidebar();
+}
+function expandAllLoc(v) {
+  locOpenAll = v;
+  locOpen = {};
+  renderSidebar();
+}
 function renderLocTree(items) {
   buildKpLocIndex();
   locLabels = {};
@@ -1126,15 +1145,22 @@ function renderLocTree(items) {
     h += '<div class="loc-empty">当前结果没有教材出处信息</div>';
   }
   const CAP_B = 12, CAP_C = 12, CAP_S = 10;
+  // 展开/收起全部
+  h += `<div class="loc-tools"><span onclick="expandAllLoc(true)">展开全部</span><span onclick="expandAllLoc(false)">收起全部</span></div>`;
   for (const bk of bookList.slice(0, CAP_B)) {
     const bi = bk.info;
     locLabels[bi.bookKey] = bi.pub + ' ' + bi.grade;
-    h += `<div class="si ${st.loc===bi.bookKey?'on':''}" onclick="setLoc('${escQ(bi.bookKey)}')"><span class="nm">${esc(bi.pub)} ${esc(bi.grade)}</span><span class="cn">${bk.cnt}</span></div>`;
+    const bOpen = (locOpenAll === null) ? _locOpen(bi.bookKey, true) : locOpenAll;
+    h += `<div class="si ${st.loc===bi.bookKey?'on':''}" onclick="setLoc('${escQ(bi.bookKey)}')"><span class="loc-arrow" onclick="toggleLocOpen('${escQ(bi.bookKey)}', event)">${bOpen?'▾':'▸'}</span><span class="nm">${esc(bi.pub)} ${esc(bi.grade)}</span><span class="cn">${bk.cnt}</span></div>`;
+    if (!bOpen) continue;
     const chs = Object.keys(bk.chs).map(function(k){ return bk.chs[k]; }).sort(function(a,b){ return a.info.chNum - b.info.chNum; });
     for (const ck of chs.slice(0, CAP_C)) {
       const ci = ck.info;
       locLabels[ci.chKey] = ci.pub + ' ' + ci.grade + ' · 第' + ci.chNum + '章 ' + ci.chName;
-      h += `<div class="si lv2 ${st.loc===ci.chKey?'on':''}" onclick="setLoc('${escQ(ci.chKey)}')"><span class="nm">第${ci.chNum}章 ${esc(ci.chName)}</span><span class="cn">${ck.cnt}</span></div>`;
+      const autoOpen = !!(st.loc && st.loc.indexOf(ci.chKey) === 0);
+      const cOpen = (locOpenAll === null) ? _locOpen(ci.chKey, autoOpen ? true : false) : locOpenAll;
+      h += `<div class="si lv2 ${st.loc===ci.chKey?'on':''}" onclick="setLoc('${escQ(ci.chKey)}')"><span class="loc-arrow" onclick="toggleLocOpen('${escQ(ci.chKey)}', event)">${cOpen?'▾':'▸'}</span><span class="nm">第${ci.chNum}章 ${esc(ci.chName)}</span><span class="cn">${ck.cnt}</span></div>`;
+      if (!cOpen) continue;
       const secs = Object.keys(ck.secs).map(function(k){ return ck.secs[k]; }).sort(_secCmp);
       for (const sk of secs.slice(0, CAP_S)) {
         const si = sk.info;
