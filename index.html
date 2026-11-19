@@ -165,7 +165,7 @@ let C = {};
 let Q = [];
 let meta = {};
 let TB = [];
-let st = {m:'',c1:'',c2:'',tp:'all',q:'',ar:''};
+let st = {m:'',c1:'',c2:'',tp:'all',q:'',ar:'',sdTab:'',loc:''};
 let isDataLoaded = false;
 let preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
@@ -328,7 +328,7 @@ function renderQuote() {
 // ===== NAVIGATION =====
 function enterModule(m) {
   if (!requireAuth()) return;
-  st = {m:{'小学':'小学','初中':'初中','中考':'中考数学'}[m],c1:'',c2:'',tp:'all',q:'',ar:''};
+  st = {m:{'小学':'小学','初中':'初中','中考':'中考数学'}[m],c1:'',c2:'',tp:'all',q:'',ar:'',sdTab:'',loc:''};
   document.getElementById('sq').value = '';
   document.getElementById('hm').style.display = 'none';
   document.getElementById('qs').style.display = 'none';
@@ -342,7 +342,7 @@ function goHome() {
   _fromTextbook = null;
   document.getElementById('navTbBtn').style.display = 'none';
   document.getElementById('navBackBtn').style.display = '';
-  st = {m:'',c1:'',c2:'',tp:'all',q:'',ar:''};
+  st = {m:'',c1:'',c2:'',tp:'all',q:'',ar:'',sdTab:'',loc:''};
   document.getElementById('hm').style.display = 'block';
   document.getElementById('qs').style.display = 'block';
   document.getElementById('br').classList.remove('sh');
@@ -429,7 +429,7 @@ renderSections = function() {
       const hit = !isDe && D && D.some(function (e) { return e.t === nm; });
       const tip = ev ? `title="${esc(ev)}"` : (hit ? '' : 'title="待补充内容"');
       const attr = hit
-        ? `onclick="event.stopPropagation();var _tb=currentTB,_ch=currentChapter;goHome();st.q='${escQ(nm)}';document.getElementById('sq').value='${escQ(nm)}';document.getElementById('hm').style.display='none';document.getElementById('qs').style.display='none';document.getElementById('br').classList.add('sh');renderModuleTabs();renderSidebar();renderResults();_fromTextbook={tb:_tb,ch:_ch};document.getElementById('navTbBtn').style.display='';document.getElementById('navBackBtn').style.display='none';"`
+        ? `onclick="event.stopPropagation();var _tb=currentTB,_ch=currentChapter;goHome();st.loc='';st.sdTab='';st.q='${escQ(nm)}';document.getElementById('sq').value='${escQ(nm)}';document.getElementById('hm').style.display='none';document.getElementById('qs').style.display='none';document.getElementById('br').classList.add('sh');renderModuleTabs();renderSidebar();renderResults();_fromTextbook={tb:_tb,ch:_ch};document.getElementById('navTbBtn').style.display='';document.getElementById('navBackBtn').style.display='none';"`
         : '';
       out += `<span class="tg" ${tip} ${attr} style="font-size:12px;padding:4px 12px;border-radius:8px;background:${bg};border:1px solid ${tc}44;color:${tc};font-weight:500;transition:all .15s;cursor:${hit ? 'pointer' : 'default'}${hit ? '' : ';opacity:0.65'}" onmouseenter="this.style.background='${tc}';this.style.color='#fff'" onmouseleave="this.style.background='${bg}';this.style.color='${tc}'">${isDe ? '⚠️' : '🔹'}${esc(nm)}</span>`;
     }
@@ -459,7 +459,7 @@ renderSections = function() {
   }
   list.innerHTML = h;
 };
-function filterBySection(name) { goHome(); st.q=name; document.getElementById('sq').value=name; document.getElementById('hm').style.display='none'; document.getElementById('qs').style.display='none'; document.getElementById('br').classList.add('sh'); renderModuleTabs(); renderSidebar(); renderResults(); }
+function filterBySection(name) { goHome(); st.loc=''; st.sdTab=''; st.q=name; document.getElementById('sq').value=name; document.getElementById('hm').style.display='none'; document.getElementById('qs').style.display='none'; document.getElementById('br').classList.add('sh'); renderModuleTabs(); renderSidebar(); renderResults(); }
 function goBackToTextbook() {
   const saved = _fromTextbook;
   _fromTextbook = null;
@@ -493,13 +493,28 @@ function buildTbIndex() {
   }
 }
 function findTbLocation(entry) {
-  buildTbIndex();
-  const candidates=[];
-  for(const term of [entry.t,entry.c2,entry.c3,entry.c1].filter(Boolean)) {
-    const m=tbIndex[term.trim()];
-    if(m) candidates.push(...m);
+  const locs = entryLocs(entry);
+  const out = [];
+  for (const l of locs) {
+    out.push({
+      pub: l.pub, grade: l.grade, ch: l.chNum, chName: l.chName,
+      key: l.chKey,
+      label: l.pub + ' ' + l.grade + ' 第' + l.chNum + '章' + (l.chName ? ' ' + l.chName : '')
+    });
+    if (out.length >= 2) break;
   }
-  return candidates.slice(0,3);
+  return out;
+}
+
+// 点击条目卡片上的“教材出处” → 左侧定位到该章
+function jumpEntryLoc(key) {
+  if (!key) return;
+  st.loc = key; st.sdTab = 'loc';
+  document.getElementById('hm').style.display = 'none';
+  document.getElementById('qs').style.display = 'none';
+  document.getElementById('br').classList.add('sh');
+  renderModuleTabs();
+  renderResults();
 }
 
 // ===== TEXTBOOK VIEW =====
@@ -1000,7 +1015,7 @@ function switchModule(m) {
   if (m==='全部' && !st.m) return;
   if (m==='全部') { goHome(); return; }
   st.m = {'小学':'小学','初中':'初中','中考':'中考数学'}[m];
-  st.c1=''; st.c2=''; st.ar='';
+  st.c1=''; st.c2=''; st.ar=''; st.loc=''; st.sdTab='';
   document.getElementById('extraPanels').innerHTML = '';
   renderModuleTabs();
   renderSidebar();
@@ -1008,13 +1023,155 @@ function switchModule(m) {
 }
 
 // ===== SIDEBAR =====
-function renderSidebar() {
+// ===== 教材定位索引(KP 名称 → 教材/章/节) =====
+let kpLocIndex = null;
+let locLabels = {};
+function buildKpLocIndex() {
+  if (kpLocIndex) return;
+  kpLocIndex = {};
+  for (const b of TB) {
+    const stage = b.stage || '初中';
+    const bookKey = stage + '|' + b.publisher + '|' + b.grade;
+    for (const ch of b.chapters) {
+      const chKey = bookKey + '|' + ch.num;
+      for (const sec of ch.sections) {
+        const secKey = chKey + '|' + sec.num;
+        for (const kp of (sec.kps || [])) {
+          const nm = (typeof kp === 'string' ? kp : (kp && kp.name) || '').trim();
+          if (!nm) continue;
+          const arr = kpLocIndex[nm] || (kpLocIndex[nm] = []);
+          if (!arr.some(function(l){ return l.secKey === secKey; })) {
+            arr.push({stage:stage, pub:b.publisher, grade:b.grade, bookKey:bookKey,
+              chNum:ch.num, chName:ch.name, chKey:chKey,
+              secNum:sec.num, secName:sec.name, secKey:secKey});
+          }
+        }
+      }
+    }
+  }
+}
+function entryLocs(e) {
+  buildKpLocIndex();
+  return kpLocIndex[(e.t || '').trim()] || [];
+}
+function locMatches(l) {
+  if (!st.loc) return true;
+  return l.secKey === st.loc || l.chKey === st.loc || l.bookKey === st.loc;
+}
+function getFilteredEntries() {
+  const out = [];
+  for (const e of D) {
+    if (st.m && e.m !== st.m) continue;
+    if (st.c1 && e.c1 !== st.c1) continue;
+    if (st.c2 && e.c2 !== st.c2) continue;
+    if (st.tp !== 'all' && e.tp !== st.tp) continue;
+    if (st.ar && (!e.areas || e.areas.indexOf(st.ar) < 0)) continue;
+    if (st.q) {
+      const q = st.q.toLowerCase();
+      if (e.t.toLowerCase().indexOf(q)<0 && (e.d||'').toLowerCase().indexOf(q)<0 &&
+          (e.c1||'').toLowerCase().indexOf(q)<0 && (e.c2||'').toLowerCase().indexOf(q)<0 &&
+          (e.c3||'').toLowerCase().indexOf(q)<0 && (e.x||'').toLowerCase().indexOf(q)<0) continue;
+    }
+    out.push(e);
+  }
+  return out;
+}
+function setSdTab(t) {
+  st.sdTab = t;
+  renderSidebar();
+}
+function setLoc(key) {
+  st.loc = (st.loc === key) ? '' : key;
+  st.sdTab = 'loc';
+  renderResults();
+}
+function clearLoc() {
+  st.loc = '';
+  renderResults();
+}
+function _secOrder(n) {
+  return String(n).split('.').map(function(x){ return parseInt(x,10) || 0; });
+}
+function _secCmp(a,b) {
+  const A=_secOrder(a.info.secNum), B=_secOrder(b.info.secNum);
+  for (let i=0;i<Math.max(A.length,B.length);i++) {
+    const d=(A[i]||0)-(B[i]||0);
+    if (d) return d;
+  }
+  return 0;
+}
+function renderLocTree(items) {
+  buildKpLocIndex();
+  locLabels = {};
+  const books = {};
+  let matched = 0, unlocated = 0;
+  for (const e of items) {
+    const locs = entryLocs(e);
+    if (!locs.length) { unlocated++; continue; }
+    matched++;
+    for (const l of locs) {
+      const bk = books[l.bookKey] || (books[l.bookKey] = {info:l, cnt:0, chs:{}});
+      bk.cnt++;
+      const ck = bk.chs[l.chKey] || (bk.chs[l.chKey] = {info:l, cnt:0, secs:{}});
+      ck.cnt++;
+      const sk = ck.secs[l.secKey] || (ck.secs[l.secKey] = {info:l, cnt:0});
+      sk.cnt++;
+    }
+  }
+  const bookList = Object.keys(books).map(function(k){ return books[k]; }).sort(function(a,b){ return b.cnt - a.cnt; });
+  let h = '<div class="sl"><div class="shd">📚 教材定位</div>';
+  h += `<div class="si ${!st.loc?'on':''}" onclick="clearLoc()"><span class="nm">全部结果</span><span class="cn">${items.length}</span></div>`;
+  h += `<div class="loc-meta">命中 ${matched} 条有出处${unlocated ? ' · '+unlocated+' 条未收录' : ''}</div>`;
+  if (!bookList.length) {
+    h += '<div class="loc-empty">当前结果没有教材出处信息</div>';
+  }
+  const CAP_B = 12, CAP_C = 12, CAP_S = 10;
+  for (const bk of bookList.slice(0, CAP_B)) {
+    const bi = bk.info;
+    locLabels[bi.bookKey] = bi.pub + ' ' + bi.grade;
+    h += `<div class="si ${st.loc===bi.bookKey?'on':''}" onclick="setLoc('${escQ(bi.bookKey)}')"><span class="nm">${esc(bi.pub)} ${esc(bi.grade)}</span><span class="cn">${bk.cnt}</span></div>`;
+    const chs = Object.keys(bk.chs).map(function(k){ return bk.chs[k]; }).sort(function(a,b){ return a.info.chNum - b.info.chNum; });
+    for (const ck of chs.slice(0, CAP_C)) {
+      const ci = ck.info;
+      locLabels[ci.chKey] = ci.pub + ' ' + ci.grade + ' · 第' + ci.chNum + '章 ' + ci.chName;
+      h += `<div class="si lv2 ${st.loc===ci.chKey?'on':''}" onclick="setLoc('${escQ(ci.chKey)}')"><span class="nm">第${ci.chNum}章 ${esc(ci.chName)}</span><span class="cn">${ck.cnt}</span></div>`;
+      const secs = Object.keys(ck.secs).map(function(k){ return ck.secs[k]; }).sort(_secCmp);
+      for (const sk of secs.slice(0, CAP_S)) {
+        const si = sk.info;
+        locLabels[si.secKey] = si.pub + ' ' + si.grade + ' · 第' + si.chNum + '章 ' + si.chName + ' · ' + si.secNum + ' ' + si.secName;
+        h += `<div class="si lv3 ${st.loc===si.secKey?'on':''}" onclick="setLoc('${escQ(si.secKey)}')"><span class="nm">${esc(si.secNum)} ${esc(si.secName)}</span><span class="cn">${sk.cnt}</span></div>`;
+      }
+      if (secs.length > CAP_S) h += `<div class="loc-more">+${secs.length - CAP_S} 个小节</div>`;
+    }
+    if (chs.length > CAP_C) h += `<div class="loc-more">+${chs.length - CAP_C} 章</div>`;
+  }
+  if (bookList.length > CAP_B) h += `<div class="loc-more">+${bookList.length - CAP_B} 本教材</div>`;
+  h += '</div>';
+  return h;
+}
+function renderSidebar(items) {
   const sd = document.getElementById('sd');
-  if (!st.m) { sd.innerHTML=''; sd.classList.remove('sh'); return; }
+  if (!st.m && !st.q) { sd.innerHTML=''; sd.classList.remove('sh'); return; }
   sd.classList.add('sh');
+  if (!st.sdTab) st.sdTab = st.q ? 'loc' : 'cat';
+  const tab = st.sdTab;
+  let h = '<div class="sd-tabs">'
+    + `<span class="sdt ${tab==='loc'?'on':''}" onclick="setSdTab('loc')">📚 教材定位</span>`
+    + `<span class="sdt ${tab==='cat'?'on':''}" onclick="setSdTab('cat')">📂 分类筛选</span>`
+    + '</div>';
+  if (tab === 'loc') {
+    h += renderLocTree(items || getFilteredEntries());
+    sd.innerHTML = h;
+    return;
+  }
+  if (!st.m) {
+    h += '<div class="sl"><div class="shd">📂 分类筛选</div><div class="loc-empty">先在顶部选择学段（小学/初中/中考）后可按分类筛选</div></div>';
+    sd.innerHTML = h;
+    return;
+  }
   const cats = T[st.m] || {};
   const c1s = Object.keys(cats).sort((a,b) => (S[st.m]?.cs?.[b]||0) - (S[st.m]?.cs?.[a]||0));
-  let h = '<div class="sl"><div class="shd">📂 分类筛选</div>';
+  h += '<div class="sl"><div class="shd">📂 分类筛选</div>';
   if (st.c1 && cats[st.c1]) {
     h += `<div class="sbk" onclick="selectC1()">← ${esc(st.c1)}</div>`;
     const c2s = cats[st.c1];
@@ -1038,10 +1195,12 @@ function renderSidebar() {
 }
 
 function selectC1(c1) {
+  st.loc='';
   if (c1) { st.c1=c1; st.c2=''; } else { st.c1=''; st.c2=''; }
   renderSidebar(); renderResults();
 }
 function selectC2(c1,c2) {
+  st.loc='';
   st.c2 = st.c2===c2 ? '' : c2;
   renderSidebar(); renderResults();
 }
@@ -1098,28 +1257,23 @@ function renderBreadcrumb() {
 
 // ===== RESULTS =====
 function renderResults() {
-  // Filter
-  let fil = [];
-  for (const e of D) {
-    if (st.m && e.m !== st.m) continue;
-    if (st.c1 && e.c1 !== st.c1) continue;
-    if (st.c2 && e.c2 !== st.c2) continue;
-    if (st.tp !== 'all' && e.tp !== st.tp) continue;
-    if (st.ar && (!e.areas || e.areas.indexOf(st.ar) < 0)) continue;
-    if (st.q) {
-      const q = st.q.toLowerCase();
-      if (e.t.toLowerCase().indexOf(q)<0 && e.d.toLowerCase().indexOf(q)<0 &&
-          e.c1.toLowerCase().indexOf(q)<0 && (e.c2||'').toLowerCase().indexOf(q)<0 &&
-          (e.c3||'').toLowerCase().indexOf(q)<0 && (e.x||'').toLowerCase().indexOf(q)<0) continue;
-    }
-    fil.push(e);
+  // Filter（先按分类/搜索过滤，再按左侧教材定位收窄）
+  const baseFil = getFilteredEntries();
+  let fil = baseFil;
+  if (st.loc) {
+    fil = baseFil.filter(function(e){ return entryLocs(e).some(locMatches); });
   }
+
+  renderSidebar(baseFil);
 
   // Info
   const pts = ['共 <strong>'+fil.length+'</strong> 条知识'];
   if (st.q) pts.push('搜索: "'+esc(st.q)+'"');
   if (st.m && st.m!=='中考数学') pts.push(st.m);
   if (st.c1 && st.m!=='中考数学') pts.push(st.c1+(st.c2?' → '+st.c2:''));
+  if (st.loc) {
+    pts.push('📚 定位: ' + esc(locLabels[st.loc] || st.loc) + ' <span style="cursor:pointer;color:var(--accent);font-weight:600" onclick="clearLoc()">✕ 清除</span>');
+  }
   document.getElementById('st').innerHTML = pts.join(' · ');
 
   renderAreaFilter(fil);
@@ -1175,7 +1329,7 @@ function renderResults() {
       ${e.imt ? '<div class="im-box"><img class="im" src="data:image/png;base64,'+e.imt+'" data-b64="'+e.imt+'" onclick="showImg(this.dataset.b64)" title="点击查看大图"></div>' : (e.img ? e.img.split(',').map(f => '<div class="im-box"><img class="im" src="images/'+f.trim()+'" onclick="showImgFile(this.src)" title="点击查看大图"></div>').join('') : '')}
       ${extra ? '<div class="ex">'+extra+'</div>' : ''}
       ${ah}
-      ${findTbLocation(e).length ? '<div class="tb-loc" style="margin-top:6px;font-size:11px;color:var(--text-muted);display:flex;flex-wrap:wrap;gap:4px;align-items:center"><span>📖</span>'+findTbLocation(e).map(l=>`<span style="background:var(--tag-bg);padding:1px 6px;border-radius:4px">${l.pub} ${l.grade} 第${l.ch}章</span>`).join('')+'</div>' : ''}
+      ${findTbLocation(e).length ? '<div class="tb-loc" style="margin-top:6px;font-size:11px;color:var(--text-muted);display:flex;flex-wrap:wrap;gap:4px;align-items:center"><span>📖</span>'+findTbLocation(e).map(l=>`<span style="background:var(--tag-bg);padding:1px 6px;border-radius:4px;cursor:pointer" onclick="event.stopPropagation();jumpEntryLoc('${escQ(l.key)}')" title="${esc(l.label)}（点击定位）">${esc(l.label)}</span>`).join('')+'</div>' : ''}
       <div class="actions">${favBtn}${learnBtn}</div>
     </div>`;
   }
@@ -1521,7 +1675,7 @@ function setupSearch() {
   document.getElementById('sq').addEventListener('input', function() {
     clearTimeout(searchTimer);
     searchTimer = setTimeout(() => {
-      st.q = this.value.trim();
+      st.q = this.value.trim(); st.loc=''; st.sdTab='';
       if (st.q && document.getElementById('hm').style.display !== 'none') {
         document.getElementById('hm').style.display = 'none';
         document.getElementById('qs').style.display = 'none';
