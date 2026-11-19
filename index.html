@@ -190,7 +190,7 @@ async function loadData() {
     TB = textbooks || [];
     isDataLoaded = true;
     document.getElementById('loadingScreen').style.display = 'none';
-    document.getElementById('hm').style.display = 'grid';
+    document.getElementById('hm').style.display = 'block';
     document.getElementById('qs').style.display = 'block';
     init();
   } catch(e) {
@@ -247,33 +247,75 @@ function restoreTheme() {
 // ===== HOME =====
 function renderHome() {
   const el = document.getElementById('hm');
+  const tbStat = function(stg) {
+    const bs = TB.filter(b => (b.stage || '初中') === stg);
+    return {
+      books: bs.length,
+      chs: bs.reduce((n,b) => n + b.chapters.length, 0),
+      secs: bs.reduce((n,b) => n + b.chapters.reduce((n2,c) => n2 + c.sections.length, 0), 0)
+    };
+  };
+  const sm = tbStat('小学'), jm = tbStat('初中');
   let h = '';
-  h += `<div class="cd m4" onclick="enterTextbook()">
+
+  // ===== 第一行: 教材库 =====
+  h += `<div class="hs"><div class="hs-h">📚 教材库<span class="hs-sub">按教材目录组织章节，逐节学习</span></div><div class="hs-row">`;
+  h += `<div class="cd small m1" onclick="enterTextbookStage('小学')">
     <div class="dv"></div>
-    <div class="top"><div class="ico">📚</div>
-    <div><div class="nm">教材库</div><div class="ct">${TB.length} 本教材 · 共 ${TB.reduce((s,b)=>s+b.chapters.length,0)} 章</div></div></div>
-    <div class="desc">按教材目录组织章节，逐节学习知识内容</div>
-    <div class="cs">
-      <span class="tg">📘 ${TB.length} 套教材已收录</span>
-      <span class="tg">📋 ${TB.reduce((s,b)=>s+b.chapters.length,0)} 章 · ${TB.reduce((s,b)=>s+b.chapters.reduce((s2,c)=>s2+c.sections.length,0),0)} 节</span>
-      <span class="tg">🔄 持续更新中</span>
-    </div></div>`;
+    <div class="top"><div class="ico">🎒</div><div><div class="nm">小学</div><div class="ct">${sm.books} 本教材 · ${sm.chs} 章</div></div></div>
+    <div class="desc">小学 1–6 年级教材目录与知识点</div>
+    <div class="cs"><span class="tg">📘 ${sm.books} 套教材</span><span class="tg">📋 ${sm.secs} 节</span></div></div>`;
+  h += `<div class="cd small m2" onclick="enterTextbookStage('初中')">
+    <div class="dv"></div>
+    <div class="top"><div class="ico">📐</div><div><div class="nm">初中</div><div class="ct">${jm.books} 本教材 · ${jm.chs} 章</div></div></div>
+    <div class="desc">初中各版本教材目录与知识点</div>
+    <div class="cs"><span class="tg">📘 ${jm.books} 套教材</span><span class="tg">📋 ${jm.secs} 节</span></div></div>`;
+  h += `<div class="cd small m4 soon" onclick="enterTextbookStage('高中')">
+    <div class="dv"></div>
+    <div class="top"><div class="ico">🏫</div><div><div class="nm">高中<span class="soon-tag">即将上线</span></div><div class="ct">教材整理中</div></div></div>
+    <div class="desc">高中数学教材目录正在整理，敬请期待</div>
+    <div class="cs"><span class="tg">⏳ 敬请期待</span></div></div>`;
+  h += `</div></div>`;
+
+  // ===== 第二行: 学科知识库 =====
+  h += `<div class="hs"><div class="hs-h">📖 学科知识库<span class="hs-sub">按知识点检索与学习</span></div><div class="hs-row">`;
   for (const k of ['小学','初中','中考']) {
     const mk = {'小学':'小学','初中':'初中','中考':'中考数学'}[k];
-    const s = S[mk] || {n:0, cs:{}};
-    const icons = {'小学':'🎒','初中':'📐','中考数学':'🎯'};
-    const descs = {'小学':'从加减乘除到几何图形，打下坚实的数学基础','初中':'代数方程与几何证明，构建系统的数学思维','中考数学':'把握考情趋势，直击中考热点与难点'};
-    const cats = Object.entries(s.cs).sort((a,b) => b[1]-a[1]).slice(0,16);
+    const s2 = S[mk] || {n:0, cs:{}};
+    const icons = {'小学':'🎒','初中':'📐','中考':'🎯'};
+    const descs = {'小学':'从加减乘除到几何图形，打下坚实的数学基础','初中':'代数方程与几何证明，构建系统的数学思维','中考':'把握考情趋势，直击中考热点与难点'};
+    const cats = Object.entries(s2.cs || {}).sort((a,b) => b[1]-a[1]).slice(0,8);
     const chips = cats.map(x => `<span class="tg">${esc(x[0])} <span class="nu">${x[1]}</span></span>`).join('');
-    const cls = {'小学':'m1','初中':'m2','中考数学':'m3'}[mk];
-    h += `<div class="cd ${cls}" onclick="enterModule('${k}')">
+    const cls = {'小学':'m1','初中':'m2','中考':'m3'}[k];
+    h += `<div class="cd small ${cls}" onclick="enterModule('${k}')">
       <div class="dv"></div>
-      <div class="top"><div class="ico">${icons[mk]||'💭'}</div>
-      <div><div class="nm">${k}</div><div class="ct">${s.n} 条知识</div></div></div>
-      <div class="desc">${descs[mk]||''}</div>
+      <div class="top"><div class="ico">${icons[mk]||'💭'}</div><div><div class="nm">${k}</div><div class="ct">${s2.n} 条知识</div></div></div>
+      <div class="desc">${descs[k]||''}</div>
       <div class="cs">${chips}</div></div>`;
   }
+  h += `</div></div>`;
   el.innerHTML = h;
+}
+
+function enterTextbookStage(stg) {
+  if (stg === '高中') { showHomeToast('高中教材正在整理中，敬请期待'); return; }
+  tbvStage = stg;
+  try { localStorage.setItem('tbvStage', stg); } catch(e) {}
+  enterTextbook();
+}
+
+function showHomeToast(msg) {
+  let t = document.getElementById('homeToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'homeToast';
+    t.style.cssText = 'position:fixed;left:50%;bottom:46px;transform:translateX(-50%);background:rgba(20,20,25,.88);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;z-index:10001;opacity:0;transition:opacity .25s;pointer-events:none';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(window._homeToastTimer);
+  window._homeToastTimer = setTimeout(function(){ t.style.opacity = '0'; }, 2000);
 }
 
 function renderQuote() {
@@ -301,7 +343,7 @@ function goHome() {
   document.getElementById('navTbBtn').style.display = 'none';
   document.getElementById('navBackBtn').style.display = '';
   st = {m:'',c1:'',c2:'',tp:'all',q:'',ar:''};
-  document.getElementById('hm').style.display = 'grid';
+  document.getElementById('hm').style.display = 'block';
   document.getElementById('qs').style.display = 'block';
   document.getElementById('br').classList.remove('sh');
   document.getElementById('tbv').style.display = 'none';
