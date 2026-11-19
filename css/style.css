@@ -318,8 +318,10 @@ mark{background:var(--mark-bg);padding:1px 4px;border-radius:4px;font-weight:500
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:4px}
 
-.im{max-width:100%;margin:8px 0;border-radius:6px;cursor:pointer;border:1px solid var(--border);transition:transform .2s,box-shadow .2s;display:block}
-.im:hover{transform:scale(1.02);box-shadow:0 4px 16px rgba(0,0,0,0.12);border-color:var(--accent)}
+.im-box{height:400px;display:flex;align-items:center;justify-content:center;margin:10px 0;padding:8px;background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:box-shadow .2s,border-color .2s}
+.im-box:hover{box-shadow:0 4px 16px rgba(0,0,0,0.15);border-color:var(--accent)}
+.im-box .im{max-width:100%;max-height:100%;width:auto;height:auto;border-radius:6px;cursor:pointer;border:none;display:block}
+@media(max-width:700px){.im-box{height:240px;padding:4px}}
 
 /* ===== MODAL ===== */
 .mmodal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(0,0,0,0.8);justify-content:center;align-items:center;cursor:pointer}
