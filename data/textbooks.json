@@ -2667,7 +2667,13 @@
           {
             "num": "20.5",
             "name": "一次函数与二元一次方程的关系",
-            "kps": []
+            "kps": [
+              {
+                "name": "一次函数与二元一次方程的关系",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           }
         ]
       },
@@ -2801,7 +2807,13 @@
           {
             "num": "22.3",
             "name": "数据的整理与描述",
-            "kps": []
+            "kps": [
+              {
+                "name": "数据的收集与整理",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "22.4",
@@ -3417,7 +3429,28 @@
           {
             "num": "3.1",
             "name": "列代数式表示数量关系",
-            "kps": []
+            "kps": [
+              {
+                "name": "代数式书写规范",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "用字母表示数",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "代数式的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "根据题意列代数式",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "3.2",
@@ -4031,7 +4064,58 @@
           {
             "num": "8.3",
             "name": "实数及其简单运算",
-            "kps": []
+            "kps": [
+              {
+                "name": "常见无理数类型",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "根号2、根号3、根号5的近似数",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "实数的运算法则",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "实数与数轴上的点一一对应",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "实数的大小比较（利用数轴）",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "实数的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "用计算器进行运算",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "实数与数轴的一一对应关系",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "无理数的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "实数的混合运算",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           }
         ]
       },
@@ -4089,7 +4173,18 @@
           {
             "num": "10.3",
             "name": "实际问题与二元一次方程组",
-            "kps": []
+            "kps": [
+              {
+                "name": "利用二元一次方程组解实际问题的思路",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "常见用二元一次方程组解的题型",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "10.4",
@@ -4533,7 +4628,23 @@
           {
             "num": "17.1",
             "name": "用提公因式法分解因式",
-            "kps": []
+            "kps": [
+              {
+                "name": "提取公因式法因式分解",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "公因式的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "提公因式",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "17.2",
@@ -4585,7 +4696,33 @@
           {
             "num": "18.3",
             "name": "分式的加法与减法",
-            "kps": []
+            "kps": [
+              {
+                "name": "最简公分母",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "同分母分式相加减",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "异分母分式相加减",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "变形：分式通分",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "分式混合运算法则",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "18.4",
@@ -4684,7 +4821,18 @@
           {
             "num": "19.3",
             "name": "二次根式的加法与减法",
-            "kps": []
+            "kps": [
+              {
+                "name": "同类二次根式",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次根式的加减",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           }
         ]
       },
@@ -4695,12 +4843,49 @@
           {
             "num": "20.1",
             "name": "勾股定理及其应用",
-            "kps": []
+            "kps": [
+              {
+                "name": "勾股定理",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "利用图形面积证明勾股定理",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "勾股定理逆定理",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "20.2",
             "name": "勾股定理的逆定理及其应用",
-            "kps": []
+            "kps": [
+              {
+                "name": "勾股定理逆定理",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "勾股定理",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "利用图形面积证明勾股定理",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "勾股数的定义",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           }
         ]
       },
@@ -4914,7 +5099,13 @@
           {
             "num": "22.1",
             "name": "函数的概念",
-            "kps": []
+            "kps": [
+              {
+                "name": "一次函数的定义",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "22.2",
@@ -4936,22 +5127,101 @@
           {
             "num": "23.1",
             "name": "一次函数的概念",
-            "kps": []
+            "kps": [
+              {
+                "name": "一次函数的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正比例函数的定义",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "23.2",
             "name": "一次函数的图象和性质",
-            "kps": []
+            "kps": [
+              {
+                "name": "正比例函数的增减性",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "一次函数图象的画法",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "一次函数的增减性",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "23.3",
             "name": "一次函数与方程（组）、不等式",
-            "kps": []
+            "kps": [
+              {
+                "name": "一次函数的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正比例函数的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "一次函数的比例系数和常数项",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "一次函数图象的画法",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "一次函数的增减性",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "23.4",
             "name": "实际问题与一次函数",
-            "kps": []
+            "kps": [
+              {
+                "name": "一次函数的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正比例函数的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "一次函数的比例系数和常数项",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "一次函数图象的画法",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "一次函数的增减性",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           }
         ]
       },
@@ -5083,22 +5353,96 @@
           {
             "num": "26.1",
             "name": "二次函数的概念",
-            "kps": []
+            "kps": [
+              {
+                "name": "二次函数y＝ax²（a≠0）的图象特征",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "描点法画二次函数图象",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "抛物线的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次函数的定义",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "26.2",
             "name": "二次函数的图象和性质",
-            "kps": []
+            "kps": [
+              {
+                "name": "二次函数y＝ax²（a≠0）的图象特征",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "26.3",
             "name": "二次函数与一元二次方程",
-            "kps": []
+            "kps": [
+              {
+                "name": "二次函数与x轴无交点",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次函数与一元二次方程的关系",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "利用二次函数图像求一元二次方程的近似解",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次函数与x轴1个交点",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次函数与x轴2个交点",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "26.4",
             "name": "实际问题与二次函数",
-            "kps": []
+            "kps": [
+              {
+                "name": "二次函数y＝ax²（a≠0）的图象特征",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "描点法画二次函数图象",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "抛物线的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次函数的定义",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           }
         ]
       },
@@ -5109,7 +5453,28 @@
           {
             "num": "27.1",
             "name": "反比例函数的概念",
-            "kps": []
+            "kps": [
+              {
+                "name": "反比例函数的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "反比例系数",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "反比例函数待定系数法求解析式",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "反比例函数待定系数法列方程",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "27.2",
@@ -5135,7 +5500,28 @@
           {
             "num": "27.3",
             "name": "实际问题与反比例函数",
-            "kps": []
+            "kps": [
+              {
+                "name": "反比例函数的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "反比例系数",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "反比例函数待定系数法求解析式",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "反比例函数待定系数法列方程",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           }
         ]
       },
@@ -5209,7 +5595,123 @@
           {
             "num": "30.1",
             "name": "直线与圆",
-            "kps": []
+            "kps": [
+              {
+                "name": "点与圆的位置关系：圆内",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "点与圆的位置关系：圆上",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "直线与圆相切",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆与圆的位置关系：外切",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "直线与圆相交",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆与圆的位置关系：内切",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆与圆的位置关系：相交",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆与圆的位置关系：内含",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "点与圆的位置关系：圆外",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆的切点",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆切线的判定2",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "内心的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆与圆的位置关系：外离",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆切线推论1：切线过圆心的垂线过切点",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆的外切三角形",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "切线长定理",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "切线长",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "直线与圆相离",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆切线推论2：经过切点且垂直于切线的直线，必过圆心",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆切线的判定1",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "三角形的内切圆",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆切线的性质",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "三角形内切圆的定义",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "30.2",
@@ -5269,7 +5771,38 @@
           {
             "num": "2",
             "name": "从立体图形到平面图形",
-            "kps": []
+            "kps": [
+              {
+                "name": "圆锥的侧面展开图",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "几何体的表面展开图",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "截一个几何体",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆柱的侧面展开图",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "截面的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "从不同方向观察立体图形",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           }
         ]
       },
@@ -5280,17 +5813,255 @@
           {
             "num": "1",
             "name": "认识有理数",
-            "kps": []
+            "kps": [
+              {
+                "name": "绝对值大的负数小于绝对值小的负数",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正数大于负数",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "0既不是正数也不是负数",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "有理数的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "有理数与数轴上点的对应关系",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "负数的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "互为相反数的两个数绝对值相等",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "0的绝对值",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "绝对值的代数意义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "绝对值等于本身的数是非负数",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "数轴上的点比较大小",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "相反数的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "0的相反数",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正负数的读法",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "相反意义的量",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "负数的特征",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "绝对值的非负性",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "绝对值等于相反数的数为非正数",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "绝对值的几何意义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "有理数按定义分类",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "数轴上两点之间的距离",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正数的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "整数的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正数的写法",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "数轴距原点远的数绝对值大",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "数轴的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "根据相反数的定义表示代数式的相反数",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "负数的绝对值",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正数的绝对值",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "分数的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "绝对值大的正数大于绝对值小的正数（不要用）",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "负数的写法",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "绝对值相等的两个数相同或互为相反数",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "有理数按正负分类",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "2",
             "name": "有理数的加减运算",
-            "kps": []
+            "kps": [
+              {
+                "name": "互为相反数的两个数的和为0",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "有理数减法",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "有理数加法的运算律",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "异号相加",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "同号相加",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "3",
             "name": "有理数的乘除运算",
-            "kps": []
+            "kps": [
+              {
+                "name": "同号相乘",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "有理数除法法则",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "倒数的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "任何数乘0都等于0",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "有理数除法",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "乘法分配律",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "有理数乘法运算律",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "异号相乘",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "4",
@@ -5728,7 +6499,23 @@
           {
             "num": "1",
             "name": "丰富的数据世界",
-            "kps": []
+            "kps": [
+              {
+                "name": "定量数据",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "数据的收集与整理",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "定性数据",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "2",
@@ -5932,7 +6719,53 @@
           {
             "num": "2",
             "name": "探索直线平行的条件",
-            "kps": []
+            "kps": [
+              {
+                "name": "平行线的判定定理2",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "平行线的判定定理3",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "内错角的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "同位角的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "平行线的判定定理1",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "平行线传递",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "同旁内角的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "用尺规作平行线的方法",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "唯一平行线",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "3",
@@ -5969,12 +6802,54 @@
           {
             "num": "2",
             "name": "频率的稳定性",
-            "kps": []
+            "kps": [
+              {
+                "name": "用频率估计概率",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "频率的稳定性",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "随机事件的概率取值范围",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "必然事件的概率",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "不可能事件的概率",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "概率的定义",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "3",
             "name": "等可能事件的概率",
-            "kps": []
+            "kps": [
+              {
+                "name": "等可能试验的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "概率的公式",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           }
         ]
       },
@@ -6113,7 +6988,28 @@
           {
             "num": "1",
             "name": "轴对称及其性质",
-            "kps": []
+            "kps": [
+              {
+                "name": "轴对称的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "对称轴的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "轴对称的性质",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "轴对称图形的定义",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "2",
@@ -6187,7 +7083,13 @@
           {
             "num": "3",
             "name": "勾股定理的应用",
-            "kps": []
+            "kps": [
+              {
+                "name": "立体图形表面最短路径问题（展开法）",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           }
         ]
       },
@@ -6279,7 +7181,23 @@
           {
             "num": "3",
             "name": "二次根式",
-            "kps": []
+            "kps": [
+              {
+                "name": "最简二次根式的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次根式的双重非负性",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次根式的定义",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           }
         ]
       },
@@ -6574,7 +7492,33 @@
           {
             "num": "4",
             "name": "二元一次方程与一次函数",
-            "kps": []
+            "kps": [
+              {
+                "name": "二元一次方程组与两条直线交点的关系",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二元一次方程组无解的条件（直线平行）",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二元一次方程与一次函数图象的关系",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "待定系数法",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二元一次方程解集的定义",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "5",
@@ -6616,7 +7560,18 @@
           {
             "num": "1",
             "name": "平均数与方差",
-            "kps": []
+            "kps": [
+              {
+                "name": "用样本平均数估计总体平均数",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "用样本方差估计总体方差",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "2",
@@ -9476,7 +10431,28 @@
           {
             "num": "20.1",
             "name": "锐角三角函数",
-            "kps": []
+            "kps": [
+              {
+                "name": "三角函数",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正弦",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "余弦",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正切",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "20.2",
@@ -9486,7 +10462,28 @@
           {
             "num": "20.3",
             "name": "用计算器求锐角三角函数值",
-            "kps": []
+            "kps": [
+              {
+                "name": "三角函数",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正弦",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "余弦",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正切",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "20.4",
@@ -14265,12 +15262,44 @@
           {
             "num": "21.2",
             "name": "二次函数的图象和性质",
-            "kps": []
+            "kps": [
+              {
+                "name": "二次函数y＝ax²（a≠0）的图象特征",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "21.3",
             "name": "二次函数与一元二次方程",
-            "kps": []
+            "kps": [
+              {
+                "name": "二次函数与x轴无交点",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次函数与一元二次方程的关系",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "利用二次函数图像求一元二次方程的近似解",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次函数与x轴1个交点",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次函数与x轴2个交点",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "21.4",
@@ -14401,7 +15430,18 @@
           {
             "num": "23.2",
             "name": "解直角三角形及其应用",
-            "kps": []
+            "kps": [
+              {
+                "name": "二次函数与y轴交点",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次函数待定系数法求解析式",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           }
         ]
       }
@@ -14465,7 +15505,123 @@
           {
             "num": "24.4",
             "name": "直线与圆的位置关系",
-            "kps": []
+            "kps": [
+              {
+                "name": "点与圆的位置关系：圆内",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "点与圆的位置关系：圆上",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "直线与圆相切",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆与圆的位置关系：外切",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "直线与圆相交",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆与圆的位置关系：内切",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆与圆的位置关系：相交",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆与圆的位置关系：内含",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "点与圆的位置关系：圆外",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆的切点",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆切线的判定2",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "内心的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆与圆的位置关系：外离",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆切线推论1：切线过圆心的垂线过切点",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆的外切三角形",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "切线长定理",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "切线长",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "直线与圆相离",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆切线推论2：经过切点且垂直于切线的直线，必过圆心",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆切线的判定1",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "三角形的内切圆",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆切线的性质",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "三角形内切圆的定义",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "24.5",
@@ -14527,7 +15683,68 @@
           {
             "num": "25.2",
             "name": "三视图",
-            "kps": []
+            "kps": [
+              {
+                "name": "直棱柱的定义与特征",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正视图",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "直棱柱的底面、侧面、侧棱",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "三视图中虚线的使用",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "左视图",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "俯视图",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正投影的规律",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "球的三视图特征",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆锥的三视图特征",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆柱的三视图特征",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "画三视图的法则",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "直棱柱的命名规则",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           }
         ]
       },
@@ -14538,7 +15755,28 @@
           {
             "num": "26.1",
             "name": "随机事件",
-            "kps": []
+            "kps": [
+              {
+                "name": "必然事件的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "必然事件的概率",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "不可能事件的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "随机事件的定义",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "26.2",
@@ -17407,17 +18645,75 @@
           {
             "num": "21.1",
             "name": "二次根式",
-            "kps": []
+            "kps": [
+              {
+                "name": "最简二次根式的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次根式的双重非负性",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次根式的定义",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "21.2",
             "name": "二次根式的乘除",
-            "kps": []
+            "kps": [
+              {
+                "name": "最简二次根式的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "分母有理化",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次根式除法的逆用",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次根式的除法",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次根式的乘法",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "1",
             "name": "二次根式的乘法",
-            "kps": []
+            "kps": [
+              {
+                "name": "最简二次根式的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次根式的除法",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次根式的乘法",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "2",
@@ -17427,12 +18723,44 @@
           {
             "num": "3",
             "name": "二次根式的除法",
-            "kps": []
+            "kps": [
+              {
+                "name": "最简二次根式的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次根式的双重非负性",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次根式的定义",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "21.3",
             "name": "二次根式的加减",
-            "kps": []
+            "kps": [
+              {
+                "name": "有理化因式的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "同类二次根式",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次根式的加减",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           }
         ]
       },
@@ -17718,17 +19046,80 @@
           {
             "num": "24.3",
             "name": "锐角三角函数",
-            "kps": []
+            "kps": [
+              {
+                "name": "三角函数",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正弦",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "余弦",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正切",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "1",
             "name": "锐角三角函数",
-            "kps": []
+            "kps": [
+              {
+                "name": "三角函数",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正弦",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "余弦",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正切",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "2",
             "name": "用计算器求锐角三角函数值",
-            "kps": []
+            "kps": [
+              {
+                "name": "三角函数",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正弦",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "余弦",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正切",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "24.4",
@@ -17755,7 +19146,28 @@
           {
             "num": "25.2",
             "name": "随机事件的概率",
-            "kps": []
+            "kps": [
+              {
+                "name": "必然事件的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "必然事件的概率",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "不可能事件的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "随机事件的定义",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "1",
@@ -17765,7 +19177,18 @@
           {
             "num": "2",
             "name": "频率与概率",
-            "kps": []
+            "kps": [
+              {
+                "name": "用频率估计概率",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "频率的稳定性",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "3",
@@ -17797,7 +19220,13 @@
           {
             "num": "26.2",
             "name": "二次函数的图象与性质",
-            "kps": []
+            "kps": [
+              {
+                "name": "二次函数y＝ax²（a≠0）的图象特征",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "1",
@@ -28091,7 +29520,123 @@
           {
             "num": "2.5",
             "name": "直线与圆的位置关系",
-            "kps": []
+            "kps": [
+              {
+                "name": "点与圆的位置关系：圆内",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "点与圆的位置关系：圆上",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "直线与圆相切",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆与圆的位置关系：外切",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "直线与圆相交",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆与圆的位置关系：内切",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆与圆的位置关系：相交",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆与圆的位置关系：内含",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "点与圆的位置关系：圆外",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆的切点",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆切线的判定2",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "内心的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆与圆的位置关系：外离",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆切线推论1：切线过圆心的垂线过切点",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆的外切三角形",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "切线长定理",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "切线长",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "直线与圆相离",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆切线推论2：经过切点且垂直于切线的直线，必过圆心",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆切线的判定1",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "三角形的内切圆",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆切线的性质",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "三角形内切圆的定义",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "2.6",
@@ -28122,7 +29667,68 @@
           {
             "num": "3.3",
             "name": "三视图",
-            "kps": []
+            "kps": [
+              {
+                "name": "直棱柱的定义与特征",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正视图",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "直棱柱的底面、侧面、侧棱",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "三视图中虚线的使用",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "左视图",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "俯视图",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正投影的规律",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "球的三视图特征",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆锥的三视图特征",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆柱的三视图特征",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "画三视图的法则",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "直棱柱的命名规则",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           }
         ]
       },
@@ -28133,7 +29739,28 @@
           {
             "num": "4.1",
             "name": "随机事件与可能性",
-            "kps": []
+            "kps": [
+              {
+                "name": "必然事件的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "必然事件的概率",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "不可能事件的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "随机事件的定义",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "4.2",
@@ -28723,12 +30350,29 @@
           {
             "num": "5.4",
             "name": "二次函数的图象和性质",
-            "kps": []
+            "kps": [
+              {
+                "name": "二次函数y＝ax²（a≠0）的图象特征",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "5.5",
             "name": "确定二次函数的表达式",
-            "kps": []
+            "kps": [
+              {
+                "name": "待定系数法求二次函数表达式（一般式）",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "待定系数法求二次函数表达式（顶点式）",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "5.6",
@@ -28749,7 +30393,28 @@
           {
             "num": "6.1",
             "name": "随机事件",
-            "kps": []
+            "kps": [
+              {
+                "name": "必然事件的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "必然事件的概率",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "不可能事件的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "随机事件的定义",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "6.2",
@@ -28780,7 +30445,18 @@
           {
             "num": "6.5",
             "name": "事件的概率",
-            "kps": []
+            "kps": [
+              {
+                "name": "等可能试验的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "概率的公式",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "6.6",
@@ -28832,7 +30508,68 @@
           {
             "num": "8.3",
             "name": "三视图",
-            "kps": []
+            "kps": [
+              {
+                "name": "直棱柱的定义与特征",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正视图",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "直棱柱的底面、侧面、侧棱",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "三视图中虚线的使用",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "左视图",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "俯视图",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "正投影的规律",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "球的三视图特征",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆锥的三视图特征",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "圆柱的三视图特征",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "画三视图的法则",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "直棱柱的命名规则",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           }
         ]
       }
@@ -28928,7 +30665,23 @@
           {
             "num": "3",
             "name": "相似三角形判定定理的证明",
-            "kps": []
+            "kps": [
+              {
+                "name": "相似三角形的性质-边等比",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "相似三角形的性质-角等",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "相似三角形的定义",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "4",
@@ -28996,7 +30749,13 @@
           {
             "num": "2",
             "name": "二次函数的图象",
-            "kps": []
+            "kps": [
+              {
+                "name": "二次函数y＝ax²（a≠0）的图象特征",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           },
           {
             "num": "3",
@@ -29006,7 +30765,33 @@
           {
             "num": "4",
             "name": "二次函数与一元二次方程",
-            "kps": []
+            "kps": [
+              {
+                "name": "二次函数与x轴无交点",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次函数与一元二次方程的关系",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "利用二次函数图像求一元二次方程的近似解",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次函数与x轴1个交点",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "二次函数与x轴2个交点",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           }
         ]
       },
@@ -30268,7 +32053,68 @@
               77,
               85
             ],
-            "kps": [],
+            "kps": [
+              {
+                "name": "闰年的含义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "小月的月份",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "十二生肖",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "2月的天数",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "日历的特点",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "大月的含义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "小月的含义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "生活中的节日",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "大月的月份",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "年和月的单位换算",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "制作年历",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "平年的含义",
+                "evidence": "",
+                "inferred": true
+              }
+            ],
             "des": []
           }
         ]
@@ -32660,7 +34506,13 @@
               69,
               70
             ],
-            "kps": [],
+            "kps": [
+              {
+                "name": "双循环赛的比赛场数",
+                "evidence": "",
+                "inferred": true
+              }
+            ],
             "des": []
           }
         ]
@@ -49281,7 +51133,28 @@
               3,
               3
             ],
-            "kps": [],
+            "kps": [
+              {
+                "name": "平移的性质",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "旋转的性质",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "平移的定义",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "旋转的概念",
+                "evidence": "",
+                "inferred": true
+              }
+            ],
             "des": [
               {
                 "name": "求图形的平移方向（1步或2步）、距离",
@@ -49304,7 +51177,18 @@
               5,
               5
             ],
-            "kps": [],
+            "kps": [
+              {
+                "name": "旋转的性质",
+                "evidence": "",
+                "inferred": true
+              },
+              {
+                "name": "旋转的概念",
+                "evidence": "",
+                "inferred": true
+              }
+            ],
             "des": [
               {
                 "name": "绕图形上一点画旋转图形",
