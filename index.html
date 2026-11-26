@@ -481,42 +481,6 @@ function goBackToTextbook() {
     renderSections();
   }
 }
-// Textbook location index for entry cards
-let tbIndex = null;
-function buildTbIndex() {
-  if (tbIndex||!TB.length) return;
-  tbIndex={};
-  for(const book of TB) for(const ch of book.chapters) for(const sec of ch.sections) {
-    const k=sec.name.trim();
-    if(!tbIndex[k]) tbIndex[k]=[];
-    tbIndex[k].push({pub:book.publisher,grade:book.grade,ch:ch.num,chName:ch.name});
-  }
-}
-function findTbLocation(entry) {
-  const locs = entryLocs(entry);
-  const out = [];
-  for (const l of locs) {
-    out.push({
-      pub: l.pub, grade: l.grade, ch: l.chNum, chName: l.chName,
-      key: l.chKey,
-      label: l.pub + ' ' + l.grade + ' 第' + l.chNum + '章' + (l.chName ? ' ' + l.chName : '')
-    });
-    if (out.length >= 2) break;
-  }
-  return out;
-}
-
-// 点击条目卡片上的“教材出处” → 左侧定位到该章
-function jumpEntryLoc(key) {
-  if (!key) return;
-  st.loc = key; st.sdTab = 'loc';
-  document.getElementById('hm').style.display = 'none';
-  document.getElementById('qs').style.display = 'none';
-  document.getElementById('br').classList.add('sh');
-  renderModuleTabs();
-  renderResults();
-}
-
 // ===== TEXTBOOK VIEW =====
 let currentTB = null;
 let currentChapter = null;
@@ -1360,7 +1324,7 @@ function renderResults() {
       ${e.imt ? '<div class="im-box"><img class="im" src="data:image/png;base64,'+e.imt+'" data-b64="'+e.imt+'" onclick="showImg(this.dataset.b64)" title="点击查看大图"></div>' : (e.img ? e.img.split(',').map(f => '<div class="im-box"><img class="im" src="images/'+f.trim()+'" onclick="showImgFile(this.src)" title="点击查看大图"></div>').join('') : '')}
       ${extra ? '<div class="ex">'+extra+'</div>' : ''}
       ${ah}
-      ${findTbLocation(e).length ? '<div class="tb-loc" style="margin-top:6px;font-size:11px;color:var(--text-muted);display:flex;flex-wrap:wrap;gap:4px;align-items:center"><span>📖</span>'+findTbLocation(e).map(l=>`<span style="background:var(--tag-bg);padding:1px 6px;border-radius:4px;cursor:pointer" onclick="event.stopPropagation();jumpEntryLoc('${escQ(l.key)}')" title="${esc(l.label)}（点击定位）">${esc(l.label)}</span>`).join('')+'</div>' : ''}
+      ${(e.c1||e.c2) ? '<div class="entry-cat" style="margin-top:6px;font-size:11px;color:var(--text-muted);display:flex;flex-wrap:wrap;gap:4px;align-items:center"><span>📂</span>'+(e.c1?'<span style="background:var(--tag-bg);padding:1px 6px;border-radius:4px">'+esc(e.c1)+'</span>':'')+(e.c1&&e.c2?'<span style="opacity:.5">›</span>':'')+(e.c2?'<span style="background:var(--tag-bg);padding:1px 6px;border-radius:4px">'+esc(e.c2)+'</span>':'')+'</div>' : ''}
       <div class="actions">${favBtn}${learnBtn}</div>
     </div>`;
   }
