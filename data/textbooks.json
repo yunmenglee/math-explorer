@@ -4325,22 +4325,12 @@
                 "inferred": true
               },
               {
-                "name": "作一个角等于已知角",
-                "evidence": "",
-                "inferred": true
-              },
-              {
                 "name": "三角形具有稳定性",
                 "evidence": "",
                 "inferred": true
               },
               {
                 "name": "尺规作图作平行线",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "尺规作图的定义",
                 "evidence": "",
                 "inferred": true
               }
@@ -5371,7 +5361,13 @@
           {
             "num": "5",
             "name": "有理数的混合运算",
-            "kps": []
+            "kps": [
+              {
+                "name": "有理数的混合计算法则",
+                "evidence": "",
+                "inferred": true
+              }
+            ]
           }
         ]
       },
@@ -5921,11 +5917,6 @@
             "num": "1",
             "name": "两条直线的位置关系",
             "kps": [
-              {
-                "name": "相交的定义",
-                "evidence": "",
-                "inferred": true
-              },
               {
                 "name": "两条直线的位置关系",
                 "evidence": "",
@@ -6950,11 +6941,6 @@
               },
               {
                 "name": "旋转角的定义",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "关于原点对称点坐标",
                 "evidence": "",
                 "inferred": true
               },
@@ -14511,11 +14497,6 @@
                 "inferred": true
               },
               {
-                "name": "正多边形的定义",
-                "evidence": "",
-                "inferred": true
-              },
-              {
                 "name": "正多边形的半径",
                 "evidence": "",
                 "inferred": true
@@ -17529,23 +17510,7 @@
           {
             "num": "3",
             "name": "公式法",
-            "kps": [
-              {
-                "name": "完全平方公式法因式分解",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "十字相乘法因式分解",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "平方差公式法因式分解",
-                "evidence": "",
-                "inferred": true
-              }
-            ]
+            "kps": []
           },
           {
             "num": "4",
@@ -17566,13 +17531,7 @@
           {
             "num": "22.3",
             "name": "实践与探索",
-            "kps": [
-              {
-                "name": "现价=原价*折扣",
-                "evidence": "",
-                "inferred": true
-              }
-            ]
+            "kps": []
           }
         ]
       },
@@ -17858,13 +17817,7 @@
           {
             "num": "26.3",
             "name": "实践与探索",
-            "kps": [
-              {
-                "name": "现价=原价*折扣",
-                "evidence": "",
-                "inferred": true
-              }
-            ]
+            "kps": []
           }
         ]
       },
@@ -30728,18 +30681,7 @@
             "num": "4.3",
             "name": "旋转",
             "pages": [],
-            "kps": [
-              {
-                "name": "旋转的概念",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "旋转的性质",
-                "evidence": "",
-                "inferred": true
-              }
-            ],
+            "kps": [],
             "des": [
               {
                 "name": "绕图形上一点画旋转图形",
@@ -31610,16 +31552,6 @@
             "pages": [],
             "kps": [
               {
-                "name": "求一个数的几分之几是多少",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "分数的意义",
-                "evidence": "",
-                "inferred": true
-              },
-              {
                 "name": "真分数",
                 "evidence": "",
                 "inferred": true
@@ -31631,11 +31563,6 @@
               },
               {
                 "name": "分数与除法的关系",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "求一个数的几分之一是多少",
                 "evidence": "",
                 "inferred": true
               },
@@ -34185,138 +34112,7 @@
             "num": "1.2",
             "name": "笔算除法",
             "pages": [],
-            "kps": [
-              {
-                "name": "两位数除以一位数列竖式计算（被除数首位不能被整除）",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "连乘问题",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "三位数除以一位数（被除数首位不能被整除）",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "已知总量求部分量（整数）",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "三位数除以一位数（被除数首位不够除）",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "商末尾有0的除法（被除数末尾没有0）",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "三位数除以一位数商的位数判断",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "除数是一位数的估算",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "两位数除以一位数（首位能除尽）",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "商末尾有0的除法（被除数末尾有0，前面整除）",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "两位数除以一位数（首位能除不尽）",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "商中间有0的除法（被除数中间有0）",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "两位数除以一位数列竖式计算（被除数首位能被整除）",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "没有余数的除法验算",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "连乘",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "被除数是0的除法计算",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "已知一个量的几倍是几，求这个量",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "连除问题",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "有关0的运算",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "三位数除以一位数（被除数每一位都能除尽）",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "除数是一位数的除法竖式计算",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "有余数的除法验算",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "三位数除以一位数（被除数首位能被整除）",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "三位数连除一位数递等式计算",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "求一个数是另一个数的倍数",
-                "evidence": "",
-                "inferred": true
-              },
-              {
-                "name": "商中间有0的除法（被除数中间没有0）",
-                "evidence": "",
-                "inferred": true
-              }
-            ],
+            "kps": [],
             "des": []
           }
         ]
@@ -48077,13 +47873,7 @@
             "num": "3.2",
             "name": "应用题",
             "pages": [],
-            "kps": [
-              {
-                "name": "已知部分量求总量（整数）",
-                "evidence": "",
-                "inferred": true
-              }
-            ],
+            "kps": [],
             "des": [
               {
                 "name": "基本双归一问题（正归一）",
@@ -55614,13 +55404,7 @@
             "num": "2.2",
             "name": "问题提出",
             "pages": [],
-            "kps": [
-              {
-                "name": "合并用字母表示式子",
-                "evidence": "",
-                "inferred": true
-              }
-            ],
+            "kps": [],
             "des": [
               {
                 "name": "阶梯收费（小数）",
